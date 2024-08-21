@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.VBox?>
+
+
+<VBox alignment="CENTER" spacing="30.0" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.qut.cab302_a1.SignupController">
+    <padding>
+        <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
+    </padding>
+
+
