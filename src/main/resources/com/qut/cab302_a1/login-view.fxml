@@ -11,13 +11,14 @@
 <VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
       fx:controller="com.qut.cab302_a1.LoginController">
   <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+    <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
   </padding>
 
-  <Label fx:id="loginTextogin" text="Login"/>
+  <Label fx:id="loginText" text="Login"/>
   <TextField></TextField>
   <PasswordField></PasswordField>
+  <Label fx:id="incorrectPasswordLabel" visible="true">Incorrect Password</Label> <!-- CHANGE TO FALSE, true for testing-->
 
   <Hyperlink fx:id="SignUpLink" onAction="#onSignup">Sign up!</Hyperlink>
-  <Button text="Login" onAction="#onLoginButtonClick"/>
+  <Button fx:id="LoginButton" onAction="#onLoginButtonClick" text="Login"/>
 </VBox>
