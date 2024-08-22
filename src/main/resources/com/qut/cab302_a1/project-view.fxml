@@ -9,7 +9,7 @@
 
 <?import javafx.scene.control.ScrollPane?>
 
-    <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" vbarPolicy="NEVER" hbarPolicy="NEVER">
+    <ScrollPane xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" vbarPolicy="NEVER" hbarPolicy="NEVER"> <!--Consider removing the NEVER statements and changing the appearence in css. -->
     <padding>
         <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
     </padding>
