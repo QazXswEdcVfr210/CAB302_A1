@@ -1,5 +1,6 @@
 package com.qut.cab302_a1;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -28,15 +29,18 @@ public class ProjectController {
         Label projectName = new Label("Project1");
         Label projectDescription = new Label("Description1");
         Button newButton = new Button("Expand");
-        newButton.setOnAction(actionEvent -> {bigPane.setVisible(true); projectPane.setVisible(false);});
+        newButton.setOnAction(actionEvent ->
+            {bigPane.setVisible(true);
+            projectPane.setVisible(false);
+            bigPane.setPrefSize(300, 300);});
+            //TODO scroll save and set & animation
         projectPane.getChildren().addAll(projectName, projectDescription, newButton);
         projectName.setStyle("-fx-font-weight: bold");
-        bigPane.setPadding(new Insets(10, 10, 10, 10));
+        bigPane.setPrefSize(100, 100);
 
 
         // bigPane stuff
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        bigPane.setPadding(new Insets(40, 200, 40, 200));
         bigPane.setVisible(false);
         Label exampleLabel = new Label("Example");
         bigPane.getChildren().addAll(exampleLabel);
