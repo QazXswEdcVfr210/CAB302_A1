@@ -1,6 +1,7 @@
 package com.qut.cab302_a1;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -16,14 +17,35 @@ public class ProjectController {
     private ScrollPane mainScrollPane;
 
     @FXML
-    private VBox createProjectPane(){
+    private StackPane createProjectPane(){
+        StackPane overLay = new StackPane();
+
         VBox projectPane = new VBox(20);
+        VBox bigPane = new VBox(100);
+
+        // small Pane stuff
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         Label projectName = new Label("Project1");
         Label projectDescription = new Label("Description1");
-        projectPane.getChildren().addAll(projectName, projectDescription);
+        Button newButton = new Button("Expand");
+        newButton.setOnAction(actionEvent -> {bigPane.setVisible(true); projectPane.setVisible(false);});
+        projectPane.getChildren().addAll(projectName, projectDescription, newButton);
         projectName.setStyle("-fx-font-weight: bold");
-        return projectPane;
+        bigPane.setPadding(new Insets(10, 10, 10, 10));
+
+
+        // bigPane stuff
+        bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
+        bigPane.setPadding(new Insets(40, 200, 40, 200));
+        bigPane.setVisible(false);
+        Label exampleLabel = new Label("Example");
+        bigPane.getChildren().addAll(exampleLabel);
+
+
+        // stackPane stuff
+        overLay.getChildren().addAll(projectPane, bigPane);
+
+        return overLay;
     }
 
     @FXML
@@ -33,7 +55,8 @@ public class ProjectController {
     protected void onCreatePanelAction(){
 
         System.out.println("Created Panel!");
-    VBox projectPan = createProjectPane();
+    StackPane projectPan = createProjectPane();
+
     mainVbox.getChildren().add(projectPan);
 
     }
