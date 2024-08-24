@@ -2,7 +2,6 @@ package com.qut.cab302_a1;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -10,6 +9,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 public class ProjectController {
+
 
     @FXML
     private VBox mainVbox;
@@ -29,11 +29,18 @@ public class ProjectController {
         Label projectName = new Label("Project1");
         Label projectDescription = new Label("Description1");
         Button newButton = new Button("Expand");
-        newButton.setOnAction(actionEvent ->
-            {bigPane.setVisible(true);
+        newButton.setOnAction(actionEvent -> {
+            //animation goes here
+
+            bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(300, 300);});
-            //TODO scroll save and set & animation
+            bigPane.setPrefSize(300, 300);
+            // Saves scroll horizontal height and applies it.
+            Platform.runLater(()->{
+                mainScrollPane.setHvalue(mainVbox.getHeight());
+            });});
+
+
         projectPane.getChildren().addAll(projectName, projectDescription, newButton);
         projectName.setStyle("-fx-font-weight: bold");
         bigPane.setPrefSize(100, 100);
