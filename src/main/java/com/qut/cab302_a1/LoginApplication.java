@@ -29,3 +29,8 @@ public class LoginApplication extends Application {
         launch();
     }
 }
+
+// TODO make bigPane exit out when clicked outside of pane
+// add animation
+// change bigPane to a stackPane and add material area.
+// add styling

@@ -1,11 +1,13 @@
 package com.qut.cab302_a1;
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -16,6 +18,7 @@ public class ProjectController {
 
         mainScrollPane.setFitToWidth(true);
         mainVbox.setFillWidth(true);
+
     }
 
     @FXML
@@ -23,6 +26,15 @@ public class ProjectController {
 
     @FXML
     private ScrollPane mainScrollPane;
+
+    @FXML
+    private boolean outsideClick(MouseEvent event, VBox box){
+        if (!box.contains(event.getSceneX(), event.getSceneY())){
+            System.out.println("Outside was clicked");
+            return true;
+        }
+        return false;
+    }
 
     @FXML
     private StackPane createProjectPane(){
@@ -35,29 +47,35 @@ public class ProjectController {
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         Label projectName = new Label("Project1");
         Label projectDescription = new Label("Description1");
-        Button newButton = new Button("Expand");
-        newButton.setOnAction(actionEvent -> {
+        projectPane.setPrefSize(150, 150);
+
+        // This is the lambda function that handles expanding the vbox when clicked.
+        projectPane.setOnMouseClicked(actionEvent -> {
             //animation goes here
 
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(300, 300);
+            bigPane.setPrefSize(450, 450);
             // Saves scroll horizontal height and applies it.
             Platform.runLater(()->{
                 mainScrollPane.setHvalue(mainVbox.getHeight());
             });});
 
-
-        projectPane.getChildren().addAll(projectName, projectDescription, newButton);
+        projectPane.getChildren().addAll(projectName, projectDescription);
         projectName.setStyle("-fx-font-weight: bold");
-        bigPane.setPrefSize(100, 100);
 
 
         // bigPane stuff
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
         Label exampleLabel = new Label("Example");
-        bigPane.getChildren().addAll(exampleLabel);
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction((ActionEvent event) -> {
+            projectPane.setVisible(true);
+            bigPane.setVisible(false);
+            bigPane.setPrefSize(150, 150);
+        });
+        bigPane.getChildren().addAll(exampleLabel, exitButton);
 
 
         // stackPane stuff
@@ -66,8 +84,6 @@ public class ProjectController {
         return overLay;
     }
 
-    @FXML
-    private Button CreatePanel;
 
     @FXML
     protected void onCreatePanelAction(){
