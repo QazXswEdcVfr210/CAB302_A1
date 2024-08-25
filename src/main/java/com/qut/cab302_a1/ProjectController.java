@@ -2,6 +2,7 @@ package com.qut.cab302_a1;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -10,6 +11,12 @@ import javafx.scene.paint.Color;
 
 public class ProjectController {
 
+    @FXML
+    public void initialize(){
+
+        mainScrollPane.setFitToWidth(true);
+        mainVbox.setFillWidth(true);
+    }
 
     @FXML
     private VBox mainVbox;

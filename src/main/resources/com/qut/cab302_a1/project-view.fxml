@@ -13,7 +13,7 @@
     <padding>
         <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
     </padding>
-        <VBox spacing="20.0" alignment="TOP_CENTER" fx:id="mainVbox">
+        <VBox spacing="20.0" alignment="CENTER" fx:id="mainVbox">
 
 
             <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
