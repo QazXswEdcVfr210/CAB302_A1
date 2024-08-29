@@ -34,20 +34,13 @@ public class ProjectController {
     @FXML
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
-        VBox projectPane = new VBox(20);
-        VBox bigPane = new VBox(100);
+        VBox projectPane = createMainPane();
+        VBox bigPane = createBigPane();
         projectList.add(overLay);
-
-        // small Pane stuff
-        projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        Label projectName = new Label("Project1");
-        Label projectDescription = new Label("Description1");
-        bigPane.setPrefSize(150, 150);
 
         // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
             //animation goes here
-
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(450, 450);
@@ -58,17 +51,8 @@ public class ProjectController {
                     pane.setVisible(false);
                 }
             }
-
         });
 
-        projectPane.getChildren().addAll(projectName, projectDescription);
-        projectName.setStyle("-fx-font-weight: bold");
-
-
-        // bigPane stuff
-        bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        bigPane.setVisible(false);
-        Label exampleLabel = new Label("Example");
         Button exitButton = new Button("Exit");
         Button materials = new Button("Materials");
         exitButton.setOnAction((ActionEvent event) -> {
@@ -78,12 +62,10 @@ public class ProjectController {
             bigPane.setPrefSize(150, 150);
             mainScrollPane.setVvalue(scrollVal);
 
-
             for (StackPane pane: projectList){
                 System.out.println("revealed");
                 pane.setVisible(true);
             }
-            mainVbox.layout();
         });
         // Material menu
         Popup popupMenu = createPopUp();
@@ -101,16 +83,33 @@ public class ProjectController {
             else{
                 popupMenu.hide();
             }
-
         });
+        bigPane.getChildren().addAll(exitButton, materials);
 
-        bigPane.getChildren().addAll(exampleLabel, exitButton, materials);
-
-
-        // stackPane stuff
+        // stackPane adds above panels
         overLay.getChildren().addAll(projectPane, bigPane);
 
         return overLay;
+    }
+
+    private VBox createMainPane(){
+        VBox projectPane = new VBox(20);
+        projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
+        projectPane.setPrefSize(150, 150);
+        Label projectName = new Label("Project1");
+        Label projectDescription = new Label("Description1");
+        projectPane.getChildren().addAll(projectName, projectDescription);
+        projectName.setStyle("-fx-font-weight: bold");
+        return projectPane;
+    }
+
+    private VBox createBigPane(){
+        VBox bigPane = new VBox(20);
+        bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
+        bigPane.setVisible(false);
+        Label exampleLabel = new Label("Example");
+        bigPane.getChildren().addAll(exampleLabel);
+        return bigPane;
     }
 
     private Popup createPopUp(){
@@ -126,11 +125,12 @@ public class ProjectController {
 
     @FXML
     protected void onCreatePanelAction(){
-
         System.out.println("Created Panel!");
-    StackPane projectPan = createProjectPane();
+        StackPane projectPan = createProjectPane();
 
-    mainVbox.getChildren().add(projectPan);
+        mainVbox.getChildren().add(projectPan);
 
     }
 }
+
+//TODO refactor into a more MVC style
