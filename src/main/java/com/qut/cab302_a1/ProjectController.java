@@ -82,7 +82,7 @@ public class ProjectController {
         // Material menu
         Popup popupMenu = new Popup();
         AnchorPane popupPane = new AnchorPane();
-        popupPane.setPrefSize(80, 80);
+        popupPane.setPrefSize(450, 150);
         Label testLabel = new Label("Test");
         popupMenu.getContent().add(testLabel);
         popupPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
@@ -90,8 +90,13 @@ public class ProjectController {
         popupMenu.hide();
         materials.setOnAction((ActionEvent event) -> {
             // button to get materials to show up.
+            // TEMP stackoverflow recommends connecting popup the button but this will eventually be changed
+            // TEMP but eventually when i figure out how to ill position the popup menu to a desired location.
             if (!popupMenu.isShowing()) {
-                popupMenu.show(popupMenu, testLabel.getLayoutX(), testLabel.getLayoutY());
+                popupMenu.show(
+                        materials,
+                        materials.localToScreen(materials.getBoundsInLocal()).getMinX(),
+                        materials.localToScreen(materials.getBoundsInLocal()).getMaxY());
 
             }
             else{
