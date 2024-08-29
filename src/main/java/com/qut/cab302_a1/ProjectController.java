@@ -1,6 +1,6 @@
 package com.qut.cab302_a1;
 
-import javafx.application.Platform;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -11,11 +11,15 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Popup;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProjectController {
+    private List<StackPane> projectList = new ArrayList<>();
+    private int identifier = 0;
 
     @FXML
     public void initialize(){
-
         mainScrollPane.setFitToWidth(true);
         mainVbox.setFillWidth(true);
     }
@@ -26,20 +30,13 @@ public class ProjectController {
     @FXML
     private ScrollPane mainScrollPane;
 
-    @FXML
-    private boolean outsideClick(MouseEvent event, VBox box){
-        if (!box.contains(event.getSceneX(), event.getSceneY())){
-            System.out.println("Outside was clicked");
-            return true;
-        }
-        return false;
-    }
 
     @FXML
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
         VBox projectPane = new VBox(20);
         VBox bigPane = new VBox(100);
+        projectList.add(overLay);
 
         // small Pane stuff
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
@@ -51,14 +48,16 @@ public class ProjectController {
         projectPane.setOnMouseClicked(actionEvent -> {
             //animation goes here
 
-            final double scrollVal = mainScrollPane.getVvalue();
-            System.out.println(scrollVal);
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(450, 450);
-            // Saves scroll vert height and applies it - System is a bit crappy.
 
-            mainScrollPane.setVvalue(scrollVal);
+            for (StackPane pane: projectList){
+                if (pane != overLay){
+                    System.out.println("hidden");
+                    pane.setVisible(false);
+                }
+            }
 
         });
 
@@ -78,6 +77,13 @@ public class ProjectController {
             bigPane.setVisible(false);
             bigPane.setPrefSize(150, 150);
             mainScrollPane.setVvalue(scrollVal);
+
+
+            for (StackPane pane: projectList){
+                System.out.println("revealed");
+                pane.setVisible(true);
+            }
+            mainVbox.layout();
         });
         // Material menu
         Popup popupMenu = new Popup();
@@ -98,6 +104,7 @@ public class ProjectController {
                         materials.localToScreen(materials.getBoundsInLocal()).getMinX(),
                         materials.localToScreen(materials.getBoundsInLocal()).getMaxY());
 
+
             }
             else{
                 popupMenu.hide();
@@ -114,6 +121,9 @@ public class ProjectController {
         return overLay;
     }
 
+    public void setContent(VBox box){
+        mainScrollPane.setContent(box);
+    }
 
     @FXML
     protected void onCreatePanelAction(){
