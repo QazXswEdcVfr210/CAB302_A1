@@ -86,13 +86,7 @@ public class ProjectController {
             mainVbox.layout();
         });
         // Material menu
-        Popup popupMenu = new Popup();
-        AnchorPane popupPane = new AnchorPane();
-        popupPane.setPrefSize(450, 150);
-        Label testLabel = new Label("Test");
-        popupMenu.getContent().add(testLabel);
-        popupPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        popupMenu.getContent().add(popupPane);
+        Popup popupMenu = createPopUp();
         popupMenu.hide();
         materials.setOnAction((ActionEvent event) -> {
             // button to get materials to show up.
@@ -103,8 +97,6 @@ public class ProjectController {
                         materials,
                         materials.localToScreen(materials.getBoundsInLocal()).getMinX(),
                         materials.localToScreen(materials.getBoundsInLocal()).getMaxY());
-
-
             }
             else{
                 popupMenu.hide();
@@ -121,8 +113,15 @@ public class ProjectController {
         return overLay;
     }
 
-    public void setContent(VBox box){
-        mainScrollPane.setContent(box);
+    private Popup createPopUp(){
+        Popup popupMenu = new Popup();
+        AnchorPane popupPane = new AnchorPane();
+        popupPane.setPrefSize(450, 150);
+        Label testLabel = new Label("Test");
+        popupMenu.getContent().add(testLabel);
+        popupPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
+        popupMenu.getContent().add(popupPane);
+        return popupMenu;
     }
 
     @FXML
