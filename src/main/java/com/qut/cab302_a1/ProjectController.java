@@ -3,6 +3,7 @@ package com.qut.cab302_a1;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -40,10 +41,24 @@ public class ProjectController {
 
         // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
+
+
+            final double scrollVal = mainScrollPane.getVvalue();
+
             //animation goes here
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(450, 450);
+            bigPane.layout();
+
+            // Gets the overlay height get the location scroll position
+            double inScrollPanePos = overLay.getBoundsInParent().getMinY();
+            double contentHeight = mainScrollPane.getContent().getBoundsInLocal().getHeight();
+            double scrollPaneVal = inScrollPanePos / (contentHeight - mainScrollPane.getViewportBounds().getHeight());
+
+
+            mainScrollPane.setVvalue(scrollPaneVal);
+
 
             for (StackPane pane: projectList){
                 if (pane != overLay){
