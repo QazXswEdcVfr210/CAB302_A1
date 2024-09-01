@@ -35,6 +35,8 @@ public class LoginController {
 
     @FXML
     protected void onLoginButtonClick() throws IOException {
+        // add logic for authentication and getting user's data from db here.
+
         Stage stage = (Stage) LoginButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);

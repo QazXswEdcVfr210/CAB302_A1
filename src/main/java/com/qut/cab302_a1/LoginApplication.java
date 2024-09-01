@@ -29,3 +29,11 @@ public class LoginApplication extends Application {
         launch();
     }
 }
+
+// TODO Discuss with team (Creating the db, fields like passwords, projects) (Setup password and signup which eventually will inject into db) (css?) (Encryption)
+//  refactor method into methods.
+//  position popupmenu
+//  change bigPane to a stackPane and add material area.
+//  add animation
+//  make bigPane exit out when clicked outside of pane
+//  add styling
