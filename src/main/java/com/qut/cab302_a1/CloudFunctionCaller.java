@@ -8,7 +8,7 @@ import java.net.URL;
 
 public class CloudFunctionCaller {
 
-    private static final String FUNCTION_URL = "https://<YOUR_REGION>-<YOUR_PROJECT_ID>.cloudfunctions.net/<YOUR_FUNCTION_NAME>";
+    private static final String FUNCTION_URL = "will change when deployed";
 
     public static void callFunction(String payload) {
         HttpURLConnection connection = null;
