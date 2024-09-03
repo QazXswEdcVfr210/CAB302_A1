@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.control.Button?>
+
+
+<?import javafx.scene.control.ScrollPane?>
+
+    <ScrollPane fx:id="mainScrollPane" xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" vbarPolicy="NEVER" hbarPolicy="NEVER" vvalue="0"> <!--Consider removing the NEVER statements and changing the appearence in css. -->
+    <padding>
+        <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
+    </padding>
+        <VBox spacing="20.0" alignment="CENTER" fx:id="mainVbox">
+
+
+            <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
+        </VBox>
+    </ScrollPane>
+
+
