@@ -14,8 +14,6 @@ public class LoginApplication extends Application {
     public static final int HEIGHT = 500;
     public static final String TITLE = "Login";
 
-
-
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
