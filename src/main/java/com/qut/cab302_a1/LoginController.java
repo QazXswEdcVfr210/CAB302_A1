@@ -1,5 +1,6 @@
 package com.qut.cab302_a1;
 
+import firebase.FirebaseLogin;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -34,8 +35,11 @@ public class LoginController {
     private Button LoginButton;
 
     @FXML
-    protected void onLoginButtonClick() throws IOException {
+    protected void onLoginButtonClick() throws Exception {
+
         // add logic for authentication and getting user's data from db here.
+        // TODO: i dont know javafx but this is how you use the stuff i wrote to handle logins, if true then it was successful if false it was not.
+        Boolean loginSuccess = FirebaseLogin.TryLogin("email", "password");
 
         Stage stage = (Stage) LoginButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));

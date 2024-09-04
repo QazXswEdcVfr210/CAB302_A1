@@ -20,7 +20,8 @@ public class FirebaseLogin {
     // - actually store user info/UID
     // - integrate with LoginApplication or LoginController
     // - sign up functionality
-    private Boolean TryLogin(String uname, String pass) throws Exception {
+
+    public static Boolean TryLogin(String uname, String pass) throws Exception {
         try{
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();  // Using GsonFactory from google-http-client-gson
