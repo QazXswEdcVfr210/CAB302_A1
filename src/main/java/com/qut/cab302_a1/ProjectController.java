@@ -7,10 +7,17 @@ import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.Node;
 import javafx.stage.Popup;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar;
+import javafx.stage.Stage;
+import java.util.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +42,7 @@ public class ProjectController {
     @FXML
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
-        VBox projectPane = createMainPane();
+        VBox projectPane = createMainPane(overLay);
         VBox bigPane = createBigPane();
         projectList.add(overLay);
 
@@ -107,16 +114,86 @@ public class ProjectController {
         return overLay;
     }
 
-    private VBox createMainPane(){
+    private VBox createMainPane(StackPane overLay) {
         VBox projectPane = new VBox(20);
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         projectPane.setPrefSize(150, 150);
-        Label projectName = new Label("Project1");
-        Label projectDescription = new Label("Description1");
-        projectPane.getChildren().addAll(projectName, projectDescription);
-        projectName.setStyle("-fx-font-weight: bold");
+
+        // Project Name
+        TextField projectNameField = new TextField();
+        projectNameField.setPromptText("Enter project name");
+
+        TextField projectDescriptionField = new TextField();
+        projectDescriptionField.setPromptText("Enter project description");
+
+        // Save Button
+        Button saveButton = new Button("Save");
+        saveButton.setOnAction(event -> {
+            String projectName = projectNameField.getText();
+            if (!projectName.isEmpty()) {
+                projectNameField.setEditable(false);
+                projectDescriptionField.setEditable(false);
+                saveButton.setDisable(true);
+            }
+        });
+
+        // Edit Button
+        Button editButton = new Button("Edit");
+        editButton.setOnAction(event -> {
+            projectNameField.setEditable(true);
+            projectDescriptionField.setEditable(true);
+            saveButton.setDisable(false);
+        });
+
+        //Delete Button
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(event -> {
+            // Create a confirmation alert
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Are you sure you want to delete this project?");
+            alert.setContentText("This action cannot be undone.");
+
+            // Get the current window (stage)
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            alert.initOwner(stage);  // Center the alert relative to the current window
+
+            ButtonType deleteButtonType = new ButtonType("Delete");
+            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
+
+            ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
+            buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
+            buttonBar.setStyle("-fx-alignment: center;");
+
+            //User Input
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.isPresent() && result.get() == deleteButtonType) {
+                mainVbox.getChildren().remove(overLay);
+                projectList.remove(overLay);  // Remove from the list of projects
+            }
+        });
+
+        // Adding buttons to a horizontal box layout
+        HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton);
+        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, buttonBox);
+
+        // Highlight effect on hover
+        projectPane.setOnMouseEntered(event -> {
+            projectPane.setStyle("-fx-border-color: blue; -fx-border-width: 2;");
+        });
+
+        projectPane.setOnMouseExited(event -> {
+            projectPane.setStyle("-fx-border-color: black; -fx-border-width: null;");
+        });
+
+
         return projectPane;
     }
+
+
+
 
     private VBox createBigPane(){
         VBox bigPane = new VBox(20);
