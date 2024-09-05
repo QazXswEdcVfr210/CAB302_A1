@@ -24,7 +24,6 @@ import java.util.List;
 
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
-    private int identifier = 0;
 
     @FXML
     public void initialize(){
@@ -55,7 +54,7 @@ public class ProjectController {
             //animation goes here
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(450, 450);
+            bigPane.setPrefSize(300, 300);
             bigPane.layout();
 
             // Gets the overlay height get the location scroll position
@@ -67,16 +66,11 @@ public class ProjectController {
             mainScrollPane.setVvalue(scrollPaneVal);
 
 
-            for (StackPane pane: projectList){
-                if (pane != overLay){
-                    System.out.println("hidden");
-                    pane.setVisible(false);
-                }
-            }
+
         });
 
         Button exitButton = new Button("Exit");
-        Button materials = new Button("Materials");
+
         exitButton.setOnAction((ActionEvent event) -> {
             final double scrollVal = mainScrollPane.getVvalue();
             projectPane.setVisible(true);
@@ -84,29 +78,9 @@ public class ProjectController {
             bigPane.setPrefSize(150, 150);
             mainScrollPane.setVvalue(scrollVal);
 
-            for (StackPane pane: projectList){
-                System.out.println("revealed");
-                pane.setVisible(true);
-            }
         });
-        // Material menu
-        Popup popupMenu = createPopUp();
-        popupMenu.hide();
-        materials.setOnAction((ActionEvent event) -> {
-            // button to get materials to show up.
-            // TEMP stackoverflow recommends connecting popup the button but this will eventually be changed
-            // TEMP but eventually when i figure out how to ill position the popup menu to a desired location.
-            if (!popupMenu.isShowing()) {
-                popupMenu.show(
-                        materials,
-                        materials.localToScreen(materials.getBoundsInLocal()).getMinX(),
-                        materials.localToScreen(materials.getBoundsInLocal()).getMaxY());
-            }
-            else{
-                popupMenu.hide();
-            }
-        });
-        bigPane.getChildren().addAll(exitButton, materials);
+
+        bigPane.getChildren().addAll(exitButton);
 
         // stackPane adds above panels
         overLay.getChildren().addAll(projectPane, bigPane);
