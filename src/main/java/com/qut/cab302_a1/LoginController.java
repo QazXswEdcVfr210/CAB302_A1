@@ -19,7 +19,7 @@ public class LoginController {
     private Label loginText;
 
     @FXML
-    private Label IncorrectPasswordText;
+    private Label incorrectPasswordLabel;
 
     @FXML
     private Hyperlink SignUpLink;
@@ -54,8 +54,8 @@ public class LoginController {
                 stage.setScene(scene);
             }
             else{
-                IncorrectPasswordText.setText("Invalid email or password");
-                IncorrectPasswordText.setVisible(true);
+                incorrectPasswordLabel.setText("Invalid email or password");
+                incorrectPasswordLabel.setVisible(true);
             }
         }
         catch (Exception e) {
