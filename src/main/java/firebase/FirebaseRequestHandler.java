@@ -1,5 +1,11 @@
 package firebase;
 
+/*
+############## THE HOLY GRAIL OF MAKING THIS THING WORK ##############
+https://cloud.google.com/identity-platform/docs/reference/rest
+######################################################################
+*/
+
 import com.google.api.Http;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.HttpRequestFactory;
@@ -21,12 +27,6 @@ public class FirebaseRequestHandler {
 
     // TODO: make my api key not exposed lol
     private static final String API_KEY = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
-
-    // Debug methods
-    public static void main(String[] args) throws Exception {
-        //TryLogin("nathcl0804@gmail.com", "N@than21012", true);
-        TrySignup("n-lark@hotmail.com", "testPwd", "testUsername", false);
-    }
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     // TODO: integrate with LoginApplication or LoginController
