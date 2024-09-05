@@ -15,8 +15,8 @@
   </padding>
 
   <Label fx:id="loginText" text="Login"/>
-  <TextField></TextField>
-  <PasswordField></PasswordField>
+  <TextField fx:id="loginField"></TextField>
+  <PasswordField fx:id="passwordField"></PasswordField>
   <Label fx:id="incorrectPasswordLabel" visible="false">Incorrect Password</Label>
 
   <Hyperlink fx:id="SignUpLink" onAction="#onSignup">Sign up!</Hyperlink>

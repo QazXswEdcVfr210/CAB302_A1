@@ -1,10 +1,8 @@
 package com.qut.cab302_a1;
 
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Hyperlink;
 import javafx.stage.Stage;
 
 import java.io.IOException;

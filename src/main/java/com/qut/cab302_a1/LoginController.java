@@ -4,9 +4,7 @@ import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -23,6 +21,12 @@ public class LoginController {
 
     @FXML
     private Hyperlink SignUpLink;
+
+    @FXML
+    private TextField loginField;
+
+    @FXML
+    private PasswordField passwordField;
 
     @FXML
     protected void onSignup() throws IOException {
@@ -43,7 +47,7 @@ public class LoginController {
         // add logic for authentication and getting user's data from db here.
         // TODO: i dont know javafx but this is how you use the stuff i wrote to handle logins, if true then it was successful if false it was not.
         try {
-            Boolean loginSuccess = FirebaseRequestHandler.TryLogin("email", "password", true);
+            Boolean loginSuccess = FirebaseRequestHandler.TryLogin(loginField.getText(), passwordField.getText(), true);
 
             if (loginSuccess) {
                 Stage stage = (Stage) LoginButton.getScene().getWindow();
