@@ -13,7 +13,13 @@ import com.google.api.client.http.json.JsonHttpContent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FirebaseLogin {
+// This class handles making requests to Firebase through REST API requests.
+// Down the line this might be replaced with making requests to cloud functions for security purposes.
+public class FirebaseRequestHandler {
+
+    public static void main(String[] args) throws Exception {
+        TryLogin("nathcl0804@gmail.com", "N@than21012");
+    }
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     // TODO:
@@ -21,13 +27,12 @@ public class FirebaseLogin {
     // - integrate with LoginApplication or LoginController
     // - sign up functionality
     // probably move this to Cloud Functions if we want some extra marks for improving security
-
-    public static Boolean TryLogin(String uname, String pass) throws Exception {
+    public static Boolean TryLogin(String uname, String pass, Boolean bPrintResponse) throws Exception {
         try{
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();  // Using GsonFactory from google-http-client-gson
 
-            // TODO: make this not exposed lol
+            // TODO: make my api key not exposed lol
             String firebaseAuthUrl = "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
             // Create payload
@@ -42,10 +47,15 @@ public class FirebaseLogin {
             HttpContent content = new JsonHttpContent(jsonFactory, credentials);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
 
-            // Handle response
-            String responseBody = response.parseAsString();
-            System.out.println(responseBody);
-            // TODO: save response as it contains the UID of the user
+            // Handle response (print response body to console if bPrintResponse is true.
+            if(bPrintResponse) {
+                String responseBody = response.parseAsString();
+                System.out.println(responseBody);
+            }
+
+            // Unpack the user's UID and email and save to FirebaseDataStorage
+            FirebaseJSONUnpacker.ExtractBasicUserInformationFromAuth(response.parseAsString(), true);
+
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
         } catch (Exception e) {
