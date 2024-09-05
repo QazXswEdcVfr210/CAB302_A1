@@ -51,7 +51,7 @@ public class FirebaseRequestHandler {
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
 
             // Handle response (print response body to console if bPrintResponse is true.
-            if(bPrintResponse) {
+            if(bPrintResponse && response.getStatusCode() == 200) {
                 String responseBody = response.parseAsString();
                 System.out.println(responseBody);
             }
@@ -61,9 +61,9 @@ public class FirebaseRequestHandler {
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
-        } catch (Exception e) {
+        } catch (HttpResponseException e) {
             // Print to console if anything goes wrong
-            e.printStackTrace();
+            System.out.printf("Error signing in: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
             return false;
         }
     }
