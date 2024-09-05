@@ -50,6 +50,7 @@ public class LoginController {
             Boolean loginSuccess = FirebaseRequestHandler.TryLogin(loginField.getText(), passwordField.getText(), true);
 
             if (loginSuccess) {
+                System.out.println("Made it through login");
                 Stage stage = (Stage) LoginButton.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
@@ -63,6 +64,7 @@ public class LoginController {
             }
         }
         catch (Exception e) {
+
             e.printStackTrace();
         }
 
