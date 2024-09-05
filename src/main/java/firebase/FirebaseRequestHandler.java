@@ -18,12 +18,11 @@ import java.util.Map;
 public class FirebaseRequestHandler {
 
     public static void main(String[] args) throws Exception {
-        TryLogin("nathcl0804@gmail.com", "N@than21012");
+        TryLogin("nathcl0804@gmail.com", "N@than21012", true);
     }
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     // TODO:
-    // - actually store user info/UID
     // - integrate with LoginApplication or LoginController
     // - sign up functionality
     // probably move this to Cloud Functions if we want some extra marks for improving security
