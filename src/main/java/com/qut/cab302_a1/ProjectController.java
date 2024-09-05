@@ -9,6 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.Node;
@@ -62,10 +63,7 @@ public class ProjectController {
             double contentHeight = mainScrollPane.getContent().getBoundsInLocal().getHeight();
             double scrollPaneVal = inScrollPanePos / (contentHeight - mainScrollPane.getViewportBounds().getHeight());
 
-
             mainScrollPane.setVvalue(scrollPaneVal);
-
-
 
         });
 
@@ -79,6 +77,10 @@ public class ProjectController {
             mainScrollPane.setVvalue(scrollVal);
 
         });
+        bigPane.setOnMouseClicked(actionEvent -> {
+            System.out.println("Test");
+        });
+
 
         bigPane.getChildren().addAll(exitButton);
 
@@ -87,6 +89,9 @@ public class ProjectController {
 
         return overLay;
     }
+
+
+
 
     private VBox createMainPane(StackPane overLay) {
         VBox projectPane = new VBox(20);
