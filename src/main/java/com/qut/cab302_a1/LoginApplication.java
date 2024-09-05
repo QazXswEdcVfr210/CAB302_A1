@@ -7,6 +7,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+//USE login admin@admin.admin password adminadmin
 public class LoginApplication extends Application {
     public static final int WIDTH = 400;
     public static final int HEIGHT = 500;
