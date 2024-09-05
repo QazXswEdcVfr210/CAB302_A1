@@ -47,7 +47,7 @@ public class LoginController {
         // add logic for authentication and getting user's data from db here.
         // TODO: i dont know javafx but this is how you use the stuff i wrote to handle logins, if true then it was successful if false it was not.
         try {
-            Boolean loginSuccess = FirebaseRequestHandler.TryLogin(loginField.getText(), passwordField.getText(), true);
+            Boolean loginSuccess = FirebaseRequestHandler.TryLogin(loginField.getText(), passwordField.getText(), false);
 
             if (loginSuccess) {
                 System.out.println("Made it through login");
