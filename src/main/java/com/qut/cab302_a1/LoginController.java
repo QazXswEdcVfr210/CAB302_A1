@@ -4,9 +4,7 @@ import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,12 +13,29 @@ public class LoginController {
     public static final int MAIN_HEIGHT = 1000;
     public static final int MAIN_WIDTH = 600;
 
+    private String user;
+
+
     @FXML
     private Label loginText;
 
     @FXML
+    private Label incorrectPasswordLabel;
+
+    @FXML
     private Hyperlink SignUpLink;
 
+    @FXML
+    private TextField loginField;
+
+    @FXML
+    private PasswordField passwordField;
+
+    /**
+     * Link that takes user to the signup page.
+     *
+     * @throws IOException
+     */
     @FXML
     protected void onSignup() throws IOException {
         Stage stage = (Stage) SignUpLink.getScene().getWindow();
@@ -34,18 +49,42 @@ public class LoginController {
     @FXML
     private Button LoginButton;
 
+
+    /**
+     * Gets email and password parameters and sends them to db. Db validates user and returns a boolean.
+     * If boolean is true, Takes user to the main projects page and shows them their projects.
+     * @throws Exception
+     */
     @FXML
     protected void onLoginButtonClick() throws Exception {
 
-        // add logic for authentication and getting user's data from db here.
-        // TODO: i dont know javafx but this is how you use the stuff i wrote to handle logins, if true then it was successful if false it was not.
-        Boolean loginSuccess = FirebaseRequestHandler.TryLogin("email", "password", true);
 
-        Stage stage = (Stage) LoginButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
-        stage.setTitle("Project Partner");
+        try {
+            Boolean loginSuccess = FirebaseRequestHandler.TryLogin(loginField.getText(), passwordField.getText(), false);
 
-        stage.setScene(scene);
+            // If login is successful change scene
+            if (loginSuccess) {
+                user = loginField.getText();
+                Stage stage = (Stage) LoginButton.getScene().getWindow();
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
+                stage.setTitle("Project Partner");
+
+                stage.setScene(scene);
+            }
+            //else update label
+            else{
+                incorrectPasswordLabel.setText("Invalid email or password");
+                incorrectPasswordLabel.setVisible(true);
+            }
+        }
+        catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+
+
+
     }
 }
