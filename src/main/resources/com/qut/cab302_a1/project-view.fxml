@@ -8,63 +8,89 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.Region?>
 
 <HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" >
-    <VBox fx:id="sideVBox" spacing="15.0" alignment="TOP_LEFT" minWidth="200.00" HBox.hgrow="NEVER">
-        <HBox spacing="70.0">
+    <VBox fx:id="sideVBox" spacing="15.0" minWidth="200.00" >
+        <HBox spacing="100.0" alignment="TOP_LEFT">
             <padding>
                 <Insets left="20.00" top="35.00"></Insets>
             </padding>
-            <Label>SideBar</Label>
+            <Label>Projects</Label>
             <Button>+</Button> <!--Change to an icon -->
         </HBox>
 
-        <VBox>
+        <VBox alignment="TOP_LEFT">
             <padding>
-                <Insets left="20.00" top="80.00"></Insets>
+                <Insets left="20.00" top="65.00"></Insets>
             </padding>
-            <HBox spacing="70.0">
+            <HBox spacing="100.0" alignment="TOP_LEFT">
                 <Label>Projects</Label>
                 <Button>V</Button> <!--Will be used to hide below elements -->
             </HBox>
-            <HBox spacing="7.00">
+            <HBox spacing="5.0">
                 <padding>
-                    <Insets left="18.00" top="10.0"></Insets>
+                    <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|</Label>
+                <Label>|-</Label>
                 <Hyperlink>All projects (0)</Hyperlink>
             </HBox>
-            <HBox spacing="7.0">
+            <HBox>
                 <padding>
-                    <Insets left="18.00" top="10.0"></Insets>
+                    <Insets left="15.00"></Insets>
                 </padding>
                 <Label>|</Label>
+            </HBox>
+            <HBox spacing="5.0">
+                <padding>
+                    <Insets left="15.00"></Insets>
+                </padding>
+                <Label>|-</Label>
                 <Hyperlink>To do (0)</Hyperlink>
-
             </HBox>
-            <HBox spacing="7.0">
+            <HBox>
                 <padding>
-                    <Insets left="18.00" top="10.0"></Insets>
+                    <Insets left="15.00"></Insets>
                 </padding>
                 <Label>|</Label>
+            </HBox>
+            <HBox spacing="5.0">
+                <padding>
+                    <Insets left="15.00"></Insets>
+                </padding>
+                <Label>|-</Label>
                 <Hyperlink>In progress (0)</Hyperlink>
-
             </HBox>
-            <HBox spacing="7.0">
+            <HBox>
                 <padding>
-                    <Insets left="18.00" top="10.0"></Insets>
+                    <Insets left="15.00"></Insets>
                 </padding>
                 <Label>|</Label>
+            </HBox>
+            <HBox spacing="5.0">
+                <padding>
+                    <Insets left="15.00"></Insets>
+                </padding>
+                <Label>|_</Label>
                 <Hyperlink>Completed (0)</Hyperlink>
 
             </HBox>
         </VBox>
+
+        <Region VBox.vgrow="ALWAYS"></Region>
+        <HBox alignment="BOTTOM_LEFT" spacing="80.0">
+            <padding>
+                <Insets bottom="20.00" left="20.00"></Insets>
+            </padding>
+            <Button>(- Logout</Button>
+            <Button>*</Button>
+        </HBox>
     </VBox>
 
     <!--Main page stuff -->
     <ScrollPane fx:id="mainScrollPane"  vbarPolicy="NEVER" hbarPolicy="NEVER" vvalue="0" HBox.hgrow="ALWAYS"> <!--Consider removing the NEVER statements and changing the appearence in css. -->
     <padding>
-        <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
+        <Insets left="10.0" right="10.0" top="30.0"/>
     </padding>
         <VBox spacing="20.0" alignment="CENTER" fx:id="mainVbox">
             <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
