@@ -39,13 +39,27 @@ public class LoginController {
 
         // add logic for authentication and getting user's data from db here.
         // TODO: i dont know javafx but this is how you use the stuff i wrote to handle logins, if true then it was successful if false it was not.
-        Boolean loginSuccess = FirebaseRequestHandler.TryLogin("email", "password", true);
+        try {
+            Boolean loginSuccess = FirebaseRequestHandler.TryLogin("email", "password", true);
 
-        Stage stage = (Stage) LoginButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
-        stage.setTitle("Project Partner");
+            if (loginSuccess) {
+                Stage stage = (Stage) LoginButton.getScene().getWindow();
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
+                stage.setTitle("Project Partner");
 
-        stage.setScene(scene);
+                stage.setScene(scene);
+            }
+            else{
+                loginText.setText("Invalid email or password");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
     }
 }
