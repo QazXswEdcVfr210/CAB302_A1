@@ -1,23 +1,19 @@
 package com.qut.cab302_a1;
 
 
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.Node;
-import javafx.stage.Popup;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ButtonBar;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import org.w3c.dom.css.Rect;
+
 import java.util.Optional;
 
 import java.util.ArrayList;
@@ -43,48 +39,39 @@ public class ProjectController {
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
         VBox projectPane = createMainPane(overLay);
-        VBox bigPane = createBigPane();
+        HBox bigPane = createBigPane();
         projectList.add(overLay);
 
         // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
 
-
-            final double scrollVal = mainScrollPane.getVvalue();
-
             //animation goes here
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(300, 300);
+            bigPane.setPrefSize(280, 280);
             bigPane.layout();
 
             // Gets the overlay height get the location scroll position
             double inScrollPanePos = overLay.getBoundsInParent().getMinY();
             double contentHeight = mainScrollPane.getContent().getBoundsInLocal().getHeight();
             double scrollPaneVal = inScrollPanePos / (contentHeight - mainScrollPane.getViewportBounds().getHeight());
-
             mainScrollPane.setVvalue(scrollPaneVal);
-
         });
+//        //temp exit
+//        Button exitButton = new Button("Exit");
+//        exitButton.setOnAction((ActionEvent event) -> {
+//            final double scrollVal = mainScrollPane.getVvalue();
+//            projectPane.setVisible(true);
+//            bigPane.setVisible(false);
+//            bigPane.setPrefSize(150, 150);
+//            mainScrollPane.setVvalue(scrollVal);
+//        });
 
-        Button exitButton = new Button("Exit");
-
-        exitButton.setOnAction((ActionEvent event) -> {
-            final double scrollVal = mainScrollPane.getVvalue();
-            projectPane.setVisible(true);
-            bigPane.setVisible(false);
-            bigPane.setPrefSize(150, 150);
-            mainScrollPane.setVvalue(scrollVal);
-
-        });
         bigPane.setOnMouseClicked(actionEvent -> {
             System.out.println("Test");
         });
 
-
-        bigPane.getChildren().addAll(exitButton);
-
-        // stackPane adds above panels
+        //bigPane.getChildren().addAll(exitButton);
         overLay.getChildren().addAll(projectPane, bigPane);
 
         return overLay;
@@ -174,25 +161,56 @@ public class ProjectController {
 
 
 
-    private VBox createBigPane(){
-        VBox bigPane = new VBox(20);
+    private HBox createBigPane(){
+        HBox bigPane = new HBox(20);
+
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
-        Label exampleLabel = new Label("Example");
-        bigPane.getChildren().addAll(exampleLabel);
+        VBox pictureBox = new VBox(20);
+        pictureBox.setMinWidth(190.00);
+        // top, right?, left?, bottom?
+        pictureBox.setPadding(new Insets(25, 0, 0, 25));
+        Image placeholder = new Image(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/bob.jpg"));
+        ImageView imageView = new ImageView(placeholder);
+        imageView.setFitHeight(180);
+        imageView.setFitWidth(180);
+        imageView.setDisable(true);
+        pictureBox.getChildren().addAll(imageView);
+        //Right side
+        VBox rightSide = new VBox(20);
+        //Left side of rightSide panel
+        rightSide.setPadding(new Insets(40, 0, 0, 0));
+            HBox middlePane = new HBox(20);
+            middlePane.setSpacing(220);
+            Label title = new Label("Title");
+                    // progressbar rightside of rightside
+                    VBox progressBar = new VBox(20);
+                        //top row
+                        HBox progressBox = new HBox(20);
+                        progressBox.setSpacing(185);
+                        Label progressLabel = new Label("=  Progress");
+                        Label tipsLabel = new Label("3/10");
+
+                        progressBox.getChildren().addAll(progressLabel, tipsLabel);
+                        Rectangle square = new Rectangle(270, 5);
+                        square.setArcWidth(10);
+                        square.setArcHeight(2);
+                    progressBar.getChildren().addAll(progressBox, square);
+            middlePane.getChildren().addAll(title, progressBar);
+            TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+            textArea.setEditable(false);
+            textArea.setWrapText(true);
+            textArea.setMaxWidth(520.00);
+            textArea.setMaxHeight(100.00);
+            //Hide background and scrollbar in css
+
+        rightSide.getChildren().addAll(middlePane, textArea);
+
+        bigPane.setMinSize(150, 150);
+        bigPane.getChildren().addAll(pictureBox, rightSide);
         return bigPane;
     }
 
-    private Popup createPopUp(){
-        Popup popupMenu = new Popup();
-        AnchorPane popupPane = new AnchorPane();
-        popupPane.setPrefSize(450, 150);
-        Label testLabel = new Label("Test");
-        popupMenu.getContent().add(testLabel);
-        popupPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        popupMenu.getContent().add(popupPane);
-        return popupMenu;
-    }
 
     @FXML
     protected void onCreatePanelAction(){

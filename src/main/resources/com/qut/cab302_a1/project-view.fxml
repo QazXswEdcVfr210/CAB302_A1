@@ -92,7 +92,7 @@
     <padding>
         <Insets left="10.0" right="10.0" top="30.0"/>
     </padding>
-        <VBox spacing="20.0" alignment="CENTER" fx:id="mainVbox">
+        <VBox spacing="15.0" alignment="CENTER" fx:id="mainVbox">
             <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
         </VBox>
     </ScrollPane>
