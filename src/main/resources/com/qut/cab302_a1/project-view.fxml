@@ -10,69 +10,69 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.Region?>
 
-<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" >
+<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" fx:id="basePane">
     <VBox fx:id="sideVBox" spacing="15.0" minWidth="200.00" >
-        <HBox spacing="100.0" alignment="TOP_LEFT">
+        <HBox spacing="55.0" alignment="TOP_LEFT">
             <padding>
                 <Insets left="20.00" top="35.00"></Insets>
             </padding>
-            <Label>Projects</Label>
-            <Button>+</Button> <!--Change to an icon -->
+            <Label fx:id="sidebarProjects0">Projects</Label>
+            <Button fx:id="buttonP">+</Button> <!--Change to an icon -->
         </HBox>
 
         <VBox alignment="TOP_LEFT">
             <padding>
                 <Insets left="20.00" top="65.00"></Insets>
             </padding>
-            <HBox spacing="100.0" alignment="TOP_LEFT">
-                <Label>Projects</Label>
-                <Button>V</Button> <!--Will be used to hide below elements -->
+            <HBox spacing="90.0" alignment="TOP_LEFT">
+                <Label fx:id="sidebarProjects1">Projects</Label>
+                <Button fx:id="buttonV">V</Button> <!--Will be used to hide below elements -->
             </HBox>
             <HBox spacing="5.0">
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|-</Label>
-                <Hyperlink>All projects (0)</Hyperlink>
+                <Label fx:id="sidepart0">|-</Label>
+                <Hyperlink fx:id="hyperlink0">All projects (0)</Hyperlink>
             </HBox>
             <HBox>
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|</Label>
+                <Label fx:id="sidepart05">|</Label>
             </HBox>
             <HBox spacing="5.0">
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|-</Label>
-                <Hyperlink>To do (0)</Hyperlink>
+                <Label fx:id="sidepart1">|-</Label>
+                <Hyperlink fx:id="hyperlink1">To do (0)</Hyperlink>
             </HBox>
             <HBox>
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|</Label>
+                <Label fx:id="sidepart15">|</Label>
             </HBox>
             <HBox spacing="5.0">
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|-</Label>
-                <Hyperlink>In progress (0)</Hyperlink>
+                <Label fx:id="sidepart2">|-</Label>
+                <Hyperlink fx:id="hyperlink2">In progress (0)</Hyperlink>
             </HBox>
             <HBox>
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|</Label>
+                <Label fx:id="sidepart25">|</Label>
             </HBox>
             <HBox spacing="5.0">
                 <padding>
                     <Insets left="15.00"></Insets>
                 </padding>
-                <Label>|_</Label>
-                <Hyperlink>Completed (0)</Hyperlink>
+                <Label fx:id="sidepart3">|_</Label>
+                <Hyperlink fx:id="hyperlink3">Completed (0)</Hyperlink>
 
             </HBox>
         </VBox>
@@ -82,8 +82,8 @@
             <padding>
                 <Insets bottom="20.00" left="20.00"></Insets>
             </padding>
-            <Button>(- Logout</Button>
-            <Button>*</Button>
+            <Button fx:id="logoutButton">(- Logout</Button>
+            <Button fx:id="buttonA">*</Button>
         </HBox>
     </VBox>
 

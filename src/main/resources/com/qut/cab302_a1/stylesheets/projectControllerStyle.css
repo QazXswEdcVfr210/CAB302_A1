@@ -1,0 +1,74 @@
+
+
+#basePane {
+    -fx-background-color: #25262b;
+}
+
+#sideVBox{
+    -fx-background-color: #25262b;
+}
+
+#mainScrollPane {
+    -fx-background-color: rgba(28,28,28,255);
+}
+
+#mainVbox {
+    -fx-background-color: rgba(28,28,28,255);
+}
+
+#overlayID {
+    -fx-background-color: #25262b;
+    -fx-arc-height: 80%;
+    -fx-arc-width: 80%;
+}
+
+#projectPanID {
+    -fx-background-color: #25262b;
+}
+
+#sidebarProjects0{
+    -fx-text-fill: white;
+    -fx-font-size: 2em;
+}
+
+#sidebarProjects1{
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+#hyperlink0, #hyperlink1, #hyperlink2, #hyperlink3 {
+    -fx-text-fill: grey;
+}
+
+#sidepart0, #sidepart05, #sidepart1, #sidepart15, #sidepart2, #sidepart25, #sidepart3 {
+    -fx-text-fill: white;
+}
+
+#buttonA, #buttonV{
+    -fx-text-fill: white;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+#buttonP{
+    -fx-text-fill: grey;
+    -fx-font-size: 1em;
+    -fx-background-radius: 50px;
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-border-color: transparent;
+}
+
+#buttonP:hover{
+    -fx-text-fill: white;
+    -fx-background-color: rgba(0, 0, 0, 0.2);
+}
+
+#logoutButton{
+    -fx-text-fill: rgba(200, 0, 0, 0.6);
+    -fx-font-size: 1em;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#logoutButton:hover{
+    -fx-text-fill: rgba(200, 0, 0, 1);
+}

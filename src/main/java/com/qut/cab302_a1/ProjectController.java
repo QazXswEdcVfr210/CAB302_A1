@@ -1,7 +1,6 @@
 package com.qut.cab302_a1;
 
 
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,10 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.w3c.dom.css.Rect;
-
 import java.util.Optional;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,9 +19,18 @@ public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
 
     @FXML
+    private HBox basePane;
+
+    @FXML
     public void initialize(){
         mainScrollPane.setFitToWidth(true);
         mainVbox.setFillWidth(true);
+        try{
+        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+        }
+        catch (Exception e){
+            System.out.println("Stylesheet failed to load");
+        }
     }
 
     @FXML
@@ -35,9 +40,15 @@ public class ProjectController {
     private ScrollPane mainScrollPane;
 
 
+    /**
+     * main functionality to the page. Creates the ui for the page
+     *
+     * @return overlay pane (base pane)
+     */
     @FXML
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
+        overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
         projectList.add(overLay);
@@ -47,16 +58,12 @@ public class ProjectController {
             hideAllPanes();
             //animation goes here
 
+            double scrollVal = mainScrollPane.getVvalue();
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(280, 280);
+            bigPane.setPrefSize(260, 260);
             bigPane.layout();
-
-            // Gets the overlay height get the location scroll position
-            double inScrollPanePos = overLay.getBoundsInParent().getMinY();
-            double contentHeight = mainScrollPane.getContent().getBoundsInLocal().getHeight();
-            double scrollPaneVal = inScrollPanePos / (contentHeight - mainScrollPane.getViewportBounds().getHeight());
-            mainScrollPane.setVvalue(scrollPaneVal);
+            mainScrollPane.setVvalue(scrollVal);
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
@@ -181,7 +188,7 @@ public class ProjectController {
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
         int totalProgress = 10;
-        int currentProgress = 7;
+        int currentProgress = 2;
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -220,19 +227,19 @@ public class ProjectController {
                                 final int MAX_WIDTH = 5;
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-                                StackPane progressPane = new StackPane();
-                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH);
+                                StackPane progressPane = new StackPane(); // Change this bar to the future background colour and add black border
+                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
                                 square.setArcWidth(10);
                                 square.setArcHeight(2);
 
                                 //progress bar gradient should range from blue to red.
-                                Rectangle progresBar = new Rectangle(progressRange, MAX_WIDTH);
+                                Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
                                 Color ColorPicker = pickColor(MAX_RANGE, progressRange);
 
-                                progresBar.setFill(ColorPicker);
+                                progressionBar.setFill(ColorPicker);
                                 square.setArcWidth(10);
                                 square.setArcHeight(2);
-                                progressPane.getChildren().addAll(square, progresBar);
+                                progressPane.getChildren().addAll(square, progressionBar);
 
                         progressBar.getChildren().addAll(progressBox, progressPane);
 
@@ -297,9 +304,10 @@ public class ProjectController {
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
         StackPane projectPan = createProjectPane();
+        projectPan.setId("projectPanID");
 
         mainVbox.getChildren().add(projectPan);
-        hideAllPanes();
+        hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
 }
