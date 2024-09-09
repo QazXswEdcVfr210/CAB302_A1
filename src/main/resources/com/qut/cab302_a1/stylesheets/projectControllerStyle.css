@@ -1,4 +1,6 @@
-
+.scene {
+    -fx-background-color: #000000;
+}
 
 #basePane {
     -fx-background-color: #25262b;
@@ -17,10 +19,16 @@
 }
 
 #overlayID {
-    -fx-background-color: #25262b;
-    -fx-arc-height: 80%;
-    -fx-arc-width: 80%;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px;
 }
+#bigPane, #projectPane {
+    -fx-background-color: #25262b;
+    -fx-background-radius: 20px;
+    -fx-border-radius: 20px
+}
+
+
 
 #projectPanID {
     -fx-background-color: #25262b;
@@ -49,6 +57,12 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
+
+#buttonA:hover, #buttonV:hover{
+    -fx-cursor: hand;
+}
+
+
 #buttonP{
     -fx-text-fill: grey;
     -fx-font-size: 1em;
@@ -57,9 +71,11 @@
     -fx-border-color: transparent;
 }
 
+
 #buttonP:hover{
     -fx-text-fill: white;
     -fx-background-color: rgba(0, 0, 0, 0.2);
+    -fx-cursor: hand;
 }
 
 #logoutButton{
@@ -71,4 +87,5 @@
 
 #logoutButton:hover{
     -fx-text-fill: rgba(200, 0, 0, 1);
+    -fx-cursor: hand;
 }

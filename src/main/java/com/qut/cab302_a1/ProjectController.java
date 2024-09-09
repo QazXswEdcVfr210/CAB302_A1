@@ -23,14 +23,14 @@ public class ProjectController {
 
     @FXML
     public void initialize(){
-        mainScrollPane.setFitToWidth(true);
-        mainVbox.setFillWidth(true);
         try{
         basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
         }
         catch (Exception e){
             System.out.println("Stylesheet failed to load");
         }
+        mainScrollPane.setFitToWidth(true);
+        mainVbox.setFillWidth(true);
     }
 
     @FXML
@@ -51,6 +51,14 @@ public class ProjectController {
         overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
+        projectPane.setId("projectPane");
+        bigPane.setId("bigPane");
+        //Rounding corners
+        overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+
+
         projectList.add(overLay);
 
         // Lambda function that handles expanding the vbox when clicked.
@@ -70,7 +78,6 @@ public class ProjectController {
             System.out.println("Test");
         });
 
-        //bigPane.getChildren().addAll(exitButton);
         overLay.getChildren().addAll(projectPane, bigPane);
 
         return overLay;

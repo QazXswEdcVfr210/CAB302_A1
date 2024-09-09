@@ -26,7 +26,7 @@
             </padding>
             <HBox spacing="90.0" alignment="TOP_LEFT">
                 <Label fx:id="sidebarProjects1">Projects</Label>
-                <Button fx:id="buttonV">V</Button> <!--Will be used to hide below elements -->
+                <Button fx:id="buttonV">v</Button> <!--Will be used to hide below elements -->
             </HBox>
             <HBox spacing="5.0">
                 <padding>
@@ -82,7 +82,7 @@
             <padding>
                 <Insets bottom="20.00" left="20.00"></Insets>
             </padding>
-            <Button fx:id="logoutButton">(- Logout</Button>
+            <Button fx:id="logoutButton"> Logout</Button>
             <Button fx:id="buttonA">*</Button>
         </HBox>
     </VBox>
