@@ -1,7 +1,4 @@
 package com.qut.cab302_a1;
-
-
-
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -13,9 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.w3c.dom.css.Rect;
-
 import java.util.Optional;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,6 +95,12 @@ public class ProjectController {
         TextField projectDescriptionField = new TextField();
         projectDescriptionField.setPromptText("Enter project description");
 
+        TextField projectResourcesField = new TextField();
+        projectResourcesField.setPromptText("Enter list of required resources");
+
+        TextField projectToolsField = new TextField();
+        projectToolsField.setPromptText("Enter list of required tools");
+
         // Save Button
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
@@ -107,6 +108,8 @@ public class ProjectController {
             if (!projectName.isEmpty()) {
                 projectNameField.setEditable(false);
                 projectDescriptionField.setEditable(false);
+                projectResourcesField.setEditable(false);
+                projectToolsField.setEditable((false));
                 saveButton.setDisable(true);
             }
         });
@@ -116,6 +119,8 @@ public class ProjectController {
         editButton.setOnAction(event -> {
             projectNameField.setEditable(true);
             projectDescriptionField.setEditable(true);
+            projectResourcesField.setEditable(true);
+            projectToolsField.setEditable(true);
             saveButton.setDisable(false);
         });
 
@@ -151,7 +156,7 @@ public class ProjectController {
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton);
-        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, buttonBox);
+        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
 
         // Highlight effect on hover
         projectPane.setOnMouseEntered(event -> {
