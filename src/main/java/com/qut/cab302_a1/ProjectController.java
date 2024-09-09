@@ -104,6 +104,7 @@ public class ProjectController {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
+
             if (!projectName.isEmpty()) {
                 projectNameField.setEditable(false);
                 projectDescriptionField.setEditable(false);
@@ -172,11 +173,15 @@ public class ProjectController {
      * bigPane is split between 2 sides and uses multiple containers to that it's content
      * is present like the high fidelity prototype.
      *
+     * Spacing has been set to a html style for readability.
+     *
      * Pulls an image from resources/pictures
      * @return
      */
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
+        int totalProgress = 10;
+        int currentProgress = 7;
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -206,14 +211,30 @@ public class ProjectController {
                             //top row
                             HBox progressBox = new HBox(20);
                             progressBox.setSpacing(185);
+                            // = should be changed to a settings icon
                             Label progressLabel = new Label("=  Progress");
-                            Label tipsLabel = new Label("3/10");
+                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
-                            Rectangle square = new Rectangle(270, 5);
-                            square.setArcWidth(10);
-                            square.setArcHeight(2);
-                        progressBar.getChildren().addAll(progressBox, square);
+                                final int MAX_RANGE = 270;
+                                final int MAX_WIDTH = 5;
+                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+
+                                StackPane progressPane = new StackPane();
+                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH);
+                                square.setArcWidth(10);
+                                square.setArcHeight(2);
+
+                                //progress bar gradient should range from blue to red.
+                                Rectangle progresBar = new Rectangle(progressRange, MAX_WIDTH);
+                                Color ColorPicker = pickColor(MAX_RANGE, progressRange);
+
+                                progresBar.setFill(ColorPicker);
+                                square.setArcWidth(10);
+                                square.setArcHeight(2);
+                                progressPane.getChildren().addAll(square, progresBar);
+
+                        progressBar.getChildren().addAll(progressBox, progressPane);
 
                 middlePane.getChildren().addAll(title, progressBar);
                 TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
@@ -228,6 +249,47 @@ public class ProjectController {
         bigPane.setMinSize(150, 150);
         bigPane.getChildren().addAll(pictureBox, rightSide);
         return bigPane;
+    }
+
+    /**Algorthim that determines how big the progress bar is
+     * by dividing max_range by totalProgress and multiplying that with
+     * currentProgress.
+     *
+     * Validation is also included.
+     *
+     * @param MAX_RANGE
+     * @param totalProgress
+     * @param currentProgress
+     * @return size of the bar
+     */
+    private int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+        if (totalProgress > MAX_RANGE || totalProgress == currentProgress || totalProgress == 0){
+            return MAX_RANGE;
+        }
+
+        if (currentProgress != totalProgress && currentProgress == 0){
+            return 0;
+        }
+
+        int range = MAX_RANGE / totalProgress;
+        return range * currentProgress;
+    }
+
+    /**
+     * Gets the color for the progress bar by comparing the size of
+     * the bar compared to the full bar
+     *
+     * @param MAX_RANGE
+     * @param progressRange
+     * @return Color for progressBar
+     */
+    private Color pickColor(int MAX_RANGE, int progressRange){
+        if (MAX_RANGE / 2 <= progressRange){ //Gradient this
+            return Color.BLUE;
+        }
+        else{
+            return Color.RED;
+        }
     }
 
 
