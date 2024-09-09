@@ -246,8 +246,8 @@ public class ProjectController {
 
             rightSide.getChildren().addAll(middlePane, textArea);
 
-        bigPane.setMinSize(150, 150);
         bigPane.getChildren().addAll(pictureBox, rightSide);
+        bigPane.setMinSize(150, 150);
         return bigPane;
     }
 
@@ -299,6 +299,7 @@ public class ProjectController {
         StackPane projectPan = createProjectPane();
 
         mainVbox.getChildren().add(projectPan);
+        hideAllPanes();
 
     }
 }
