@@ -88,6 +88,7 @@
     </VBox>
 
     <!--Main page stuff -->
+
     <ScrollPane fx:id="mainScrollPane"  vbarPolicy="NEVER" hbarPolicy="NEVER" vvalue="0" HBox.hgrow="ALWAYS"> <!--Consider removing the NEVER statements and changing the appearence in css. -->
     <padding>
         <Insets left="10.0" right="10.0" top="30.0"/>

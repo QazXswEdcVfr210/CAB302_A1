@@ -11,6 +11,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +32,10 @@ public class ProjectController {
             System.out.println("Stylesheet failed to load");
         }
         mainScrollPane.setFitToWidth(true);
+        mainScrollPane.setFitToHeight(true);
         mainVbox.setFillWidth(true);
+
+
     }
 
     @FXML
@@ -70,6 +75,7 @@ public class ProjectController {
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(260, 260);
+            overLay.setPrefSize(260, 260);
             bigPane.layout();
             mainScrollPane.setVvalue(scrollVal);
         });
@@ -95,6 +101,7 @@ public class ProjectController {
         for (StackPane pane : projectList) {
             Node temp = pane.getChildren().get(1);
             ((HBox) temp).setPrefSize(150, 150);
+            pane.setPrefSize(150, 150);
             temp.setVisible(false);
             temp = pane.getChildren().get(0);
             temp.setVisible(true);
@@ -190,7 +197,7 @@ public class ProjectController {
      * Spacing has been set to a html style for readability.
      *
      * Pulls an image from resources/pictures
-     * @return
+     * @return bigPane expanded version of the projectPane
      */
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
@@ -204,10 +211,11 @@ public class ProjectController {
             pictureBox.fillWidthProperty();
             // top, right?, left?, bottom?
             pictureBox.setPadding(new Insets(25, 0, 0, 25));
-            Image placeholder = new Image(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/bob.jpg"));
+            Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/bob.jpg")));
             ImageView imageView = new ImageView(placeholder);
             imageView.setFitHeight(180);
             imageView.setFitWidth(180);
+            imageView.setStyle("-fx-background-radius: 20px;"); //come back to this later.
             imageView.setDisable(true);
 
             pictureBox.getChildren().addAll(imageView);
@@ -219,15 +227,18 @@ public class ProjectController {
                 HBox middlePane = new HBox(20);
                 middlePane.setSpacing(220);
                 Label title = new Label("Title");
+                title.setId("titleID");
 
-                        // progressbar rightside of rightside
+                        // progressbar right side of right side
                         VBox progressBar = new VBox(20);
                             //top row
                             HBox progressBox = new HBox(20);
                             progressBox.setSpacing(185);
                             // = should be changed to a settings icon
                             Label progressLabel = new Label("=  Progress");
+                            progressLabel.setId("progressLabelID");
                             Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+                            tipsLabel.setId("tipsLabelID");
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
@@ -235,34 +246,42 @@ public class ProjectController {
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
                                 StackPane progressPane = new StackPane(); // Change this bar to the future background colour and add black border
-                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
-                                square.setArcWidth(10);
-                                square.setArcHeight(2);
+                                Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+
+                                backBar.setArcWidth(10);
+                                backBar.setArcHeight(2);
+                                backBar.setFill(Color.GRAY);
 
                                 //progress bar gradient should range from blue to red.
                                 Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
-                                Color ColorPicker = pickColor(MAX_RANGE, progressRange);
+                                Color colorPicker = pickColor(MAX_RANGE, progressRange);
 
-                                progressionBar.setFill(ColorPicker);
-                                square.setArcWidth(10);
-                                square.setArcHeight(2);
-                                progressPane.getChildren().addAll(square, progressionBar);
+                                progressionBar.setFill(colorPicker);
+                                backBar.setArcWidth(10);
+                                backBar.setArcHeight(2);
+                                progressPane.getChildren().addAll(backBar, progressionBar);
 
                         progressBar.getChildren().addAll(progressBox, progressPane);
 
                 middlePane.getChildren().addAll(title, progressBar);
-                TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
-                textArea.setMaxWidth(520.00);
-                textArea.setMaxHeight(100.00);
-                //Hide background and scrollbar in css
+                TextArea textArea = getTextArea();
 
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
         bigPane.setMinSize(150, 150);
         return bigPane;
+    }
+
+    private static TextArea getTextArea() {
+        TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+        textArea.setId("textareaID");
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setMaxWidth(520.00);
+        textArea.setMaxHeight(100.00);
+        textArea.setStyle("-fx-background-color: transparent;");
+        return textArea;
     }
 
     /**Algorthim that determines how big the progress bar is
