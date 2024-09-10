@@ -1,5 +1,7 @@
 package firebase;
 
+import javafx.util.Pair;
+
 // This class stores commonly-accessed user data from Firebase so that we don't have to keep making requests.
 public class FirebaseDataStorage {
 
@@ -25,5 +27,15 @@ public class FirebaseDataStorage {
         FirebaseDataStorage.userEmail = userEmail;
     }
 
+    // The user's ID and refresh tokens (key = ID, value = refresh).
+    private static Pair<String, String> userTokens;
+    // Getter
+    public static Pair<String, String> getUserTokens() {
+        return userTokens;
+    }
+    // Setter
+    public static void setUserTokens(Pair<String, String> userTokens) {
+        FirebaseDataStorage.userTokens = userTokens;
+    }
 
 }
