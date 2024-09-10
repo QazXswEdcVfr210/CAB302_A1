@@ -26,7 +26,7 @@
             </padding>
             <HBox spacing="90.0" alignment="TOP_LEFT">
                 <Label fx:id="sidebarProjects1">Projects</Label>
-                <Button fx:id="buttonV">v</Button> <!--Will be used to hide below elements -->
+                <Button fx:id="buttonV" onAction="#minimiseActon">v</Button> <!--Will be used to hide below elements -->
             </HBox>
             <HBox spacing="5.0">
                 <padding>
@@ -95,6 +95,7 @@
     </padding>
         <VBox spacing="15.0" alignment="CENTER" fx:id="mainVbox">
             <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
+            <Label fx:id="projectName">All Projects</Label>
         </VBox>
     </ScrollPane>
 </HBox>

@@ -1,6 +1,7 @@
 package com.qut.cab302_a1;
 
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.lang.reflect.Array;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -19,6 +21,40 @@ import java.util.List;
 
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
+
+    @FXML
+    private Button buttonV;
+
+    @FXML
+    private Hyperlink hyperlink0, hyperlink1, hyperlink2, hyperlink3;
+    Hyperlink[] hyperlinks = new Hyperlink[4];
+
+    @FXML
+    private Label sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3;
+    Label[] sidepartLabels = new Label[7];
+
+
+    @FXML
+    private void minimiseActon() {
+        if (hyperlink1.isVisible()) {
+            for (Hyperlink link : hyperlinks) {
+                link.setVisible(false);
+            }
+            for (Label label : sidepartLabels) {
+                label.setVisible(false);
+            }
+            buttonV.setText("-");
+        }
+        else{
+            for (Hyperlink link : hyperlinks) {
+                link.setVisible(true);
+            }
+            for (Label label : sidepartLabels) {
+                label.setVisible(true);
+            }
+            buttonV.setText("v");
+        }
+    }
 
     @FXML
     private HBox basePane;
@@ -34,7 +70,8 @@ public class ProjectController {
         mainScrollPane.setFitToWidth(true);
         mainScrollPane.setFitToHeight(true);
         mainVbox.setFillWidth(true);
-
+        hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
+        sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
 
     }
 
@@ -269,7 +306,7 @@ public class ProjectController {
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
-        bigPane.setMinSize(150, 150);
+        bigPane.setPrefSize(150, 150);
         return bigPane;
     }
 
@@ -336,6 +373,9 @@ public class ProjectController {
         hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
+
 }
 
 //TODO refactor into a more MVC style
+// Give each pane a priority number for rerangement.
+
