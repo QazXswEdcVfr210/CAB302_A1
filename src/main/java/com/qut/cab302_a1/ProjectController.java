@@ -1,33 +1,34 @@
 package com.qut.cab302_a1;
 
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Bounds;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
+import javafx.geometry.Insets;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.Node;
-import javafx.stage.Popup;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ButtonBar;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import java.util.Optional;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
-    private int identifier = 0;
+
+    @FXML
+    private HBox basePane;
 
     @FXML
     public void initialize(){
+        try{
+        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+        }
+        catch (Exception e){
+            System.out.println("Stylesheet failed to load");
+        }
         mainScrollPane.setFitToWidth(true);
         mainVbox.setFillWidth(true);
     }
@@ -39,80 +40,67 @@ public class ProjectController {
     private ScrollPane mainScrollPane;
 
 
+    /**
+     * main functionality to the page. Creates the ui for the page
+     *
+     * @return overlay pane (base pane)
+     */
     @FXML
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
+        overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
-        VBox bigPane = createBigPane();
+        HBox bigPane = createBigPane();
+        projectPane.setId("projectPane");
+        bigPane.setId("bigPane");
+        //Rounding corners
+        overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+
+
         projectList.add(overLay);
 
         // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
-
-
-            final double scrollVal = mainScrollPane.getVvalue();
-
+            hideAllPanes();
             //animation goes here
+
+            double scrollVal = mainScrollPane.getVvalue();
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(450, 450);
+            bigPane.setPrefSize(260, 260);
             bigPane.layout();
-
-            // Gets the overlay height get the location scroll position
-            double inScrollPanePos = overLay.getBoundsInParent().getMinY();
-            double contentHeight = mainScrollPane.getContent().getBoundsInLocal().getHeight();
-            double scrollPaneVal = inScrollPanePos / (contentHeight - mainScrollPane.getViewportBounds().getHeight());
-
-
-            mainScrollPane.setVvalue(scrollPaneVal);
-
-
-            for (StackPane pane: projectList){
-                if (pane != overLay){
-                    System.out.println("hidden");
-                    pane.setVisible(false);
-                }
-            }
-        });
-
-        Button exitButton = new Button("Exit");
-        Button materials = new Button("Materials");
-        exitButton.setOnAction((ActionEvent event) -> {
-            final double scrollVal = mainScrollPane.getVvalue();
-            projectPane.setVisible(true);
-            bigPane.setVisible(false);
-            bigPane.setPrefSize(150, 150);
             mainScrollPane.setVvalue(scrollVal);
-
-            for (StackPane pane: projectList){
-                System.out.println("revealed");
-                pane.setVisible(true);
-            }
         });
-        // Material menu
-        Popup popupMenu = createPopUp();
-        popupMenu.hide();
-        materials.setOnAction((ActionEvent event) -> {
-            // button to get materials to show up.
-            // TEMP stackoverflow recommends connecting popup the button but this will eventually be changed
-            // TEMP but eventually when i figure out how to ill position the popup menu to a desired location.
-            if (!popupMenu.isShowing()) {
-                popupMenu.show(
-                        materials,
-                        materials.localToScreen(materials.getBoundsInLocal()).getMinX(),
-                        materials.localToScreen(materials.getBoundsInLocal()).getMaxY());
-            }
-            else{
-                popupMenu.hide();
-            }
-        });
-        bigPane.getChildren().addAll(exitButton, materials);
 
-        // stackPane adds above panels
+        bigPane.setOnMouseClicked(actionEvent -> {
+            System.out.println("Test");
+        });
+
         overLay.getChildren().addAll(projectPane, bigPane);
 
         return overLay;
     }
+
+    /**
+     * Used before expanding a new pane into bigPane.
+     *
+     * loops through the list of parent stackPane.
+     * gets both children small and big pane.
+     *
+     * Sets them to visible true or false. Changes the size so the stackPane isnt stretched.
+     */
+    private void hideAllPanes(){
+        for (StackPane pane : projectList) {
+            Node temp = pane.getChildren().get(1);
+            ((HBox) temp).setPrefSize(150, 150);
+            temp.setVisible(false);
+            temp = pane.getChildren().get(0);
+            temp.setVisible(true);
+        }
+    }
+
 
     private VBox createMainPane(StackPane overLay) {
         VBox projectPane = new VBox(20);
@@ -130,6 +118,7 @@ public class ProjectController {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
+
             if (!projectName.isEmpty()) {
                 projectNameField.setEditable(false);
                 projectDescriptionField.setEditable(false);
@@ -192,35 +181,140 @@ public class ProjectController {
         return projectPane;
     }
 
+    /**
+     * Creates the bigPane.
+     *
+     * bigPane is split between 2 sides and uses multiple containers to that it's content
+     * is present like the high fidelity prototype.
+     *
+     * Spacing has been set to a html style for readability.
+     *
+     * Pulls an image from resources/pictures
+     * @return
+     */
+    private HBox createBigPane(){
+        HBox bigPane = new HBox(20);
+        int totalProgress = 10;
+        int currentProgress = 2;
 
-
-
-    private VBox createBigPane(){
-        VBox bigPane = new VBox(20);
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
-        Label exampleLabel = new Label("Example");
-        bigPane.getChildren().addAll(exampleLabel);
+
+            VBox pictureBox = new VBox(20);
+            pictureBox.fillWidthProperty();
+            // top, right?, left?, bottom?
+            pictureBox.setPadding(new Insets(25, 0, 0, 25));
+            Image placeholder = new Image(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/bob.jpg"));
+            ImageView imageView = new ImageView(placeholder);
+            imageView.setFitHeight(180);
+            imageView.setFitWidth(180);
+            imageView.setDisable(true);
+
+            pictureBox.getChildren().addAll(imageView);
+            //Right side
+            VBox rightSide = new VBox(20);
+
+            //Left side of rightSide panel
+            rightSide.setPadding(new Insets(40, 0, 0, 0));
+                HBox middlePane = new HBox(20);
+                middlePane.setSpacing(220);
+                Label title = new Label("Title");
+
+                        // progressbar rightside of rightside
+                        VBox progressBar = new VBox(20);
+                            //top row
+                            HBox progressBox = new HBox(20);
+                            progressBox.setSpacing(185);
+                            // = should be changed to a settings icon
+                            Label progressLabel = new Label("=  Progress");
+                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+
+                            progressBox.getChildren().addAll(progressLabel, tipsLabel);
+                                final int MAX_RANGE = 270;
+                                final int MAX_WIDTH = 5;
+                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+
+                                StackPane progressPane = new StackPane(); // Change this bar to the future background colour and add black border
+                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+                                square.setArcWidth(10);
+                                square.setArcHeight(2);
+
+                                //progress bar gradient should range from blue to red.
+                                Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
+                                Color ColorPicker = pickColor(MAX_RANGE, progressRange);
+
+                                progressionBar.setFill(ColorPicker);
+                                square.setArcWidth(10);
+                                square.setArcHeight(2);
+                                progressPane.getChildren().addAll(square, progressionBar);
+
+                        progressBar.getChildren().addAll(progressBox, progressPane);
+
+                middlePane.getChildren().addAll(title, progressBar);
+                TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+                textArea.setEditable(false);
+                textArea.setWrapText(true);
+                textArea.setMaxWidth(520.00);
+                textArea.setMaxHeight(100.00);
+                //Hide background and scrollbar in css
+
+            rightSide.getChildren().addAll(middlePane, textArea);
+
+        bigPane.getChildren().addAll(pictureBox, rightSide);
+        bigPane.setMinSize(150, 150);
         return bigPane;
     }
 
-    private Popup createPopUp(){
-        Popup popupMenu = new Popup();
-        AnchorPane popupPane = new AnchorPane();
-        popupPane.setPrefSize(450, 150);
-        Label testLabel = new Label("Test");
-        popupMenu.getContent().add(testLabel);
-        popupPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        popupMenu.getContent().add(popupPane);
-        return popupMenu;
+    /**Algorthim that determines how big the progress bar is
+     * by dividing max_range by totalProgress and multiplying that with
+     * currentProgress.
+     *
+     * Validation is also included.
+     *
+     * @param MAX_RANGE
+     * @param totalProgress
+     * @param currentProgress
+     * @return size of the bar
+     */
+    private int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+        if (totalProgress > MAX_RANGE || totalProgress == currentProgress || totalProgress == 0){
+            return MAX_RANGE;
+        }
+
+        if (currentProgress != totalProgress && currentProgress == 0){
+            return 0;
+        }
+
+        int range = MAX_RANGE / totalProgress;
+        return range * currentProgress;
     }
+
+    /**
+     * Gets the color for the progress bar by comparing the size of
+     * the bar compared to the full bar
+     *
+     * @param MAX_RANGE
+     * @param progressRange
+     * @return Color for progressBar
+     */
+    private Color pickColor(int MAX_RANGE, int progressRange){
+        if (MAX_RANGE / 2 <= progressRange){ //Gradient this
+            return Color.BLUE;
+        }
+        else{
+            return Color.RED;
+        }
+    }
+
 
     @FXML
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
         StackPane projectPan = createProjectPane();
+        projectPan.setId("projectPanID");
 
         mainVbox.getChildren().add(projectPan);
+        hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
 }
