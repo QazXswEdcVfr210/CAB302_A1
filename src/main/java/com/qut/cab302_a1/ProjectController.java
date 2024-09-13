@@ -14,13 +14,18 @@ import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
+
+
+
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
+
 
     @FXML
     public void initialize(){
         mainScrollPane.setFitToWidth(true);
         mainVbox.setFillWidth(true);
+
     }
 
     @FXML

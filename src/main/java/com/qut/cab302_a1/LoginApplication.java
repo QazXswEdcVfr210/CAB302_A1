@@ -20,6 +20,8 @@ public class LoginApplication extends Application {
         stage.setTitle(TITLE);
         stage.setScene(scene);
         stage.show();
+        //add css
+        scene.getStylesheets().add(getClass().getResource("/com/qut/cab302_a1/main.css").toExternalForm());
     }
 
     public static void main(String[] args) {

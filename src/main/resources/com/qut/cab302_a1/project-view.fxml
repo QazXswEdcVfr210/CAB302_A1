@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.Region?>
 
 <HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" >
-    <VBox fx:id="sideVBox" spacing="15.0" minWidth="200.00" >
+    <VBox fx:id="sideVBox" spacing="15.0" minWidth="200.00" stylesheets="@main.css" >
         <HBox spacing="100.0" alignment="TOP_LEFT">
             <padding>
                 <Insets left="20.00" top="35.00"></Insets>

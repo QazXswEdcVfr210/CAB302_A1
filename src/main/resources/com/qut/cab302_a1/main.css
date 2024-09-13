@@ -1,0 +1,108 @@
+/* main.css */
+
+/* General settings */
+.root {
+    -fx-background-color: #222327;
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-text-fill: #fff;
+}
+
+
+/* Label styling */
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 18px;
+}
+
+/* TextField and PasswordField styling */
+.text-field, .password-field {
+    -fx-background-color: #2a2a2a;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #38393a;
+    -fx-border-radius: 5px;
+    -fx-padding: 10px;
+}
+
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #8a2be2; /* Purple color for focused state */
+}
+
+/* Button styling */
+.button {
+    -fx-background-color: #545587;
+    -fx-text-fill: #ffffff;
+    -fx-border-radius: 8px;
+    -fx-font-size: 16px;
+    -fx-padding: 10px;
+}
+
+.button:hover {
+    -fx-background-color: #5755d9;
+}
+
+.button:disabled {
+    -fx-background-color: #3a3a5e;
+}
+
+/* Hyperlink styling */
+.hyperlink {
+    -fx-text-fill: #6c63ff;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #908cff;
+}
+
+/* ScrollPane styling */
+.scroll-pane {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+/* VBox styling for projects list */
+.vbox {
+    -fx-spacing: 20px;
+}
+
+/* HBox for progress bars and other similar containers */
+.hbox {
+    -fx-spacing: 15px;
+}
+
+
+/* Sidebar styling */
+.sidebar {
+    -fx-background-color: #1e1e2e;
+    -fx-padding: 15px;
+}
+
+/* Logout button styling */
+.logout-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: red;
+}
+
+/* Header styling */
+.header {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+}
+
+/* Project pane styling */
+.project-pane {
+    -fx-background-color: #2a2a3c;
+    -fx-border-color: #444454;
+    -fx-border-radius: 8px;
+    -fx-padding: 15px;
+}
+
+/* Title and text styling inside project cards */
+.project-title {
+    -fx-font-size: 24px;
+    -fx-text-fill: #ffffff;
+}
+
+.project-description {
+    -fx-text-fill: #aaaaaa;
+}

@@ -31,6 +31,16 @@ public class LoginController {
     @FXML
     private PasswordField passwordField;
 
+    @FXML
+    public void initialize() {
+        // Add CSS classes
+        loginField.getStyleClass().add("text-field");
+        passwordField.getStyleClass().add("password-field");
+        LoginButton.getStyleClass().add("button");
+        SignUpLink.getStyleClass().add("hyperlink");
+        incorrectPasswordLabel.getStyleClass().add("error-text"); // Optional styling for error label
+    }
+
     /**
      * Link that takes user to the signup page.
      *
