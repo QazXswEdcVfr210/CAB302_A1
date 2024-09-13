@@ -8,21 +8,16 @@ https://firebase.google.com/docs/firestore/reference/rest/
 ######################################################################
 */
 
-import com.google.api.Http;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpContent;
+import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.http.HttpResponseException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 // This class handles making requests to Firebase through REST API requests.
 // Down the line this might be replaced with making requests to cloud functions for security purposes.
@@ -30,7 +25,7 @@ public class FirebaseRequestHandler {
 
     public static void main(String[] args) throws Exception{
         //TrySignup("nathcl0804@gmail.com", "N@than21012", "Nathan", true);
-        //TryLogin("admin@admin.admin", "adminadmin", false);
+        TryLogin("admin@admin.admin", "adminadmin", false);
     }
 
     // TODO: make my api key not exposed lol
@@ -113,6 +108,8 @@ public class FirebaseRequestHandler {
             // TODO: sign in after making an account
             // TODO: send email after sign in
 
+            SetUpNewUser();
+
             return true;
 
         } catch (HttpResponseException e){
@@ -128,11 +125,7 @@ public class FirebaseRequestHandler {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
-            String firebaseUrl = String.format("https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users/%s/", FirebaseDataStorage.getUid());
-
-            // Create payload
-            Map<String, String> requestInfo = new HashMap<>();
-            //requestInfo.put("Authorization", FirebaseDataStorage.getUserTokens().getKey());
+            String firebaseUrl = String.format("https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users/%s", FirebaseDataStorage.getUid());
 
             // Make GET request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
@@ -150,25 +143,35 @@ public class FirebaseRequestHandler {
         }
     }
 
+    /*
+        Creates a new user document, then populates the new document with required fields. Operation split into two
+        helper functions to increase readability.
+     */
     private static Boolean SetUpNewUser() throws Exception{
+        if(CreateUserDocument()) {
+            return PopulateUserDocument();
+        } else {
+            return false;
+        }
+    }
+
+    // Creates a new user document by creating a POST request to firestore with an empty payload.
+    private static Boolean CreateUserDocument() throws Exception {
         try {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
 
             // Use test url for now
-            String firebaseUrl = String.format("https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users", "TEST");
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users?documentId=" + FirebaseDataStorage.getUid();
 
             // Create payload
-            Map<String, Object> requestInfo = new HashMap<String, Object>();
-            HashMap<String, Object> fields = new HashMap<String, Object>();
-            requestInfo.put("fields", fields);
-            fields.put("test", "testValue");
+            FirebaseJSONPackage payload = new FirebaseJSONPackage();
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, requestInfo);
+            HttpContent content = ByteArrayContent.fromString("application/json", payload.getData().toString());
 
             // Handle response
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
@@ -181,6 +184,39 @@ public class FirebaseRequestHandler {
             e.printStackTrace();
             return false;
         }
-
     }
+
+    // Populates the new document by creating a PATCH request with the new fields in the payload.
+    private static Boolean PopulateUserDocument() throws Exception {
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+            JsonFactory jsonFactory = new GsonFactory();
+
+            // Use test url for now
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users?documentId=" + FirebaseDataStorage.getUid();
+
+            // Create payload
+            FirebaseJSONPackage payload = new FirebaseJSONPackage();
+            payload.AddList("projectIDs", new ArrayList<>());
+            payload.AddString("test", "test");
+
+            // Make POST request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpContent content = ByteArrayContent.fromString("application/json", payload.getData().toString());
+
+            // Handle response
+            HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
+            String responseBody = response.parseAsString();
+
+            return true;
+
+        } catch (HttpResponseException e) {
+            //System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
+            e.printStackTrace();
+            return false;
+        }
+    }
+
 }
