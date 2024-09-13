@@ -14,9 +14,7 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.json.JsonHttpContent;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 // This class handles making requests to Firebase through REST API requests.
@@ -32,7 +30,6 @@ public class FirebaseRequestHandler {
     private static final String API_KEY = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
-    // TODO: integrate with LoginApplication or LoginController
     // TODO: USE THE createAuthUri RESOURCE TO **VERIFY** THAT THERE IS AN ACCOUNT WITH THE EMAIL FOR EXTRA SECURITY BEFORE SENDING PASSWORD INFO
     public static Boolean TryLogin(String email, String pass, Boolean bPrintResponse) throws Exception {
         try{
@@ -42,16 +39,20 @@ public class FirebaseRequestHandler {
             String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s", API_KEY);
 
             // Create payload
-            Map<String, String> credentials = new HashMap<>();
-            credentials.put("email", email);
-            credentials.put("password", pass);
-            credentials.put("returnSecureToken", "true");
+            FirebaseJSONPackage p = new FirebaseJSONPackage();
+            Map<String, Object> data = p
+                    .AddKVP("email", email)
+                    .AddKVP("password", pass)
+                    .AddKVP("returnSecureToken", "true")
+                    .getData();
+
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, credentials);
+            HttpContent content = new JsonHttpContent(jsonFactory, data);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
+
             String responseBody = response.parseAsString();
 
             // Handle response (print response body to console if bPrintResponse is true.
@@ -64,8 +65,7 @@ public class FirebaseRequestHandler {
             FirebaseJSONUnpacker.ExtractTokens(responseBody);
 
             // Get the user's project list
-            //GetProjectIds();
-            SetUpNewUser();
+            GetProjectIds();
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -86,16 +86,19 @@ public class FirebaseRequestHandler {
             String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s", API_KEY);
 
             // Create payload
-            Map<String, String> signUpInfo = new HashMap<>();
-            signUpInfo.put("email", email);
-            signUpInfo.put("password", pass);
-            signUpInfo.put("displayName", username);
-            signUpInfo.put("returnSecureToken", "true");
+            FirebaseJSONPackage p = new FirebaseJSONPackage();
+            Map<String, Object> data = p
+                    .AddKVP("email", email)
+                    .AddKVP("password", pass)
+                    .AddKVP("displayName", username)
+                    .AddKVP("returnSecureToken", "true")
+                    .getData();
+
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, signUpInfo);
+            HttpContent content = new JsonHttpContent(jsonFactory, data);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
 
             // Handle response (print response body to console if bPrintResponse is true.
@@ -119,13 +122,13 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // WIP - Gets the list of the current user's projects.
+    // Gets the list of the current user's projects.
     public static Boolean GetProjectIds() throws Exception {
         try {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
-            String firebaseUrl = String.format("https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users/%s", FirebaseDataStorage.getUid());
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users/" + FirebaseDataStorage.getUid();
 
             // Make GET request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
@@ -143,39 +146,21 @@ public class FirebaseRequestHandler {
         }
     }
 
-    /*
-        Creates a new user document, then populates the new document with required fields. Operation split into two
-        helper functions to increase readability.
-     */
-    private static Boolean SetUpNewUser() throws Exception{
-        if(CreateUserDocument()) {
-            return PopulateUserDocument();
-        } else {
-            return false;
-        }
-    }
-
-    // Creates a new user document by creating a POST request to firestore with an empty payload.
-    private static Boolean CreateUserDocument() throws Exception {
+    // Creates a new user document, then populates the new document with required fields.
+    private static Boolean SetUpNewUser() throws Exception {
         try {
-            // Set up request
-            HttpTransport httpTransport = new NetHttpTransport();
-            JsonFactory jsonFactory = new GsonFactory();
+            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
+            Map<String, Object> fields = new HashMap<String, Object>();
+            Map<String, Object> username = new HashMap<String, Object>();
+            Map<String, Object> projectIDs = new HashMap<String, Object>();
 
-            // Use test url for now
-            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users?documentId=" + FirebaseDataStorage.getUid();
+            fields.put("username", username);
+            username.put("stringValue", "testUsername");
 
-            // Create payload
-            FirebaseJSONPackage payload = new FirebaseJSONPackage();
+            fields.put("projectIDs", projectIDs);
+            projectIDs.put("arrayValue", new HashMap<String, Object>());
 
-            // Make POST request
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-            GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = ByteArrayContent.fromString("application/json", payload.getData().toString());
-
-            // Handle response
-            HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
-            String responseBody = response.parseAsString();
+            FirestoreHandler.CreateDocument("Users", FirebaseDataStorage.getUid(), fields);
 
             return true;
 
@@ -185,38 +170,4 @@ public class FirebaseRequestHandler {
             return false;
         }
     }
-
-    // Populates the new document by creating a PATCH request with the new fields in the payload.
-    private static Boolean PopulateUserDocument() throws Exception {
-        try {
-            // Set up request
-            HttpTransport httpTransport = new NetHttpTransport();
-            JsonFactory jsonFactory = new GsonFactory();
-
-            // Use test url for now
-            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users?documentId=" + FirebaseDataStorage.getUid();
-
-            // Create payload
-            FirebaseJSONPackage payload = new FirebaseJSONPackage();
-            payload.AddList("projectIDs", new ArrayList<>());
-            payload.AddString("test", "test");
-
-            // Make POST request
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-            GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = ByteArrayContent.fromString("application/json", payload.getData().toString());
-
-            // Handle response
-            HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
-            String responseBody = response.parseAsString();
-
-            return true;
-
-        } catch (HttpResponseException e) {
-            //System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
-            e.printStackTrace();
-            return false;
-        }
-    }
-
 }

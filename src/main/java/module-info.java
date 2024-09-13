@@ -10,6 +10,8 @@ module com.qut.cab302_a1 {
     requires firebase.admin;
 
     requires jdk.xml.dom;
+    requires java.sql;
+    requires com.google.api.services.storage;
 
     opens com.qut.cab302_a1 to javafx.fxml;
     exports com.qut.cab302_a1;

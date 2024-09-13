@@ -2,6 +2,8 @@ package firebase;
 
 import javafx.util.Pair;
 
+import java.util.List;
+
 // This class stores commonly-accessed user data from Firebase so that we don't have to keep making requests.
 public class FirebaseDataStorage {
 
@@ -38,4 +40,14 @@ public class FirebaseDataStorage {
         FirebaseDataStorage.userTokens = userTokens;
     }
 
+    // The user's list of projects by their ID.
+    private static List<String> projectIDs;
+    // Getter
+    public static List<String> getProjectIDs() {
+        return FirebaseDataStorage.projectIDs;
+    }
+    // Setter
+    public static void setProjectIDs(List<String> projectIDs){
+        FirebaseDataStorage.projectIDs = projectIDs;
+    }
 }

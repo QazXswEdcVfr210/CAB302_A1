@@ -1,56 +1,37 @@
 package firebase;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import java.util.HashMap;
+import java.util.Map;
 
-import java.util.List;
+/*
+    This class is used to create custom JSON packages to send through REST API requests to pass data to various Firebase services.
+    This is only used when a lot of custom data needs to be uploaded to the database, smaller scale interactions will be hardcoded.
 
-// This class is used to create custom JSON packages to send through REST API requests to pass data to various Firebase services.
-// This is only used when a lot of custom data needs to be uploaded to the database, smaller scale interactions will be hardcoded.
+    This was originally implemented by using google's gson.JsonArray and gson.JsonObject, however
+    attempting to send JSON via a JsonObject instance results in no actual data sent when it is
+    packaged with the JsonHttpContent class, however packaging JSON in a Map works fine.
+
+    This class is an attempt at refactoring some of the code to make it more readable.
+ */
+
 public class FirebaseJSONPackage {
 
     // Read-only outside of this class.
-    private JsonObject jsonObject = new JsonObject();
+    private Map<String, Object> data = new HashMap<String, Object>();
 
-    // Public getter
-    public JsonObject getData() {
-        return this.jsonObject;
+    public FirebaseJSONPackage() {
+        data = new HashMap<String, Object>();
     }
 
-    // Adds a new string value to our JSON package.
-    public void AddString(String name, String value) {
-        JsonObject data = new JsonObject();
-        data.addProperty("stringValue", value);
-        jsonObject.add(name, data);
+    // Get data once all key value pairs have been added to the package.
+    public Map<String, Object> getData() {
+        return this.data;
     }
 
-    // Adds a new boolean value to our JSON package.
-    public void AddBool(String name, Boolean value) {
-        JsonObject data = new JsonObject();
-        data.addProperty("integerValue", value);
-        jsonObject.add(name, data);
-    }
-
-    // Adds a new integer value to our JSON package.
-    public void AddInteger(String name, Integer value) {
-        JsonObject data = new JsonObject();
-        data.addProperty("booleanValue", value);
-        jsonObject.add(name, data);
-    }
-
-    // Adds a new list/array of strings to our JSON package.
-    public void AddList(String name, List<String> value) {
-        JsonObject data = new JsonObject();
-        JsonArray newArray = new JsonArray();
-
-        for(String element:value) {
-            JsonObject dataElement = new JsonObject();
-            dataElement.addProperty("stringValue", element);
-            newArray.add(dataElement);
-        }
-
-        data.add("arrayValue", newArray);
-        jsonObject.add(name, data);
+    // Adds a new field to our JSON package.
+    public FirebaseJSONPackage AddKVP(String key, Object value) {
+        data.put(key, value);
+        return this;
     }
 
 }
