@@ -6,13 +6,15 @@ import com.google.api.client.http.json.JsonHttpContent;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 
+import javafx.util.Pair;
+
 import java.util.Map;
 
 // This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
 public class FirestoreHandler {
 
     // Interacting with Documents
-    public static Boolean CreateDocument(String collection, String document, Map<String, Object> data) throws Exception{
+    public static Pair<Boolean, String> CreateDocument(String collection, String document, Map<String, Object> data) throws Exception{
         try {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
@@ -36,13 +38,14 @@ public class FirestoreHandler {
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
             String responseBody = response.parseAsString();
 
-            //PopulateNewUserDocument();
-            return true;
+            // Return the name of the new document
+            System.out.println((responseBody));
+            return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
             //System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
             e.printStackTrace();
-            return false;
+            return new Pair<>(false, "ERROR CODE GOES HERE"); // TODO: Extract error code
         }
     }
 
@@ -51,6 +54,10 @@ public class FirestoreHandler {
     }
 
     public static Boolean DeleteDocument(String name) {
+        return false;
+    }
+
+    public static Boolean CheckDocumentExists(String name) {
         return false;
     }
 
