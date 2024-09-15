@@ -2,6 +2,7 @@ package com.qut.cab302_a1;
 
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -240,8 +241,8 @@ public class ProjectController {
      */
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
-        int totalProgress = 10;
-        int currentProgress = 2;
+        int totalProgress = 10; // testing values
+        int currentProgress = 9; //testing values
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -298,6 +299,8 @@ public class ProjectController {
                                 progressionBar.setFill(colorPicker);
                                 backBar.setArcWidth(10);
                                 backBar.setArcHeight(2);
+
+                                progressPane.setAlignment(Pos.CENTER_LEFT);
                                 progressPane.getChildren().addAll(backBar, progressionBar);
 
                         progressBar.getChildren().addAll(progressBox, progressPane);
