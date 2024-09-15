@@ -1,5 +1,6 @@
 package com.qut.cab302_a1;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -265,8 +266,8 @@ public class ProjectController {
             //Left side of rightSide panel
             rightSide.setPadding(new Insets(40, 0, 0, 0));
                 HBox middlePane = new HBox(20);
-                middlePane.setSpacing(220);
-                Label title = new Label("Title");
+                Label title = new Label("Title"); // no more than 25 Char
+                int MAX_SPACING = 260;
                 title.setId("titleID");
 
                         // progressbar right side of right side
@@ -285,8 +286,10 @@ public class ProjectController {
                                 final int MAX_WIDTH = 5;
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-                                StackPane progressPane = new StackPane(); // Change this bar to the future background colour and add black border
+                                HBox.setHgrow(middlePane, Priority.ALWAYS);
+                                StackPane progressPane = new StackPane();
                                 Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+
 
                                 backBar.setArcWidth(10);
                                 backBar.setArcHeight(2);
@@ -306,6 +309,11 @@ public class ProjectController {
                         progressBar.getChildren().addAll(progressBox, progressPane);
 
                 middlePane.getChildren().addAll(title, progressBar);
+
+                // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
+                Platform.runLater(()-> {
+                    middlePane.setSpacing(calcSpacing(title.getWidth(), MAX_SPACING, title)); // HERE
+                });
                 TextArea textArea = getTextArea();
 
             rightSide.getChildren().addAll(middlePane, textArea);
@@ -315,6 +323,33 @@ public class ProjectController {
         return bigPane;
     }
 
+    /**
+     * Calculates the spacing for inbeteeen the title and the
+     * progress bar.
+     *
+     *
+     * @param textSize
+     * @param maxSize
+     * @param title
+     * @return the size of the spacing
+     */
+    private int calcSpacing(double textSize, int maxSize, Label title){
+        int newSize;
+        double fontSize = 1.5; //css font size value
+        if (textSize > maxSize){
+            fontSize -= 0.2;
+            title.setStyle("-fx-font-size: " + fontSize + "em;");
+            System.out.println("adjusted font size: " + fontSize);
+            return 0;
+        }
+
+        System.out.println(textSize);
+        newSize = maxSize - (int)textSize;
+        System.out.println(newSize);
+
+        return newSize;
+    }
+
     private static TextArea getTextArea() {
         TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
         textArea.setId("textareaID");
@@ -322,7 +357,6 @@ public class ProjectController {
         textArea.setWrapText(true);
         textArea.setMaxWidth(520.00);
         textArea.setMaxHeight(100.00);
-        textArea.setStyle("-fx-background-color: transparent;");
         return textArea;
     }
 

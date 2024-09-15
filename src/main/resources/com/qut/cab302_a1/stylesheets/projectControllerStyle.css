@@ -87,17 +87,32 @@
 }
 
 #progressLabelID{
-
+    -fx-text-fill: grey;
+    -fx-font-size: 1.2em;
 }
 
 #tipsLabelID{
+    -fx-text-fill: grey;
 
 }
 
 #titleID{
-
-}
-
-#textareaID{
     -fx-text-fill: white;
+    -fx-font-size: 1.5em;
 }
+
+#textareaID, .content{
+    -fx-text-fill: grey;
+    -fx-background-color: #25262b;
+    -fx-font-size: 1em;
+    -fx-spacing: 2px;
+
+}
+
+#textareaID .scroll-bar, .thumb{
+    -fx-background-color: transparent;
+    -fx-opacity: 0;
+
+}
+
+
