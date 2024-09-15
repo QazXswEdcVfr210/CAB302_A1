@@ -1,7 +1,5 @@
 package com.qut.cab302_a1;
 
-
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -12,8 +10,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-
-import java.lang.reflect.Array;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
@@ -69,10 +65,11 @@ public class ProjectController {
         }
         mainScrollPane.setFitToWidth(true);
         mainScrollPane.setFitToHeight(true);
+
         mainVbox.setFillWidth(true);
+
         hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
         sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
-
     }
 
     @FXML
@@ -114,11 +111,12 @@ public class ProjectController {
             bigPane.setPrefSize(260, 260);
             overLay.setPrefSize(260, 260);
             bigPane.layout();
+
             mainScrollPane.setVvalue(scrollVal);
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
-            System.out.println("Test");
+            System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
@@ -135,6 +133,10 @@ public class ProjectController {
      * Sets them to visible true or false. Changes the size so the stackPane isnt stretched.
      */
     private void hideAllPanes(){
+        if (projectList.size() >= 3){
+            mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly big. DO NOT REMOVE
+        }
+
         for (StackPane pane : projectList) {
             Node temp = pane.getChildren().get(1);
             ((HBox) temp).setPrefSize(150, 150);
@@ -306,7 +308,7 @@ public class ProjectController {
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
-        bigPane.setPrefSize(150, 150);
+        bigPane.setMinSize(150, 150);
         return bigPane;
     }
 
@@ -370,6 +372,7 @@ public class ProjectController {
         projectPan.setId("projectPanID");
 
         mainVbox.getChildren().add(projectPan);
+
         hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
