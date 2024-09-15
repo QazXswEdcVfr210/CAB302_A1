@@ -286,7 +286,7 @@ public class ProjectController {
                                 final int MAX_WIDTH = 5;
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-                                HBox.setHgrow(middlePane, Priority.ALWAYS);
+                                HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
                                 StackPane progressPane = new StackPane();
                                 Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
 
@@ -327,10 +327,9 @@ public class ProjectController {
      * Calculates the spacing for inbeteeen the title and the
      * progress bar.
      *
-     *
-     * @param textSize
-     * @param maxSize
-     * @param title
+     * @param textSize size of text
+     * @param maxSize maxSize of the space.
+     * @param title title label
      * @return the size of the spacing
      */
     private int calcSpacing(double textSize, int maxSize, Label title){
