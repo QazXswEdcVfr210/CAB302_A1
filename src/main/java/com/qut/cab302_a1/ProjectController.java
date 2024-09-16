@@ -316,6 +316,7 @@ public class ProjectController {
 
                 // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
                 Platform.runLater(()-> {
+                    title.layout();
                     middlePane.setSpacing(calcSpacing(title.getWidth(), MAX_SPACING, title)); // HERE
                 });
                 TextArea textArea = getTextArea();
@@ -343,7 +344,6 @@ public class ProjectController {
             fontSize -= 0.2;
             title.setStyle("-fx-font-size: " + fontSize + "em;");
             System.out.println("adjusted font size: " + fontSize);
-            return 0;
         }
 
         System.out.println(textSize);
