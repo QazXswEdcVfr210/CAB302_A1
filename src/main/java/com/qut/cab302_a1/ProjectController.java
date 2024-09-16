@@ -13,6 +13,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
@@ -23,6 +25,7 @@ import java.util.List;
 
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
+    public int testTitle = 0;
 
     @FXML
     private Button buttonV;
@@ -270,8 +273,9 @@ public class ProjectController {
             //Left side of rightSide panel
             rightSide.setPadding(new Insets(40, 0, 0, 0));
                 HBox middlePane = new HBox(20);
-                Label title = new Label("Title"); // no more than 25 Char
-                int MAX_SPACING = 260;
+                Label title = new Label("Title" + testTitle); // no more than 25 Char
+                testTitle++;
+                int MAX_SPACING = 400;
                 title.setId("titleID");
 
                         // progressbar right side of right side
@@ -315,10 +319,12 @@ public class ProjectController {
                 middlePane.getChildren().addAll(title, progressBar);
 
                 // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
-                Platform.runLater(()-> {
-                    title.layout();
-                    middlePane.setSpacing(calcSpacing(title.getWidth(), MAX_SPACING, title)); // HERE
-                });
+
+
+                    String titleString = title.toString();
+                    double titleWidth = calculateTextSize(titleString);
+                    middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
+
                 TextArea textArea = getTextArea();
 
             rightSide.getChildren().addAll(middlePane, textArea);
@@ -326,6 +332,13 @@ public class ProjectController {
         bigPane.getChildren().addAll(pictureBox, rightSide);
         bigPane.setMinSize(150, 150);
         return bigPane;
+    }
+
+    private double calculateTextSize(String title){
+    Text titleText = new Text(title);
+    titleText.setFont(Font.font("-fx-font-size: 1.5"));
+    double width = titleText.getLayoutBounds().getWidth();
+    return width;
     }
 
     /**
