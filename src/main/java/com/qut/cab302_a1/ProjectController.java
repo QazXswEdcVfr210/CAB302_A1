@@ -2,8 +2,10 @@ package com.qut.cab302_a1;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -12,10 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
@@ -252,7 +256,7 @@ public class ProjectController {
             pictureBox.fillWidthProperty();
             // top, right?, left?, bottom?
             pictureBox.setPadding(new Insets(25, 0, 0, 25));
-            Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/bob.jpg")));
+            Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
             ImageView imageView = new ImageView(placeholder);
             imageView.setFitHeight(180);
             imageView.setFitWidth(180);
@@ -411,6 +415,25 @@ public class ProjectController {
 
         hideAllPanes(); // This for some reason fixes the size of panes.
 
+    }
+
+    @FXML
+    private Button logoutButton;
+
+    @FXML
+   protected void onLogoutAction(){
+        try{
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
+        stage.setTitle("Project Partner");
+        stage.setWidth(LoginApplication.WIDTH);
+        stage.setHeight(LoginApplication.HEIGHT);
+        stage.setScene(scene);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
     }
 
 }

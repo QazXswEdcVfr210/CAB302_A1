@@ -82,7 +82,7 @@
             <padding>
                 <Insets bottom="20.00" left="20.00"></Insets>
             </padding>
-            <Button fx:id="logoutButton"> Logout</Button>
+            <Button fx:id="logoutButton" onAction="#onLogoutAction"> Logout</Button>
             <Button fx:id="buttonA">*</Button>
         </HBox>
     </VBox>
