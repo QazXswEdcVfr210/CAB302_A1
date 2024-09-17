@@ -10,8 +10,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class LoginController {
-    public static final int MAIN_HEIGHT = 1000;
-    public static final int MAIN_WIDTH = 600;
+    public static final int MAIN_WIDTH = 1000;
+    public static final int MAIN_HEIGHT = 600;
 
     private String user;
 
@@ -67,9 +67,10 @@ public class LoginController {
                 user = loginField.getText();
                 Stage stage = (Stage) LoginButton.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
+                Scene scene = new Scene(fxmlLoader.load(), MAIN_WIDTH, MAIN_HEIGHT);
                 stage.setTitle("Project Partner");
-
+                stage.setWidth(MAIN_WIDTH);
+                stage.setHeight(MAIN_HEIGHT);
                 stage.setScene(scene);
             }
             //else update label
