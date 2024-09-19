@@ -152,6 +152,9 @@ public class FirebaseRequestHandler {
 
             Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, fields);
 
+            // TODO: Add reference to this project in Users/{uid}/projectIDs
+            FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", projectID);
+
             return "success";
 
         } catch (HttpResponseException e) {
