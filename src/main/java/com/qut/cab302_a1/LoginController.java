@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,6 +16,18 @@ public class LoginController {
 
     private String user;
 
+    @FXML
+    private VBox loginMain;
+
+    @FXML
+    public void initialize() {
+        try{
+            loginMain.getStylesheets().add(getClass().getResource("stylesheets/loginStylesheet.css").toExternalForm());
+        }
+        catch (Exception e){
+            System.out.println("Stylesheet failed to load");
+        }
+    }
 
     @FXML
     private Label loginText;
