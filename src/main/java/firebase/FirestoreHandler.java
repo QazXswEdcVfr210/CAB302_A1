@@ -39,7 +39,6 @@ public class FirestoreHandler {
             String responseBody = response.parseAsString();
 
             // Return the name of the new document
-            System.out.println((responseBody));
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
@@ -70,8 +69,38 @@ public class FirestoreHandler {
         return false;
     }
 
-    public static Boolean ModifyFieldValue(String collectionName, String documentName, String fieldName, String newValue) {
-        return false;
+    public static Pair<Boolean, String> ModifyFieldValue(String collection, String document, String field, Map<String, Object> data) throws Exception {
+
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+            JsonFactory jsonFactory = new GsonFactory();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document + "?updateMask.fieldPaths=" + field;
+
+            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
+            FirebaseJSONPackage p = new FirebaseJSONPackage();
+            Map<String, Object> packageData = p
+                    .AddKVP("fields", data)
+                    .getData();
+
+            // Make PATCH request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpContent content = new JsonHttpContent(jsonFactory, packageData);
+
+            // Handle response
+            HttpResponse response = requestFactory.buildPatchRequest(url, content).execute();
+            String responseBody = response.parseAsString();
+
+            // Return the name of the new document
+            return new Pair<>(true, responseBody);
+
+        } catch (HttpResponseException e) {
+            e.printStackTrace();
+            return new Pair<>(false, "");
+        }
     }
 
     public static Boolean DeleteField(String name) {
