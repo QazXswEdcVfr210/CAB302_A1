@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -186,15 +188,37 @@ public class ProjectController {
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
+            String projectDescription = projectDescriptionField.getText();
 
-            if (!projectName.isEmpty()) {
-                projectNameField.setEditable(false);
-                projectDescriptionField.setEditable(false);
-                projectResourcesField.setEditable(false);
-                projectToolsField.setEditable((false));
-                saveButton.setDisable(true);
+            if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
+                try {
+                    // Call the backend function to create a new project and update the database
+                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+
+                    if (result.equals("success")) {
+                        // Success case: disable editing and buttons
+                        projectNameField.setEditable(false);
+                        projectDescriptionField.setEditable(false);
+                        projectResourcesField.setEditable(false);
+                        projectToolsField.setEditable(false);
+                        saveButton.setDisable(true);
+
+                        // Optionally, show a success message
+                        showSuccessAlert("Project Created", "Project was successfully saved to the database!");
+                    } else {
+                        // Handle the error returned by the backend
+                        showErrorAlert("Error creating project", result);
+                    }
+                } catch (Exception e) {
+                    // Handle exceptions from backend
+                    showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
+                }
+            } else {
+                // Show error if fields are empty
+                showErrorAlert("Validation Error", "Project name and description cannot be empty.");
             }
         });
+
 
         // Edit Button
         Button editButton = new Button("Edit");
@@ -252,6 +276,25 @@ public class ProjectController {
 
         return projectPane;
     }
+
+    // Method to display success alerts
+    private void showSuccessAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);  // No header, just a title and content
+        alert.setContentText(message);
+        alert.showAndWait();  // Wait for the user to close the alert
+    }
+
+    // Method to display error alerts
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);  // No header, just a title and content
+        alert.setContentText(message);
+        alert.showAndWait();  // Wait for the user to close the alert
+    }
+
 
     /**
      * Creates the bigPane.
