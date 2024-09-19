@@ -1,4 +1,6 @@
 package com.qut.cab302_a1;
+
+
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -9,7 +11,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
-import org.w3c.dom.css.Rect;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +19,16 @@ public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
 
     @FXML
+    private HBox basePane;
+
+    @FXML
     public void initialize(){
+        try{
+        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+        }
+        catch (Exception e){
+            System.out.println("Stylesheet failed to load");
+        }
         mainScrollPane.setFitToWidth(true);
         mainVbox.setFillWidth(true);
     }
@@ -30,11 +40,25 @@ public class ProjectController {
     private ScrollPane mainScrollPane;
 
 
+    /**
+     * main functionality to the page. Creates the ui for the page
+     *
+     * @return overlay pane (base pane)
+     */
     @FXML
     private StackPane createProjectPane(){
         StackPane overLay = new StackPane();
+        overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
+        projectPane.setId("projectPane");
+        bigPane.setId("bigPane");
+        //Rounding corners
+        overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+
+
         projectList.add(overLay);
 
         // Lambda function that handles expanding the vbox when clicked.
@@ -42,23 +66,18 @@ public class ProjectController {
             hideAllPanes();
             //animation goes here
 
+            double scrollVal = mainScrollPane.getVvalue();
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-            bigPane.setPrefSize(280, 280);
+            bigPane.setPrefSize(260, 260);
             bigPane.layout();
-
-            // Gets the overlay height get the location scroll position
-            double inScrollPanePos = overLay.getBoundsInParent().getMinY();
-            double contentHeight = mainScrollPane.getContent().getBoundsInLocal().getHeight();
-            double scrollPaneVal = inScrollPanePos / (contentHeight - mainScrollPane.getViewportBounds().getHeight());
-            mainScrollPane.setVvalue(scrollPaneVal);
+            mainScrollPane.setVvalue(scrollVal);
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
             System.out.println("Test");
         });
 
-        //bigPane.getChildren().addAll(exitButton);
         overLay.getChildren().addAll(projectPane, bigPane);
 
         return overLay;
@@ -95,21 +114,14 @@ public class ProjectController {
         TextField projectDescriptionField = new TextField();
         projectDescriptionField.setPromptText("Enter project description");
 
-        TextField projectResourcesField = new TextField();
-        projectResourcesField.setPromptText("Enter list of required resources");
-
-        TextField projectToolsField = new TextField();
-        projectToolsField.setPromptText("Enter list of required tools");
-
         // Save Button
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
+
             if (!projectName.isEmpty()) {
                 projectNameField.setEditable(false);
                 projectDescriptionField.setEditable(false);
-                projectResourcesField.setEditable(false);
-                projectToolsField.setEditable((false));
                 saveButton.setDisable(true);
             }
         });
@@ -119,8 +131,6 @@ public class ProjectController {
         editButton.setOnAction(event -> {
             projectNameField.setEditable(true);
             projectDescriptionField.setEditable(true);
-            projectResourcesField.setEditable(true);
-            projectToolsField.setEditable(true);
             saveButton.setDisable(false);
         });
 
@@ -156,7 +166,7 @@ public class ProjectController {
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton);
-        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
+        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, buttonBox);
 
         // Highlight effect on hover
         projectPane.setOnMouseEntered(event -> {
@@ -177,11 +187,15 @@ public class ProjectController {
      * bigPane is split between 2 sides and uses multiple containers to that it's content
      * is present like the high fidelity prototype.
      *
+     * Spacing has been set to a html style for readability.
+     *
      * Pulls an image from resources/pictures
      * @return
      */
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
+        int totalProgress = 10;
+        int currentProgress = 2;
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -211,14 +225,30 @@ public class ProjectController {
                             //top row
                             HBox progressBox = new HBox(20);
                             progressBox.setSpacing(185);
+                            // = should be changed to a settings icon
                             Label progressLabel = new Label("=  Progress");
-                            Label tipsLabel = new Label("3/10");
+                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
-                            Rectangle square = new Rectangle(270, 5);
-                            square.setArcWidth(10);
-                            square.setArcHeight(2);
-                        progressBar.getChildren().addAll(progressBox, square);
+                                final int MAX_RANGE = 270;
+                                final int MAX_WIDTH = 5;
+                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+
+                                StackPane progressPane = new StackPane(); // Change this bar to the future background colour and add black border
+                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+                                square.setArcWidth(10);
+                                square.setArcHeight(2);
+
+                                //progress bar gradient should range from blue to red.
+                                Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
+                                Color ColorPicker = pickColor(MAX_RANGE, progressRange);
+
+                                progressionBar.setFill(ColorPicker);
+                                square.setArcWidth(10);
+                                square.setArcHeight(2);
+                                progressPane.getChildren().addAll(square, progressionBar);
+
+                        progressBar.getChildren().addAll(progressBox, progressPane);
 
                 middlePane.getChildren().addAll(title, progressBar);
                 TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
@@ -230,9 +260,50 @@ public class ProjectController {
 
             rightSide.getChildren().addAll(middlePane, textArea);
 
-        bigPane.setMinSize(150, 150);
         bigPane.getChildren().addAll(pictureBox, rightSide);
+        bigPane.setMinSize(150, 150);
         return bigPane;
+    }
+
+    /**Algorthim that determines how big the progress bar is
+     * by dividing max_range by totalProgress and multiplying that with
+     * currentProgress.
+     *
+     * Validation is also included.
+     *
+     * @param MAX_RANGE
+     * @param totalProgress
+     * @param currentProgress
+     * @return size of the bar
+     */
+    private int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+        if (totalProgress > MAX_RANGE || totalProgress == currentProgress || totalProgress == 0){
+            return MAX_RANGE;
+        }
+
+        if (currentProgress != totalProgress && currentProgress == 0){
+            return 0;
+        }
+
+        int range = MAX_RANGE / totalProgress;
+        return range * currentProgress;
+    }
+
+    /**
+     * Gets the color for the progress bar by comparing the size of
+     * the bar compared to the full bar
+     *
+     * @param MAX_RANGE
+     * @param progressRange
+     * @return Color for progressBar
+     */
+    private Color pickColor(int MAX_RANGE, int progressRange){
+        if (MAX_RANGE / 2 <= progressRange){ //Gradient this
+            return Color.BLUE;
+        }
+        else{
+            return Color.RED;
+        }
     }
 
 
@@ -240,8 +311,10 @@ public class ProjectController {
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
         StackPane projectPan = createProjectPane();
+        projectPan.setId("projectPanID");
 
         mainVbox.getChildren().add(projectPan);
+        hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
 }
