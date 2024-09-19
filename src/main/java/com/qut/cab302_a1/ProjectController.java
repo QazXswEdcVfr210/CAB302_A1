@@ -1,8 +1,10 @@
 package com.qut.cab302_a1;
 
-
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -10,13 +12,53 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import java.io.IOException;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
+    public int testTitle = 1;
+
+    @FXML
+    private Button buttonV;
+
+    @FXML
+    private Hyperlink hyperlink0, hyperlink1, hyperlink2, hyperlink3;
+    Hyperlink[] hyperlinks = new Hyperlink[4];
+
+    @FXML
+    private Label sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3;
+    Label[] sidepartLabels = new Label[7];
+
+
+    @FXML
+    private void minimiseActon() {
+        if (hyperlink1.isVisible()) {
+            for (Hyperlink link : hyperlinks) {
+                link.setVisible(false);
+            }
+            for (Label label : sidepartLabels) {
+                label.setVisible(false);
+            }
+            buttonV.setText("-");
+        }
+        else{
+            for (Hyperlink link : hyperlinks) {
+                link.setVisible(true);
+            }
+            for (Label label : sidepartLabels) {
+                label.setVisible(true);
+            }
+            buttonV.setText("v");
+        }
+    }
 
     @FXML
     private HBox basePane;
@@ -30,7 +72,12 @@ public class ProjectController {
             System.out.println("Stylesheet failed to load");
         }
         mainScrollPane.setFitToWidth(true);
+        mainScrollPane.setFitToHeight(true);
+
         mainVbox.setFillWidth(true);
+
+        hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
+        sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
     }
 
     @FXML
@@ -70,12 +117,14 @@ public class ProjectController {
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(260, 260);
+            overLay.setPrefSize(260, 260);
             bigPane.layout();
+
             mainScrollPane.setVvalue(scrollVal);
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
-            System.out.println("Test");
+            System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
@@ -92,9 +141,14 @@ public class ProjectController {
      * Sets them to visible true or false. Changes the size so the stackPane isnt stretched.
      */
     private void hideAllPanes(){
+        if (projectList.size() >= 3){
+            mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly big. DO NOT REMOVE
+        }
+
         for (StackPane pane : projectList) {
             Node temp = pane.getChildren().get(1);
             ((HBox) temp).setPrefSize(150, 150);
+            pane.setPrefSize(150, 150);
             temp.setVisible(false);
             temp = pane.getChildren().get(0);
             temp.setVisible(true);
@@ -190,12 +244,12 @@ public class ProjectController {
      * Spacing has been set to a html style for readability.
      *
      * Pulls an image from resources/pictures
-     * @return
+     * @return bigPane expanded version of the projectPane
      */
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
-        int totalProgress = 10;
-        int currentProgress = 2;
+        int totalProgress = 10; // testing values
+        int currentProgress = 9; //testing values
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -204,10 +258,11 @@ public class ProjectController {
             pictureBox.fillWidthProperty();
             // top, right?, left?, bottom?
             pictureBox.setPadding(new Insets(25, 0, 0, 25));
-            Image placeholder = new Image(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/bob.jpg"));
+            Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
             ImageView imageView = new ImageView(placeholder);
             imageView.setFitHeight(180);
             imageView.setFitWidth(180);
+            imageView.setStyle("-fx-background-radius: 20px;"); //come back to this later.
             imageView.setDisable(true);
 
             pictureBox.getChildren().addAll(imageView);
@@ -217,52 +272,120 @@ public class ProjectController {
             //Left side of rightSide panel
             rightSide.setPadding(new Insets(40, 0, 0, 0));
                 HBox middlePane = new HBox(20);
-                middlePane.setSpacing(220);
-                Label title = new Label("Title");
+                Label title = new Label("Title" + testTitle); // no more than 25 Char
+                testTitle++;
+                int MAX_SPACING = 400;
+                title.setId("titleID");
 
-                        // progressbar rightside of rightside
+                        // progressbar right side of right side
                         VBox progressBar = new VBox(20);
                             //top row
                             HBox progressBox = new HBox(20);
                             progressBox.setSpacing(185);
                             // = should be changed to a settings icon
                             Label progressLabel = new Label("=  Progress");
+                            progressLabel.setId("progressLabelID");
                             Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+                            tipsLabel.setId("tipsLabelID");
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
                                 final int MAX_WIDTH = 5;
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-                                StackPane progressPane = new StackPane(); // Change this bar to the future background colour and add black border
-                                Rectangle square = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
-                                square.setArcWidth(10);
-                                square.setArcHeight(2);
+                                HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
+                                StackPane progressPane = new StackPane();
+                                Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+
+
+                                backBar.setArcWidth(10);
+                                backBar.setArcHeight(2);
+                                backBar.setFill(Color.GRAY);
 
                                 //progress bar gradient should range from blue to red.
                                 Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
-                                Color ColorPicker = pickColor(MAX_RANGE, progressRange);
+                                Color colorPicker = pickColor(MAX_RANGE, progressRange);
 
-                                progressionBar.setFill(ColorPicker);
-                                square.setArcWidth(10);
-                                square.setArcHeight(2);
-                                progressPane.getChildren().addAll(square, progressionBar);
+                                progressionBar.setFill(colorPicker);
+                                backBar.setArcWidth(10);
+                                backBar.setArcHeight(2);
+
+                                progressPane.setAlignment(Pos.CENTER_LEFT);
+                                progressPane.getChildren().addAll(backBar, progressionBar);
 
                         progressBar.getChildren().addAll(progressBox, progressPane);
 
                 middlePane.getChildren().addAll(title, progressBar);
-                TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
-                textArea.setEditable(false);
-                textArea.setWrapText(true);
-                textArea.setMaxWidth(520.00);
-                textArea.setMaxHeight(100.00);
-                //Hide background and scrollbar in css
+
+                // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
+
+
+                    String titleString = title.toString();
+                    double titleWidth = calculateTextSize(titleString);
+                    middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
+
+                TextArea textArea = getTextArea();
 
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
         bigPane.setMinSize(150, 150);
         return bigPane;
+    }
+
+    public void movePanes(){
+        if (testTitle % 2 == 0){
+            //moving panes around method values above are for testing
+        }
+    }
+
+    /**Gets the string of title and sets it to a text format
+     * checks the width and returns double value
+     *
+     * @param title
+     * @return size of text and font
+     */
+    public double calculateTextSize(String title){
+    Text titleText = new Text(title);
+    titleText.setFont(Font.font("-fx-font-size: 1.5"));
+    double width = titleText.getLayoutBounds().getWidth();
+    return width;
+    }
+
+    /**
+     * Calculates the spacing for inbeteeen the title and the
+     * progress bar.
+     *
+     * @param textSize size of text
+     * @param maxSize maxSize of the space.
+     * @param title title label
+     * @return the size of the spacing
+     */
+    public int calcSpacing(double textSize, int maxSize, Label title){
+        int newSize;
+        double fontSize = 1.5; //css font size value
+        if (textSize > maxSize){
+            fontSize -= 0.2;
+            title.setStyle("-fx-font-size: " + fontSize + "em;");
+            System.out.println("adjusted font size: " + fontSize);
+        }
+
+        System.out.println(textSize);
+        //System.out.println(calculateTextSize("Example") + " Test");
+        newSize = maxSize - (int)textSize;
+        System.out.println(newSize);
+
+        return newSize;
+    }
+
+    public static TextArea getTextArea() {
+        TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+        textArea.setId("textareaID");
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setMaxWidth(520.00);
+        textArea.setMaxHeight(100.00);
+        return textArea;
     }
 
     /**Algorthim that determines how big the progress bar is
@@ -276,8 +399,8 @@ public class ProjectController {
      * @param currentProgress
      * @return size of the bar
      */
-    private int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
-        if (totalProgress > MAX_RANGE || totalProgress == currentProgress || totalProgress == 0){
+    public int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+        if (currentProgress > totalProgress || totalProgress == currentProgress || totalProgress == 0){
             return MAX_RANGE;
         }
 
@@ -286,7 +409,7 @@ public class ProjectController {
         }
 
         int range = MAX_RANGE / totalProgress;
-        return range * currentProgress;
+        return (int)(range * currentProgress);
     }
 
     /**
@@ -297,7 +420,7 @@ public class ProjectController {
      * @param progressRange
      * @return Color for progressBar
      */
-    private Color pickColor(int MAX_RANGE, int progressRange){
+    public Color pickColor(int MAX_RANGE, int progressRange){
         if (MAX_RANGE / 2 <= progressRange){ //Gradient this
             return Color.BLUE;
         }
@@ -314,9 +437,32 @@ public class ProjectController {
         projectPan.setId("projectPanID");
 
         mainVbox.getChildren().add(projectPan);
+
         hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
+
+    @FXML
+    private Button logoutButton;
+
+    @FXML
+   protected void onLogoutAction(){
+        try{
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
+        stage.setTitle("Project Partner");
+        stage.setWidth(LoginApplication.WIDTH);
+        stage.setHeight(LoginApplication.HEIGHT);
+        stage.setScene(scene);
+        }
+        catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
 }
 
-//TODO refactor into a more MVC style
+//TODO
+// Give each pane a priority number for rerangement.
+

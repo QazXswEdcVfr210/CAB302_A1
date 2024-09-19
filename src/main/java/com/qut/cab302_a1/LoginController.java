@@ -5,16 +5,29 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class LoginController {
-    public static final int MAIN_HEIGHT = 1000;
-    public static final int MAIN_WIDTH = 600;
+    public static final int MAIN_WIDTH = 1000;
+    public static final int MAIN_HEIGHT = 600;
 
     private String user;
 
+    @FXML
+    private VBox loginMain;
+
+    @FXML
+    public void initialize() {
+        try{
+            loginMain.getStylesheets().add(getClass().getResource("stylesheets/loginStylesheet.css").toExternalForm());
+        }
+        catch (Exception e){
+            System.out.println("Stylesheet failed to load");
+        }
+    }
 
     @FXML
     private Label loginText;
@@ -42,7 +55,8 @@ public class LoginController {
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("signup-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
         stage.setTitle("Sign Up");
-
+        stage.setWidth(LoginApplication.WIDTH);
+        stage.setHeight(LoginApplication.HEIGHT);
         stage.setScene(scene);
     }
 
@@ -67,9 +81,10 @@ public class LoginController {
                 user = loginField.getText();
                 Stage stage = (Stage) LoginButton.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), MAIN_HEIGHT, MAIN_WIDTH);
+                Scene scene = new Scene(fxmlLoader.load(), MAIN_WIDTH, MAIN_HEIGHT);
                 stage.setTitle("Project Partner");
-
+                stage.setWidth(MAIN_WIDTH);
+                stage.setHeight(MAIN_HEIGHT);
                 stage.setScene(scene);
             }
             //else update label

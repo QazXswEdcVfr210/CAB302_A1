@@ -1,20 +1,10 @@
-.scene {
-    -fx-background-color: #000000;
-}
 
-#basePane {
+#sideVBox, #basePane{
     -fx-background-color: #25262b;
 }
 
-#sideVBox{
-    -fx-background-color: #25262b;
-}
 
-#mainScrollPane {
-    -fx-background-color: rgba(28,28,28,255);
-}
-
-#mainVbox {
+#mainVbox, #mainScrollPane {
     -fx-background-color: rgba(28,28,28,255);
 }
 
@@ -27,8 +17,6 @@
     -fx-background-radius: 20px;
     -fx-border-radius: 20px
 }
-
-
 
 #projectPanID {
     -fx-background-color: #25262b;
@@ -46,6 +34,14 @@
 
 #hyperlink0, #hyperlink1, #hyperlink2, #hyperlink3 {
     -fx-text-fill: grey;
+
+}
+
+#hyperlink0:hover, #hyperlink1:hover, #hyperlink2:hover, #hyperlink3:hover {
+    -fx-text-fill: white;
+    -fx-background-color: rgba(0,0,0,0.15);
+    -fx-background-radius: 20px;
+    -fx-underline: false;
 }
 
 #sidepart0, #sidepart05, #sidepart1, #sidepart15, #sidepart2, #sidepart25, #sidepart3 {
@@ -89,3 +85,34 @@
     -fx-text-fill: rgba(200, 0, 0, 1);
     -fx-cursor: hand;
 }
+
+#progressLabelID{
+    -fx-text-fill: grey;
+    -fx-font-size: 1.2em;
+}
+
+#tipsLabelID{
+    -fx-text-fill: grey;
+
+}
+
+#titleID{
+    -fx-text-fill: white;
+    -fx-font-size: 1.5em;
+}
+
+#textareaID, .content{
+    -fx-text-fill: grey;
+    -fx-background-color: #25262b;
+    -fx-font-size: 1em;
+    -fx-spacing: 2px;
+
+}
+
+#textareaID .scroll-bar, .thumb{
+    -fx-background-color: transparent;
+    -fx-opacity: 0;
+
+}
+
+
