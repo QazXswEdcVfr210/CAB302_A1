@@ -7,6 +7,7 @@ module com.qut.cab302_a1 {
     requires com.google.gson;
     requires proto.google.common.protos;
     requires jdk.xml.dom;
+    requires junit;
 
     opens com.qut.cab302_a1 to javafx.fxml;
     exports com.qut.cab302_a1;
