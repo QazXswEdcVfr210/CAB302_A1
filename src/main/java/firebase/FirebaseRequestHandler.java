@@ -25,11 +25,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 // Down the line this might be replaced with making requests to cloud functions for security purposes.
 public class FirebaseRequestHandler {
 
-    public static void main(String[] args) throws Exception{
-        //TrySignup("nathcl0804@gmail.com", "N@than21012", "Nathan", true);
-        TryLogin("admin@admin.admin", "adminadmin", false);
-    }
-
     // TODO: make my api key not exposed lol
     private static final String API_KEY = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
@@ -69,7 +64,6 @@ public class FirebaseRequestHandler {
 
             // Get the user's project list
             GetProjectIds();
-            CreateProject("test project", "test description");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
