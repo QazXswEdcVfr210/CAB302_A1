@@ -29,11 +29,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class FirebaseRequestHandler {
 
-    public static void main(String[] args) throws Exception{
-        //TrySignup("nathcl0804@gmail.com", "N@than21012", "Nathan", true);
-        TryLogin("admin@admin.admin", "adminadmin", false);
-    }
-
     // Not a security risk as auth keys are distributed on user login
     private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
@@ -203,7 +198,7 @@ public class FirebaseRequestHandler {
             Map<String, Object> projectIDs = new HashMap<String, Object>();
 
             fields.put("username", username);
-            username.put("stringValue", "testUsername");
+            username.put("stringValue", "testUsername"); // TODO: remove placeholder
 
             fields.put("projectIDs", projectIDs);
             projectIDs.put("arrayValue", new HashMap<String, Object>());
