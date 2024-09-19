@@ -400,7 +400,7 @@ public class ProjectController {
      * @return size of the bar
      */
     public int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
-        if (totalProgress > MAX_RANGE || totalProgress == currentProgress || totalProgress == 0){
+        if (currentProgress > totalProgress || totalProgress == currentProgress || totalProgress == 0){
             return MAX_RANGE;
         }
 
@@ -409,7 +409,7 @@ public class ProjectController {
         }
 
         int range = MAX_RANGE / totalProgress;
-        return range * currentProgress;
+        return (int)(range * currentProgress);
     }
 
     /**

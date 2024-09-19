@@ -1,5 +1,6 @@
 import com.qut.cab302_a1.ProjectController;
 import javafx.scene.control.Label;
+import javafx.scene.paint.Color;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 
@@ -18,6 +19,8 @@ public class testProjectController {
         Assertions.assertEquals(expectedSize, (int)result);
     }
 
+
+// Label is breaking test. Fix later
 //    @Test
 //    public void calcNormalSpacing(){
 //        Label exampleLabel = new Label("Example");
@@ -39,6 +42,7 @@ public class testProjectController {
 //
 //    }
 
+    // ProgressBar
     @Test
     public void testCalculateLowProgressBar(){
         int currentProject = 2;
@@ -58,7 +62,7 @@ public class testProjectController {
     }
 
     @Test
-    public void testCalculate0(){
+    public void testCalculate0Progression(){
         int currentProject = 0;
         int expectedProgress = 0;
         int result = projectController.calculateProgress(MAX_RANGE, totalProgress, currentProject);
@@ -68,7 +72,7 @@ public class testProjectController {
     @Test
     public void testCalculateIncorrectVal(){
         int currentProject = 11;
-        int expectedProgress = 10;
+        int expectedProgress = MAX_RANGE;
         int result = projectController.calculateProgress(MAX_RANGE, totalProgress, currentProject);
         Assertions.assertEquals(expectedProgress, result);
     }
@@ -78,7 +82,7 @@ public class testProjectController {
         int currentProject = 2;
         int totalLowProgress = 4;
         int expectedProgress = (int)(0.5 * MAX_RANGE);
-        int result = projectController.calculateProgress(MAX_RANGE, totalProgress, currentProject);
+        int result = projectController.calculateProgress(MAX_RANGE, totalLowProgress, currentProject);
         Assertions.assertEquals(expectedProgress, result);
     }
 
@@ -87,7 +91,24 @@ public class testProjectController {
         int currentProject = 66;
         int totalHighProgress = 100;
         int expectedProgress = (int)(0.66 * MAX_RANGE);
-        int result = projectController.calculateProgress(MAX_RANGE, totalProgress, currentProject);
+        int result = projectController.calculateProgress(MAX_RANGE, totalHighProgress, currentProject);
         Assertions.assertEquals(expectedProgress, result);
+    }
+
+    //Colour
+    @Test
+    public void testBlue(){
+        int progressRange = 180;
+        Color expected = projectController.pickColor(MAX_RANGE, progressRange);
+        Color actual = Color.BLUE;
+        Assertions.assertEquals(expected, actual);
+    }
+
+    @Test
+    public void testRed(){
+        int progressRange = 100;
+        Color expected = projectController.pickColor(MAX_RANGE, progressRange);
+        Color actual = Color.RED;
+        Assertions.assertEquals(expected, actual);
     }
 }
