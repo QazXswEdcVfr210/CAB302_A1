@@ -8,7 +8,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.Hyperlink?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:id="loginMain"
       fx:controller="com.qut.cab302_a1.LoginController">
   <padding>
     <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>

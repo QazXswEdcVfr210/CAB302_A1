@@ -26,7 +26,7 @@
             </padding>
             <HBox spacing="90.0" alignment="TOP_LEFT">
                 <Label fx:id="sidebarProjects1">Projects</Label>
-                <Button fx:id="buttonV">v</Button> <!--Will be used to hide below elements -->
+                <Button fx:id="buttonV" onAction="#minimiseActon">v</Button> <!--Will be used to hide below elements -->
             </HBox>
             <HBox spacing="5.0">
                 <padding>
@@ -82,18 +82,20 @@
             <padding>
                 <Insets bottom="20.00" left="20.00"></Insets>
             </padding>
-            <Button fx:id="logoutButton"> Logout</Button>
+            <Button fx:id="logoutButton" onAction="#onLogoutAction"> Logout</Button>
             <Button fx:id="buttonA">*</Button>
         </HBox>
     </VBox>
 
     <!--Main page stuff -->
+
     <ScrollPane fx:id="mainScrollPane"  vbarPolicy="NEVER" hbarPolicy="NEVER" vvalue="0" HBox.hgrow="ALWAYS"> <!--Consider removing the NEVER statements and changing the appearence in css. -->
     <padding>
         <Insets left="10.0" right="10.0" top="30.0"/>
     </padding>
         <VBox spacing="15.0" alignment="CENTER" fx:id="mainVbox">
             <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
+            <Label fx:id="projectName">All Projects</Label>
         </VBox>
     </ScrollPane>
 </HBox>
