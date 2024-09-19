@@ -4,10 +4,23 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<VBox alignment="CENTER" spacing="30.0" xmlns:fx="http://javafx.com/fxml"
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Button?>
+<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml" fx:id="signupMain"
       fx:controller="com.qut.cab302_a1.SignupController">
     <padding>
         <Insets bottom="40.0" left="80.0" right="80.0" top="60.0"/>
     </padding>
 
+    <Label fx:id="loginText" text="Login"/>
+    <TextField fx:id="loginField">admin@admin.admin</TextField>
+    <PasswordField fx:id="passwordField">adminadmin</PasswordField>
+    <PasswordField fx:id="passwordConfirm">adminadmin</PasswordField>
+    <Label fx:id="incorrectPasswordLabel" visible="false">Incorrect Password</Label>
+
+
+    <Button fx:id="LoginButton"  text="Signup"/>
+    <Button fx:id="google" text="Signup with google"/>
 </VBox>
