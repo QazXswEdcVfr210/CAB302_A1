@@ -1,10 +1,12 @@
 
+
 #sideVBox, #basePane{
     -fx-background-color: #25262b;
 }
 
 
 #mainVbox, #mainScrollPane {
+
     -fx-background-color: rgba(28,28,28,255);
 }
 
@@ -17,6 +19,8 @@
     -fx-background-radius: 20px;
     -fx-border-radius: 20px
 }
+
+
 
 #projectPanID {
     -fx-background-color: #25262b;
@@ -35,6 +39,7 @@
 #hyperlink0, #hyperlink1, #hyperlink2, #hyperlink3 {
     -fx-text-fill: grey;
 
+
 }
 
 #hyperlink0:hover, #hyperlink1:hover, #hyperlink2:hover, #hyperlink3:hover {
@@ -42,6 +47,7 @@
     -fx-background-color: rgba(0,0,0,0.15);
     -fx-background-radius: 20px;
     -fx-underline: false;
+
 }
 
 #sidepart0, #sidepart05, #sidepart1, #sidepart15, #sidepart2, #sidepart25, #sidepart3 {
@@ -84,6 +90,7 @@
 #logoutButton:hover{
     -fx-text-fill: rgba(200, 0, 0, 1);
     -fx-cursor: hand;
+
 }
 
 #progressLabelID{

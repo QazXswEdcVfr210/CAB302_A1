@@ -1,25 +1,28 @@
 package com.qut.cab302_a1;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.Node;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.ArrayList;
-import java.util.List;
+
 
 
 public class ProjectController {
@@ -117,8 +120,12 @@ public class ProjectController {
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(260, 260);
+
+            bigPane.layout();
+
             overLay.setPrefSize(260, 260);
             bigPane.layout();
+
 
             mainScrollPane.setVvalue(scrollVal);
         });
@@ -168,23 +175,55 @@ public class ProjectController {
         TextField projectDescriptionField = new TextField();
         projectDescriptionField.setPromptText("Enter project description");
 
+        TextField projectResourcesField = new TextField();
+        projectResourcesField.setPromptText("Enter list of required resources");
+
+        TextField projectToolsField = new TextField();
+        projectToolsField.setPromptText("Enter list of required tools");
+
         // Save Button
         Button saveButton = new Button("Save");
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
+            String projectDescription = projectDescriptionField.getText();
 
-            if (!projectName.isEmpty()) {
-                projectNameField.setEditable(false);
-                projectDescriptionField.setEditable(false);
-                saveButton.setDisable(true);
+            if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
+                try {
+                    // Call the backend function to create a new project and update the database
+                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+
+                    if (result.equals("success")) {
+                        // Success case: disable editing and buttons
+                        projectNameField.setEditable(false);
+                        projectDescriptionField.setEditable(false);
+                        projectResourcesField.setEditable(false);
+                        projectToolsField.setEditable(false);
+                        saveButton.setDisable(true);
+
+                        // Optionally, show a success message
+                        showSuccessAlert("Project Created", "Project was successfully saved to the database!");
+                    } else {
+                        // Handle the error returned by the backend
+                        showErrorAlert("Error creating project", result);
+                    }
+                } catch (Exception e) {
+                    // Handle exceptions from backend
+                    showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
+                }
+            } else {
+                // Show error if fields are empty
+                showErrorAlert("Validation Error", "Project name and description cannot be empty.");
             }
         });
+
 
         // Edit Button
         Button editButton = new Button("Edit");
         editButton.setOnAction(event -> {
             projectNameField.setEditable(true);
             projectDescriptionField.setEditable(true);
+            projectResourcesField.setEditable(true);
+            projectToolsField.setEditable(true);
             saveButton.setDisable(false);
         });
 
@@ -220,7 +259,7 @@ public class ProjectController {
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton);
-        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, buttonBox);
+        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
 
         // Highlight effect on hover
         projectPane.setOnMouseEntered(event -> {
@@ -235,6 +274,25 @@ public class ProjectController {
         return projectPane;
     }
 
+    // Method to display success alerts
+    private void showSuccessAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);  // No header, just a title and content
+        alert.setContentText(message);
+        alert.showAndWait();  // Wait for the user to close the alert
+    }
+
+    // Method to display error alerts
+    private void showErrorAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);  // No header, just a title and content
+        alert.setContentText(message);
+        alert.showAndWait();  // Wait for the user to close the alert
+    }
+
+
     /**
      * Creates the bigPane.
      *
@@ -248,8 +306,10 @@ public class ProjectController {
      */
     private HBox createBigPane(){
         HBox bigPane = new HBox(20);
+
         int totalProgress = 10; // testing values
         int currentProgress = 9; //testing values
+
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -284,14 +344,17 @@ public class ProjectController {
                             progressBox.setSpacing(185);
                             // = should be changed to a settings icon
                             Label progressLabel = new Label("=  Progress");
+
                             progressLabel.setId("progressLabelID");
                             Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
                             tipsLabel.setId("tipsLabelID");
+
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
                                 final int MAX_WIDTH = 5;
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+
 
                                 HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
                                 StackPane progressPane = new StackPane();
@@ -333,6 +396,7 @@ public class ProjectController {
         return bigPane;
     }
 
+
     public void movePanes(){
         if (testTitle % 2 == 0){
             //moving panes around method values above are for testing
@@ -346,6 +410,7 @@ public class ProjectController {
      * @return size of text and font
      */
     public double calculateTextSize(String title){
+
     Text titleText = new Text(title);
     titleText.setFont(Font.font("-fx-font-size: 1.5"));
     double width = titleText.getLayoutBounds().getWidth();
@@ -387,6 +452,7 @@ public class ProjectController {
         textArea.setMaxHeight(100.00);
         return textArea;
     }
+
 
     /**Algorthim that determines how big the progress bar is
      * by dividing max_range by totalProgress and multiplying that with
@@ -437,6 +503,7 @@ public class ProjectController {
         projectPan.setId("projectPanID");
 
         mainVbox.getChildren().add(projectPan);
+        hideAllPanes(); // This for some reason fixes the size of panes.
 
         hideAllPanes(); // This for some reason fixes the size of panes.
 

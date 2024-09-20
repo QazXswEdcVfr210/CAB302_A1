@@ -21,11 +21,13 @@ import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+
 /*
     This class handles making requests to Firebase through REST API requests.
     Down the line this might be replaced with making requests to cloud functions for security purposes.
     The purpose of this class is to abstract complex backend functionality into easy to use functions for frontend use.
  */
+
 
 public class FirebaseRequestHandler {
 
@@ -54,6 +56,8 @@ public class FirebaseRequestHandler {
             GenericUrl url = new GenericUrl(firebaseUrl);
             HttpContent content = new JsonHttpContent(jsonFactory, data);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
+
+            String responseBody = response.parseAsString();
 
             // Handle response (print response body to console if bPrintResponse is true.
             String responseBody = response.parseAsString();
@@ -123,45 +127,7 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // Creates a new project, the returned string is either representative of success or an error code
-    public static String CreateProject(String _projectName, String _projectDescription) throws Exception {
-        try{
 
-            // Generate random project ID and check if project exists
-            String projectID = "";
-            boolean cont = true;
-            while(cont) {
-                projectID = RandomStringUtils.randomAlphabetic(16);
-                cont = FirestoreHandler.CheckDocumentExists(projectID);
-            }
-
-            // Create payload
-            Map<String, Object> fields = new HashMap<String, Object>();
-
-            Map<String, Object> projectName = new HashMap<String, Object>();
-            fields.put("projectName", projectName);
-            projectName.put("stringValue", _projectName);
-
-            Map<String, Object> projectDescription = new HashMap<String, Object>();
-            fields.put("projectDescription", projectDescription);
-            projectDescription.put("stringValue", _projectDescription);
-
-            Map<String, Object> projectSteps = new HashMap<String, Object>();
-            fields.put("projectSteps", projectSteps);
-            projectSteps.put("arrayValue", new HashMap<String, Object>());
-
-            Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, fields);
-
-            // TODO: Add reference to this project in Users/{uid}/projectIDs
-            FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", projectID);
-
-            return "success";
-
-        } catch (HttpResponseException e) {
-            // Print to console if anything goes wrong
-            return FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent());
-        }
-    }
 
     // Creates a new project step
     public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
@@ -169,6 +135,7 @@ public class FirebaseRequestHandler {
     }
 
     // ######## these functions aren't used outside of this script and now live at the bottom of this page ########
+
 
     // Gets the list of the current user's projects.
     private static void GetProjectIds() throws Exception {
@@ -201,7 +168,9 @@ public class FirebaseRequestHandler {
             Map<String, Object> projectIDs = new HashMap<String, Object>();
 
             fields.put("username", username);
+
             username.put("stringValue", "testUsername"); // TODO: remove placeholder
+
 
             fields.put("projectIDs", projectIDs);
             projectIDs.put("arrayValue", new HashMap<String, Object>());
@@ -211,6 +180,49 @@ public class FirebaseRequestHandler {
         } catch (HttpResponseException e) {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
         }
+    }
+
+
+    // Creates a new project, the returned string is either representative of success or an error code
+    public static String CreateProject(String _projectName, String _projectDescription) throws Exception {
+        try{
+
+            // Generate random project ID and check if project exists
+            String projectID = "";
+            boolean cont = false;
+            while(cont) {
+                projectID = RandomStringUtils.randomAlphabetic(16);
+                cont = FirestoreHandler.CheckDocumentExists(projectID);
+            }
+
+            // Create payload
+            Map<String, Object> fields = new HashMap<String, Object>();
+
+            Map<String, Object> projectName = new HashMap<String, Object>();
+            fields.put("projectName", projectName);
+            projectName.put("stringValue", _projectName);
+
+            Map<String, Object> projectDescription = new HashMap<String, Object>();
+            fields.put("projectDescription", projectDescription);
+            projectDescription.put("stringValue", _projectDescription);
+
+            Map<String, Object> projectSteps = new HashMap<String, Object>();
+            fields.put("projectSteps", projectSteps);
+            projectSteps.put("arrayValue", new HashMap<String, Object>());
+
+            Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, fields);
+
+            return "success";
+
+        } catch (HttpResponseException e) {
+            // Print to console if anything goes wrong
+            return FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent());
+        }
+    }
+
+    // Creates a new project step
+    public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
+        return false;
     }
 
     // TODO: Create functions MakePostRequest(), MakeGetRequest()
