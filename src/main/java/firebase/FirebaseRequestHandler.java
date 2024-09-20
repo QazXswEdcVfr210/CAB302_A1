@@ -57,7 +57,7 @@ public class FirebaseRequestHandler {
             HttpContent content = new JsonHttpContent(jsonFactory, data);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
 
-            String responseBody = response.parseAsString();
+
 
             // Handle response (print response body to console if bPrintResponse is true.
             String responseBody = response.parseAsString();
@@ -220,10 +220,7 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // Creates a new project step
-    public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
-        return false;
-    }
+
 
     // TODO: Create functions MakePostRequest(), MakeGetRequest()
 }
