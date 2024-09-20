@@ -1,8 +1,5 @@
 package com.qut.cab302_a1;
 
-
-
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +27,7 @@ import javafx.stage.Stage;
 
 public class ProjectController {
     private List<StackPane> projectList = new ArrayList<>();
-    public int testTitle = 0;
+    public int testTitle = 1;
 
     @FXML
     private Button buttonV;
@@ -400,7 +397,20 @@ public class ProjectController {
     }
 
 
-    private double calculateTextSize(String title){
+    public void movePanes(){
+        if (testTitle % 2 == 0){
+            //moving panes around method values above are for testing
+        }
+    }
+
+    /**Gets the string of title and sets it to a text format
+     * checks the width and returns double value
+     *
+     * @param title
+     * @return size of text and font
+     */
+    public double calculateTextSize(String title){
+
     Text titleText = new Text(title);
     titleText.setFont(Font.font("-fx-font-size: 1.5"));
     double width = titleText.getLayoutBounds().getWidth();
@@ -416,7 +426,7 @@ public class ProjectController {
      * @param title title label
      * @return the size of the spacing
      */
-    private int calcSpacing(double textSize, int maxSize, Label title){
+    public int calcSpacing(double textSize, int maxSize, Label title){
         int newSize;
         double fontSize = 1.5; //css font size value
         if (textSize > maxSize){
@@ -426,13 +436,14 @@ public class ProjectController {
         }
 
         System.out.println(textSize);
+        //System.out.println(calculateTextSize("Example") + " Test");
         newSize = maxSize - (int)textSize;
         System.out.println(newSize);
 
         return newSize;
     }
 
-    private static TextArea getTextArea() {
+    public static TextArea getTextArea() {
         TextArea textArea = new TextArea("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
         textArea.setId("textareaID");
         textArea.setEditable(false);
@@ -454,8 +465,8 @@ public class ProjectController {
      * @param currentProgress
      * @return size of the bar
      */
-    private int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
-        if (totalProgress > MAX_RANGE || totalProgress == currentProgress || totalProgress == 0){
+    public int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+        if (currentProgress > totalProgress || totalProgress == currentProgress || totalProgress == 0){
             return MAX_RANGE;
         }
 
@@ -464,7 +475,7 @@ public class ProjectController {
         }
 
         int range = MAX_RANGE / totalProgress;
-        return range * currentProgress;
+        return (int)(range * currentProgress);
     }
 
     /**
@@ -475,7 +486,7 @@ public class ProjectController {
      * @param progressRange
      * @return Color for progressBar
      */
-    private Color pickColor(int MAX_RANGE, int progressRange){
+    public Color pickColor(int MAX_RANGE, int progressRange){
         if (MAX_RANGE / 2 <= progressRange){ //Gradient this
             return Color.BLUE;
         }
@@ -519,6 +530,6 @@ public class ProjectController {
 
 }
 
-//TODO refactor into a more MVC style
+//TODO
 // Give each pane a priority number for rerangement.
 

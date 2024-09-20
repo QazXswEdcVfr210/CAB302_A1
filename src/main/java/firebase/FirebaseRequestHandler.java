@@ -21,12 +21,18 @@ import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-// This class handles making requests to Firebase through REST API requests.
-// Down the line this might be replaced with making requests to cloud functions for security purposes.
+
+/*
+    This class handles making requests to Firebase through REST API requests.
+    Down the line this might be replaced with making requests to cloud functions for security purposes.
+    The purpose of this class is to abstract complex backend functionality into easy to use functions for frontend use.
+ */
+
+
 public class FirebaseRequestHandler {
 
-    // TODO: make my api key not exposed lol
-    private static final String API_KEY = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
+    // Not a security risk as auth keys are distributed on user login
+    private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     // TODO: USE THE createAuthUri RESOURCE TO **VERIFY** THAT THERE IS AN ACCOUNT WITH THE EMAIL FOR EXTRA SECURITY BEFORE SENDING PASSWORD INFO
@@ -35,7 +41,7 @@ public class FirebaseRequestHandler {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
-            String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s", API_KEY);
+            String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s", FirebaseID);
 
             // Create payload
             FirebaseJSONPackage p = new FirebaseJSONPackage();
@@ -54,6 +60,7 @@ public class FirebaseRequestHandler {
             String responseBody = response.parseAsString();
 
             // Handle response (print response body to console if bPrintResponse is true.
+            String responseBody = response.parseAsString();
             if(bPrintResponse && response.getStatusCode() == 200) {
                 System.out.println(responseBody);
             }
@@ -81,7 +88,7 @@ public class FirebaseRequestHandler {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
-            String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s", API_KEY);
+            String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s", FirebaseID);
 
             // Create payload
             FirebaseJSONPackage p = new FirebaseJSONPackage();
@@ -120,6 +127,16 @@ public class FirebaseRequestHandler {
         }
     }
 
+
+
+    // Creates a new project step
+    public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
+        return false;
+    }
+
+    // ######## these functions aren't used outside of this script and now live at the bottom of this page ########
+
+
     // Gets the list of the current user's projects.
     private static void GetProjectIds() throws Exception {
         try {
@@ -151,7 +168,9 @@ public class FirebaseRequestHandler {
             Map<String, Object> projectIDs = new HashMap<String, Object>();
 
             fields.put("username", username);
-            username.put("stringValue", "testUsername");
+
+            username.put("stringValue", "testUsername"); // TODO: remove placeholder
+
 
             fields.put("projectIDs", projectIDs);
             projectIDs.put("arrayValue", new HashMap<String, Object>());
@@ -162,6 +181,7 @@ public class FirebaseRequestHandler {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
         }
     }
+
 
     // Creates a new project, the returned string is either representative of success or an error code
     public static String CreateProject(String _projectName, String _projectDescription) throws Exception {
@@ -204,4 +224,6 @@ public class FirebaseRequestHandler {
     public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
         return false;
     }
+
+    // TODO: Create functions MakePostRequest(), MakeGetRequest()
 }

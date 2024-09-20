@@ -10,6 +10,9 @@ module com.qut.cab302_a1 {
     requires firebase.admin;
 
     requires jdk.xml.dom;
+
+    requires junit;
+
     requires java.sql;
     requires com.google.api.services.storage;
     requires org.apache.commons.lang3;

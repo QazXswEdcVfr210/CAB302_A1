@@ -88,8 +88,12 @@ public class FirebaseJSONUnpacker {
 
             // Store project ids
             List<String> projectIDs = new ArrayList<>();
-            for (JsonElement element : projectIDsArray) {
-                projectIDs.add(element.getAsJsonObject().get("stringValue").getAsString());
+
+            if(projectIDsArray != null && !projectIDsArray.isEmpty()) {
+                for (JsonElement element : projectIDsArray) {
+                    projectIDs.add(element.getAsJsonObject().get("stringValue").getAsString());
+                }
+
             }
 
             // Save to local storage

@@ -70,7 +70,9 @@ public class FirestoreHandler {
         return false;
     }
 
-    public static Boolean ModifyFieldValue(String name, String newValue) {
+
+    public static Boolean ModifyFieldValue(String collectionName, String documentName, String fieldName, String newValue) {
+
         return false;
     }
 
