@@ -90,7 +90,7 @@ public class ProjectController   {
 
     public class CustomStackPane extends StackPane implements ObserverPane {
 
-        int position = 0;
+        int position = testTitle; //set to 0 later
         public CustomStackPane(int position) {
             this.position = position;
             paneObservers.add(this);
@@ -185,7 +185,7 @@ public class ProjectController   {
     }
 
 
-    private VBox createMainPane(StackPane overLay) {
+    private VBox createMainPane(CustomStackPane overLay) {
         VBox projectPane = new VBox(20);
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         projectPane.setPrefSize(150, 150);
@@ -275,6 +275,7 @@ public class ProjectController   {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == deleteButtonType) {
                 mainVbox.getChildren().remove(overLay);
+                paneObservers.remove(overLay);
                 projectList.remove(overLay);  // Remove from the list of projects
             }
         });
