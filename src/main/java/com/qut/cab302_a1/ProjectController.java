@@ -94,14 +94,12 @@ public class ProjectController   {
         public CustomStackPane(int position) {
             this.position = position;
             paneObservers.add(this);
-            notifyObservers();
+            notifiedObservers();
         }
 
         // When a postion is changed this function is called which updates each observer
-        public void notifyObservers() {
-            for (ObserverPane observer : paneObservers) {
-                observer.updatePane(this.position);
-            }
+        public void notifiedObservers() {
+            System.out.println(testTitle);
         }
 
         // change location
@@ -109,6 +107,28 @@ public class ProjectController   {
         public void updatePane(int position) {
             System.out.println("position = " + position);
         }
+
+        public void mergeOrderObservers(){
+            mergeList(paneObservers);
+        }
+
+        public void mergeList(List<ObserverPane> list){
+            List<ObserverPane> firstHalf = new ArrayList<>();
+            List<ObserverPane> secondHalf = new ArrayList<>();
+
+            if (list.size() > 1){
+                int half = list.size() / 2;
+
+                for (int i = 0; i < half; i++) {
+                    firstHalf.add(list.get(i));
+                }
+
+                for (int i = half; i < list.size(); i++) {
+                    secondHalf.add(list.get(i));
+                }
+            }
+        }
+
     }
     /**
      * main functionality to the page. Creates the ui for the page
