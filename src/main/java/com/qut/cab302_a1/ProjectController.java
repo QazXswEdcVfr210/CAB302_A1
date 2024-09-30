@@ -23,7 +23,7 @@ import javafx.stage.Stage;
 
 
 public class ProjectController   {
-    private List<StackPane> projectList = new ArrayList<>();
+    private List<CustomStackPane> projectList = new ArrayList<>();
     private static List<ObserverPane> paneObservers =  new ArrayList<>();
     public int testTitle = 1;
 
@@ -109,12 +109,12 @@ public class ProjectController   {
         }
 
         public void mergeOrderObservers(){
-            splitList(paneObservers);
+            splitList(projectList);
         }
 
-        public List<ObserverPane> splitList(List<ObserverPane> list){
-            List<ObserverPane> firstHalf = new ArrayList<>();
-            List<ObserverPane> secondHalf = new ArrayList<>();
+        public List<CustomStackPane> splitList(List<CustomStackPane> list){
+            List<CustomStackPane> firstHalf = new ArrayList<>();
+            List<CustomStackPane> secondHalf = new ArrayList<>();
 
             if (list.size() < 2){
                 return list;
@@ -138,7 +138,11 @@ public class ProjectController   {
             return mergeLists(list, firstHalf, secondHalf);
         }
 
-        public static mergeLists()
+        public List<CustomStackPane> mergeLists(List<CustomStackPane> original, List<CustomStackPane> first, List<CustomStackPane> second){
+            List<CustomStackPane> merged = new ArrayList<>();
+
+            return merged;
+        }
     }
     /**
      * main functionality to the page. Creates the ui for the page
