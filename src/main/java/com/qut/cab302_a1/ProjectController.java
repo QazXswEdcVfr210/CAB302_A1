@@ -109,14 +109,17 @@ public class ProjectController   {
         }
 
         public void mergeOrderObservers(){
-            mergeList(paneObservers);
+            splitList(paneObservers);
         }
 
-        public void mergeList(List<ObserverPane> list){
+        public List<ObserverPane> splitList(List<ObserverPane> list){
             List<ObserverPane> firstHalf = new ArrayList<>();
             List<ObserverPane> secondHalf = new ArrayList<>();
 
-            if (list.size() > 1){
+            if (list.size() < 2){
+                return list;
+            }
+            else{
                 int half = list.size() / 2;
 
                 for (int i = 0; i < half; i++) {
@@ -126,9 +129,16 @@ public class ProjectController   {
                 for (int i = half; i < list.size(); i++) {
                     secondHalf.add(list.get(i));
                 }
+
+                splitList(firstHalf);
+                splitList(secondHalf);
+
             }
+
+            return mergeLists(list, firstHalf, secondHalf);
         }
 
+        public static mergeLists()
     }
     /**
      * main functionality to the page. Creates the ui for the page
