@@ -97,9 +97,14 @@ public class ProjectController   {
             notifiedObservers();
         }
 
+        public int getPosition(){
+            return position;
+        }
+
         // When a postion is changed this function is called which updates each observer
         public void notifiedObservers() {
             System.out.println(testTitle);
+            mergeOrderObservers();
         }
 
         // change location
@@ -115,6 +120,7 @@ public class ProjectController   {
         public List<CustomStackPane> splitList(List<CustomStackPane> list){
             List<CustomStackPane> firstHalf = new ArrayList<>();
             List<CustomStackPane> secondHalf = new ArrayList<>();
+            List<CustomStackPane> finalList = new ArrayList<>();
 
             if (list.size() < 2){
                 return list;
@@ -132,7 +138,6 @@ public class ProjectController   {
 
                 splitList(firstHalf);
                 splitList(secondHalf);
-
             }
 
             return mergeLists(list, firstHalf, secondHalf);
@@ -140,7 +145,32 @@ public class ProjectController   {
 
         public List<CustomStackPane> mergeLists(List<CustomStackPane> original, List<CustomStackPane> first, List<CustomStackPane> second){
             List<CustomStackPane> merged = new ArrayList<>();
+            int originalSize = original.size();
+            int i = 0, j = 0;
 
+            while (i < first.size() && j < second.size()){
+                if (first.get(i).getPosition() < second.get(i).getPosition()){
+                    merged.add(first.get(i));
+                    i++;
+                }
+                else {
+                    merged.add(second.get(j));
+                    j++;
+                }
+            }
+
+            while (i < first.size()){
+                merged.add(first.get(i));
+                i++;
+            }
+
+            while (j < second.size()){
+                merged.add(second.get(j));
+                j++;
+            }
+
+
+            // 2 for loops
             return merged;
         }
     }
