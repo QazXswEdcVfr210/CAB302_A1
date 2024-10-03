@@ -25,7 +25,7 @@ import javafx.stage.Stage;
 public class ProjectController   {
     private List<CustomStackPane> projectList = new ArrayList<>();
     private static List<ObserverPane> paneObservers =  new ArrayList<>();
-    public int testTitle = 1;
+    public static int testTitle = 10;
 
     @FXML
     private Button buttonV;
@@ -90,15 +90,34 @@ public class ProjectController   {
 
     public class CustomStackPane extends StackPane implements ObserverPane {
 
-        int position = testTitle; //set to 0 later
+        int positionVal = 10;
+
+        int position; //set to 0 later
         public CustomStackPane(int position) {
+            super();
             this.position = position;
             paneObservers.add(this);
+            setPosition(positionVal);
+            positionVal--;
+
+            //test
+            for(CustomStackPane pane: projectList){
+                System.out.print(pane.getPosition() + ", ");
+            }
+
             notifiedObservers();
+            //test
+            for(CustomStackPane pane: projectList){
+                System.out.print(pane.getPosition() + ", ");
+            }
         }
 
         public int getPosition(){
             return position;
+        }
+
+        public void setPosition(int positionVal){
+            this.position = positionVal;
         }
 
         // When a postion is changed this function is called which updates each observer
@@ -114,7 +133,7 @@ public class ProjectController   {
         }
 
         public void mergeOrderObservers(){
-            splitList(projectList);
+            projectList = splitList(projectList);
         }
 
         public List<CustomStackPane> splitList(List<CustomStackPane> list){
@@ -149,7 +168,7 @@ public class ProjectController   {
             int i = 0, j = 0;
 
             while (i < first.size() && j < second.size()){
-                if (first.get(i).getPosition() < second.get(i).getPosition()){
+                if (first.get(i).getPosition() < second.get(j).getPosition()){
                     merged.add(first.get(i));
                     i++;
                 }
@@ -419,7 +438,7 @@ public class ProjectController   {
             rightSide.setPadding(new Insets(40, 0, 0, 0));
                 HBox middlePane = new HBox(20);
                 Label title = new Label("Title" + testTitle); // no more than 25 Char
-                testTitle++;
+                testTitle--;
                 int MAX_SPACING = 400;
                 title.setId("titleID");
 
