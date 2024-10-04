@@ -2,7 +2,6 @@ package com.qut.cab302_a1;
 
 import java.io.IOException;
 import java.util.*;
-
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +18,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 
 
 public class ProjectController   {
@@ -90,22 +88,28 @@ public class ProjectController   {
 
     public class CustomStackPane extends StackPane implements ObserverPane {
 
-        int positionVal = 10;
-
         int position; //set to 0 later
         public CustomStackPane(int position) {
             super();
             this.position = position;
             paneObservers.add(this);
-            setPosition(positionVal);
-            positionVal--;
+            projectList.add(this);
 
             //test
             for(CustomStackPane pane: projectList){
                 System.out.print(pane.getPosition() + ", ");
             }
 
+            System.out.println("");
+
             notifiedObservers();
+            mainVbox.getChildren().removeIf(node -> node instanceof CustomStackPane);
+
+            for (CustomStackPane pane: projectList){
+                mainVbox.getChildren().add(pane);
+            }
+
+
             //test
             for(CustomStackPane pane: projectList){
                 System.out.print(pane.getPosition() + ", ");
@@ -155,8 +159,8 @@ public class ProjectController   {
                     secondHalf.add(list.get(i));
                 }
 
-                splitList(firstHalf);
-                splitList(secondHalf);
+                firstHalf = splitList(firstHalf);
+                secondHalf = splitList(secondHalf);
             }
 
             return mergeLists(list, firstHalf, secondHalf);
@@ -200,9 +204,8 @@ public class ProjectController   {
      */
     @FXML
     private StackPane createProjectPane (){
-        CustomStackPane overLay = new CustomStackPane(0);
+        CustomStackPane overLay = new CustomStackPane(testTitle);
         overLay.setId("overlayID");
-        overLay.setUserData(0); //0-2 0 = priority | 1 = inProgress | 2 = Complete
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
         projectPane.setId("projectPane");
@@ -211,7 +214,7 @@ public class ProjectController   {
         overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
-        projectList.add(overLay);
+
 
         // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
