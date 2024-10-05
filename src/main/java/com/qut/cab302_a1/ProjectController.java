@@ -162,13 +162,31 @@ public class ProjectController {
         }
     }
 
+    // Method to handle the saving of duplicated projects to db
+    private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
+        try {
+            // This calls the FirebaseRequestHandler to save the project in the db
+            String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
+
+            if (result.equals("success")) {
+                // Show success message if saved to db
+                showSuccessAlert("Project Duplicated", "The duplicated project was successfully saved to the database!");
+            } else {
+                // Show error message if it fails
+                showErrorAlert("Error", "Failed to duplicate project: " + result);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();  // Log any errors
+            showErrorAlert("Error", "An error occurred while duplicating the project: " + e.getMessage());
+        }
+    }
 
     private VBox createMainPane(StackPane overLay) {
         VBox projectPane = new VBox(20);
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         projectPane.setPrefSize(150, 150);
 
-        // Project Name
+        // Project details
         TextField projectNameField = new TextField();
         projectNameField.setPromptText("Enter project name");
 
@@ -186,11 +204,13 @@ public class ProjectController {
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
             String projectDescription = projectDescriptionField.getText();
+            String projectResources = projectResourcesField.getText();
+            String projectTools = projectToolsField.getText();
 
-            if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
+            if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
                 try {
                     // Call the backend function to create a new project and update the database
-                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
 
                     if (result.equals("success")) {
                         // Success case: disable editing and buttons
@@ -216,6 +236,38 @@ public class ProjectController {
             }
         });
 
+        // Duplicate button
+        Button duplicateButton = new Button("Duplicate");
+        duplicateButton.setOnAction(event -> {
+            // Retrieve the values from the existing fields
+            String projectName = projectNameField.getText();
+            String projectDescription = projectDescriptionField.getText();
+            String projectResources = projectResourcesField.getText();
+            String projectTools = projectToolsField.getText();
+
+            // Create a new StackPane for the duplicated fields
+            StackPane duplicateProjectPane = createProjectPane();
+            duplicateProjectPane.setId("duplicateProjectPaneID");
+
+            // Get the VBox from the new pane (children at index 0)
+            VBox newProjectPane = (VBox) duplicateProjectPane.getChildren().get(0);
+
+            // Get the text fields from the new pane and set their values to the duplicated values
+            TextField duplicateNameField = (TextField) newProjectPane.getChildren().get(0);
+            TextField duplicateDescriptionField = (TextField) newProjectPane.getChildren().get(1);
+            TextField duplicateResourcesField = (TextField) newProjectPane.getChildren().get(2);
+            TextField duplicateToolsField = (TextField) newProjectPane.getChildren().get(3);
+
+            duplicateNameField.setText(projectName);
+            duplicateDescriptionField.setText(projectDescription);
+            duplicateResourcesField.setText(projectResources);
+            duplicateToolsField.setText(projectTools);
+
+            // Add the duplicated pane to the main VBox
+            mainVbox.getChildren().add(duplicateProjectPane);
+            hideAllPanes(); // This for some reason fixes the size of panes.
+            handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools);
+        });
 
         // Edit Button
         Button editButton = new Button("Edit");
@@ -240,7 +292,8 @@ public class ProjectController {
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             alert.initOwner(stage);  // Center the alert relative to the current window
 
-            ButtonType deleteButtonType = new ButtonType("Delete");
+                        ButtonType deleteButtonType = new ButtonType("Delete");
+
             ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
             alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
@@ -258,7 +311,7 @@ public class ProjectController {
         });
 
         // Adding buttons to a horizontal box layout
-        HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton);
+        HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
         projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
 
         // Highlight effect on hover
