@@ -1,3 +1,105 @@
 #loginMain{
     -fx-background-color: rgba(28,28,28,255);
 }
+
+#loginText{
+    -fx-text-fill: white;
+    -fx-font-size: 1.7em;
+    -fx-font-weight: bold;
+}
+
+#userLabel, #passwordLabel{
+    -fx-text-fill: white;
+}
+
+#orLabel{
+    -fx-text-fill: grey;
+}
+
+#LoginButton{
+    -fx-pref-width: 400px;
+    -fx-pref-height: 33px;
+    -fx-background-color: #3D6794;
+    -fx-text-fill: grey;
+    -fx-background-radius: 3px;
+}
+
+#LoginButton:hover{
+    -fx-text-fill: white;
+    -fx-background-color: #6287AF;
+    -fx-cursor: hand;
+}
+
+#passwordField {
+    -fx-border-color: white;
+    -fx-text-fill: white;
+    -fx-background-color: #25262b;
+    -fx-pref-height: 33px;
+}
+
+#passwordField.empty {
+    -fx-border-color: grey;
+    -fx-text-fill: grey;
+    -fx-pref-height: 33px;
+}
+
+#loginField {
+    -fx-border-color: white;
+    -fx-text-fill: white;
+    -fx-background-color: #25262b;
+    -fx-pref-height: 33px;
+}
+
+#loginField.empty {
+    -fx-border-color: grey;
+    -fx-text-fill: grey;
+    -fx-pref-height: 33px;
+}
+
+#settingsButton{
+    -fx-text-fill: grey;
+    -fx-font-size: 1.7em;
+    -fx-background-color: transparent;
+}
+
+#settingsButton:hover{
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+
+#googleButton{
+    -fx-pref-width: 340px;
+    -fx-pref-height: 33px;
+    -fx-text-fill: lightgrey;
+    -fx-border-color: #17599F;
+    -fx-background-color: transparent;
+    -fx-background-radius: 5px;
+}
+
+#googleButton:hover{
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+#appleButton:hover{
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+#appleButton{
+    -fx-pref-width: 340px;
+    -fx-pref-height: 33px;
+    -fx-text-fill: lightgrey;
+    -fx-border-color: #17599F;
+    -fx-background-color: transparent;
+    -fx-background-radius: 5px;
+}
+
+#registerLabel{
+    -fx-text-fill: grey;
+}
+
+#SignUpLink{
+    -fx-text-fill: white;
+}
