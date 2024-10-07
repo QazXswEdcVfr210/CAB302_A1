@@ -103,7 +103,11 @@ public class ProjectController   {
             System.out.println("");
 
             notifiedObservers();
-            mainVbox.getChildren().removeIf(node -> node instanceof CustomStackPane);
+
+            for (CustomStackPane pane: projectList) {
+                mainVbox.getChildren().remove(pane);
+            }
+
 
             for (CustomStackPane pane: projectList){
                 mainVbox.getChildren().add(pane);
@@ -203,7 +207,7 @@ public class ProjectController   {
      * @return overlay pane (base pane)
      */
     @FXML
-    private StackPane createProjectPane (){
+    private void createProjectPane (){
         CustomStackPane overLay = new CustomStackPane(testTitle);
         overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
@@ -240,8 +244,6 @@ public class ProjectController   {
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
-
-        return overLay;
     }
 
     /**
@@ -600,12 +602,10 @@ public class ProjectController   {
     @FXML
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
-        StackPane projectPan = createProjectPane();
-        projectPan.setId("projectPanID");
+        createProjectPane();
 
-        mainVbox.getChildren().add(projectPan);
-        hideAllPanes(); // This for some reason fixes the size of panes.
 
+        //mainVbox.getChildren().add(projectPan);
         hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
