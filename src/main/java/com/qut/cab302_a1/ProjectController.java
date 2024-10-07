@@ -118,6 +118,7 @@ public class ProjectController   {
             for(CustomStackPane pane: projectList){
                 System.out.print(pane.getPosition() + ", ");
             }
+
         }
 
         public int getPosition(){
@@ -207,7 +208,7 @@ public class ProjectController   {
      * @return overlay pane (base pane)
      */
     @FXML
-    private void createProjectPane (){
+    private CustomStackPane createProjectPane (){
         CustomStackPane overLay = new CustomStackPane(testTitle);
         overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
@@ -244,6 +245,7 @@ public class ProjectController   {
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
+        return overLay;
     }
 
     /**
@@ -262,7 +264,7 @@ public class ProjectController   {
             mainScrollPane.setFitToHeight(true);
         }
 
-        for (StackPane pane : projectList) {
+        for (CustomStackPane pane : projectList) {
             Node temp = pane.getChildren().get(1);
             ((HBox) temp).setPrefSize(150, 150);
             pane.setPrefSize(150, 150);
@@ -602,7 +604,7 @@ public class ProjectController   {
     @FXML
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
-        createProjectPane();
+        CustomStackPane projectPan = createProjectPane();
 
 
         //mainVbox.getChildren().add(projectPan);
