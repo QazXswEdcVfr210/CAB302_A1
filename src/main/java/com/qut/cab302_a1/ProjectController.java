@@ -1,11 +1,7 @@
 package com.qut.cab302_a1;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
+import java.util.*;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -24,10 +20,10 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 
-
-public class ProjectController {
-    private List<StackPane> projectList = new ArrayList<>();
-    public int testTitle = 1;
+public class ProjectController   {
+    private List<CustomStackPane> projectList = new ArrayList<>();
+    private static List<ObserverPane> paneObservers =  new ArrayList<>();
+    public static int testTitle = 10;
 
     @FXML
     private Button buttonV;
@@ -90,14 +86,130 @@ public class ProjectController {
     private ScrollPane mainScrollPane;
 
 
+    public class CustomStackPane extends StackPane implements ObserverPane {
+
+        int position; //set to 0 later
+        public CustomStackPane(int position) {
+            super();
+            this.position = position;
+            paneObservers.add(this);
+            projectList.add(this);
+
+            //test
+            for(CustomStackPane pane: projectList){
+                System.out.print(pane.getPosition() + ", ");
+            }
+
+            System.out.println("");
+
+            notifiedObservers();
+
+            for (CustomStackPane pane: projectList) {
+                mainVbox.getChildren().remove(pane);
+            }
+
+
+            for (CustomStackPane pane: projectList){
+                mainVbox.getChildren().add(pane);
+            }
+
+
+            //test
+            for(CustomStackPane pane: projectList){
+                System.out.print(pane.getPosition() + ", ");
+            }
+
+        }
+
+        public int getPosition(){
+            return position;
+        }
+
+        public void setPosition(int positionVal){
+            this.position = positionVal;
+        }
+
+        // When a postion is changed this function is called which updates each observer
+        public void notifiedObservers() {
+            System.out.println(testTitle);
+            mergeOrderObservers();
+        }
+
+        // change location
+        @Override
+        public void updatePane(int position) {
+            System.out.println("position = " + position);
+        }
+
+        public void mergeOrderObservers(){
+            projectList = splitList(projectList);
+        }
+
+        public List<CustomStackPane> splitList(List<CustomStackPane> list){
+            List<CustomStackPane> firstHalf = new ArrayList<>();
+            List<CustomStackPane> secondHalf = new ArrayList<>();
+            List<CustomStackPane> finalList = new ArrayList<>();
+
+            if (list.size() < 2){
+                return list;
+            }
+            else{
+                int half = list.size() / 2;
+
+                for (int i = 0; i < half; i++) {
+                    firstHalf.add(list.get(i));
+                }
+
+                for (int i = half; i < list.size(); i++) {
+                    secondHalf.add(list.get(i));
+                }
+
+                firstHalf = splitList(firstHalf);
+                secondHalf = splitList(secondHalf);
+            }
+
+            return mergeLists(list, firstHalf, secondHalf);
+        }
+
+        public List<CustomStackPane> mergeLists(List<CustomStackPane> original, List<CustomStackPane> first, List<CustomStackPane> second){
+            List<CustomStackPane> merged = new ArrayList<>();
+            int originalSize = original.size();
+            int i = 0, j = 0;
+
+            while (i < first.size() && j < second.size()){
+                if (first.get(i).getPosition() < second.get(j).getPosition()){
+                    merged.add(first.get(i));
+                    i++;
+                }
+                else {
+                    merged.add(second.get(j));
+                    j++;
+                }
+            }
+
+            while (i < first.size()){
+                merged.add(first.get(i));
+                i++;
+            }
+
+            while (j < second.size()){
+                merged.add(second.get(j));
+                j++;
+            }
+
+
+            // 2 for loops
+            return merged;
+        }
+    }
     /**
      * main functionality to the page. Creates the ui for the page
      *
      * @return overlay pane (base pane)
      */
     @FXML
-    private StackPane createProjectPane(){
-        StackPane overLay = new StackPane();
+    private CustomStackPane createProjectPane (){
+        CustomStackPane overLay = new CustomStackPane(testTitle);
         overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
@@ -108,8 +220,6 @@ public class ProjectController {
         projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
 
-
-        projectList.add(overLay);
 
         // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
@@ -135,7 +245,6 @@ public class ProjectController {
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
-
         return overLay;
     }
 
@@ -151,8 +260,11 @@ public class ProjectController {
         if (projectList.size() >= 3){
             mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly big. DO NOT REMOVE
         }
+        else if (projectList.size() <3){
+            mainScrollPane.setFitToHeight(true);
+        }
 
-        for (StackPane pane : projectList) {
+        for (CustomStackPane pane : projectList) {
             Node temp = pane.getChildren().get(1);
             ((HBox) temp).setPrefSize(150, 150);
             pane.setPrefSize(150, 150);
@@ -181,7 +293,7 @@ public class ProjectController {
         }
     }
 
-    private VBox createMainPane(StackPane overLay) {
+    private VBox createMainPane(CustomStackPane overLay) {
         VBox projectPane = new VBox(20);
         projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         projectPane.setPrefSize(150, 150);
@@ -306,6 +418,7 @@ public class ProjectController {
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == deleteButtonType) {
                 mainVbox.getChildren().remove(overLay);
+                paneObservers.remove(overLay);
                 projectList.remove(overLay);  // Remove from the list of projects
             }
         });
@@ -363,7 +476,6 @@ public class ProjectController {
         int totalProgress = 10; // testing values
         int currentProgress = 9; //testing values
 
-
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
 
@@ -386,7 +498,7 @@ public class ProjectController {
             rightSide.setPadding(new Insets(40, 0, 0, 0));
                 HBox middlePane = new HBox(20);
                 Label title = new Label("Title" + testTitle); // no more than 25 Char
-                testTitle++;
+                testTitle--;
                 int MAX_SPACING = 400;
                 title.setId("titleID");
 
@@ -402,17 +514,14 @@ public class ProjectController {
                             Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
                             tipsLabel.setId("tipsLabelID");
 
-
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
                                 final int MAX_WIDTH = 5;
                                 int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-
                                 HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
                                 StackPane progressPane = new StackPane();
                                 Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
-
 
                                 backBar.setArcWidth(10);
                                 backBar.setArcHeight(2);
@@ -430,18 +539,14 @@ public class ProjectController {
                                 progressPane.getChildren().addAll(backBar, progressionBar);
 
                         progressBar.getChildren().addAll(progressBox, progressPane);
+                    middlePane.getChildren().addAll(title, progressBar);
 
-                middlePane.getChildren().addAll(title, progressBar);
-
-                // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
-
-
+                    // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
                     String titleString = title.toString();
                     double titleWidth = calculateTextSize(titleString);
                     middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
 
                 TextArea textArea = getTextArea();
-
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
@@ -552,12 +657,10 @@ public class ProjectController {
     @FXML
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
-        StackPane projectPan = createProjectPane();
-        projectPan.setId("projectPanID");
+        CustomStackPane projectPan = createProjectPane();
 
-        mainVbox.getChildren().add(projectPan);
-        hideAllPanes(); // This for some reason fixes the size of panes.
 
+        //mainVbox.getChildren().add(projectPan);
         hideAllPanes(); // This for some reason fixes the size of panes.
 
     }
@@ -580,6 +683,8 @@ public class ProjectController {
             e.printStackTrace();
         }
     }
+
+
 
 }
 
