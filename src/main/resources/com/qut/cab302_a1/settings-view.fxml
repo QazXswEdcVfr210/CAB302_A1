@@ -12,7 +12,7 @@
 
     <VBox alignment="CENTER">
         <VBox alignment="CENTER_LEFT">
-            <Button fx:id="backButton">←</Button>
+            <Button fx:id="backButton" onAction="#returnAction">←</Button>
         </VBox>
         <VBox alignment="CENTER" HBox.hgrow="ALWAYS">
             <Label fx:id="settingsLabel">Settings</Label>

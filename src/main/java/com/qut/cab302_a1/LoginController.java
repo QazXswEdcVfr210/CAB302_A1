@@ -106,7 +106,7 @@ public class LoginController {
     @FXML
     public void settingsClick() throws IOException {
         Stage stage = (Stage) settingsButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(SettingsController.class.getResource("settings-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("settings-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
         stage.setTitle("Settings");
         stage.setWidth(LoginApplication.WIDTH);
