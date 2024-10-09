@@ -1,5 +1,6 @@
 package com.qut.cab302_a1;
 
+import com.qut.cab302_a1.models.Settings;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -17,6 +18,9 @@ public class SignupController {
 
     @FXML
     private Hyperlink loginLink;
+
+    @FXML
+    private Button settingsButton;
 
     @FXML
     private Button registerButton;
@@ -48,4 +52,15 @@ public class SignupController {
         stage.setScene(scene);
     }
 
+    @FXML
+    public void settingsClick() throws IOException {
+        Stage stage = (Stage) settingsButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(SettingsController.class.getResource("settings-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
+        stage.setTitle("Settings");
+        stage.setWidth(LoginApplication.WIDTH);
+        stage.setHeight(LoginApplication.HEIGHT);
+        SettingsController.setState(Settings.REGISTER);
+        stage.setScene(scene);
+    }
 }

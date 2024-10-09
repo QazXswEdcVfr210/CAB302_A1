@@ -1,0 +1,25 @@
+#settingsMain{
+    -fx-background-color: #25262b;
+}
+
+#rec1, #rec2 {
+    -fx-background-color: blue;
+}
+
+#rec1Label1, #rec1Label2, #rec2Label1, #rec2Label2 {
+    -fx-text-fill: white;
+}
+
+#settingsLabel {
+
+}
+
+#settingsLabel2, #accountLabel, #appLabel {
+
+}
+
+#buttonAbout,
+
+#buttonLogout{
+
+}
