@@ -96,6 +96,6 @@
         <padding>
             <Insets bottom="25" left="20"/>
         </padding>
-        <Button fx:id="buttonLogout">Logout</Button>
+        <Button fx:id="buttonLogout" onAction="#logoutAction">Logout</Button>
     </VBox>
 </VBox>
