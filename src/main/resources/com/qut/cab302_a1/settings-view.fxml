@@ -20,66 +20,73 @@
 
 
     </VBox>
-    <HBox alignment="CENTER" spacing="20">
+    <HBox alignment="CENTER" spacing="30">
         <padding>
             <Insets top="20" />
         </padding>
        <StackPane alignment="CENTER">
 
-           <Rectangle fx:id="rec1"></Rectangle>
+           <Rectangle fx:id="rec1" height="50" width="130" arcHeight="5" arcWidth="5"></Rectangle>
            <HBox>
+               <padding>
+                   <Insets top="15" left="20" />
+               </padding>
                <Label fx:id="rec1Label1">0</Label>
-               <Label fx:id="rec1Label2">Projects left</Label>
+               <Label fx:id="rec1Label2" text=" Projects left"></Label>
            </HBox>
        </StackPane>
         <StackPane alignment="CENTER">
-            <Rectangle fx:id="rec2"></Rectangle>
+
+            <Rectangle fx:id="rec2" height="50" width="130" arcHeight="5" arcWidth="5"></Rectangle>
             <HBox>
+                <padding>
+                    <Insets top="15" left="18" />
+                </padding>
                <Label fx:id="rec2Label1">0</Label>
-               <Label fx:id="rec2Label2">Projects done</Label>
+               <Label fx:id="rec2Label2" text=" Projects done"></Label>
            </HBox>
         </StackPane>
     </HBox>
     <VBox alignment="CENTER_LEFT" spacing="30">
         <padding>
-            <Insets left="30" right="10"/>
+            <Insets left="30" right="10" top="20"/>
         </padding>
         <VBox>
             <Label fx:id="settingsLabel2">Settings</Label>
             <VBox alignment="CENTER" spacing="5">
-                <HBox fx:id="buttonLang" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="213">
-                    <Label alignment="CENTER_LEFT">Change App Language</Label>
-                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                <HBox fx:id="buttonLang" alignment="CENTER_LEFT" maxWidth="380" minHeight="30" spacing="201">
+                    <Label fx:id="buttonLang1" alignment="CENTER_LEFT">Change App Language</Label>
+                    <Label fx:id="buttonLang2" alignment="CENTER_RIGHT" text=">"></Label>
                 </HBox>
-                <HBox fx:id="buttonTypo" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="200">
-                    <Label alignment="CENTER_LEFT">Change App Typography</Label>
-                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                <HBox fx:id="buttonTypo" alignment="CENTER_LEFT" maxWidth="380" minHeight="30" spacing="190">
+                    <Label fx:id="buttonTypo1" alignment="CENTER_LEFT">Change App Typography</Label>
+                    <Label fx:id="buttonTypo2" alignment="CENTER_RIGHT" text=">"></Label>
                 </HBox>
             </VBox>
         </VBox>
         <VBox>
             <Label fx:id="accountLabel">Account</Label>
-            <VBox alignment="CENTER" spacing="5">
-                <HBox fx:id="buttonAccount" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="211">
-                    <Label alignment="CENTER_LEFT">Change Account Name</Label>
-                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+            <VBox alignment="CENTER" spacing="10">
+                <HBox fx:id="buttonAccount" alignment="CENTER_LEFT" maxWidth="380" minHeight="30" spacing="200">
+                    <Label fx:id="buttonAccount1" alignment="CENTER_LEFT">Change Account Name</Label>
+                    <Label fx:id="buttonAccount2" alignment="CENTER_RIGHT" text=">"></Label>
                 </HBox>
-                <HBox fx:id="buttonPass" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="187">
-                    <Label alignment="CENTER_LEFT">Change Account Password</Label>
-                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                <HBox fx:id="buttonPass" alignment="CENTER_LEFT" maxWidth="380" minHeight="30" spacing="176">
+                    <Label fx:id="buttonPass1" alignment="CENTER_LEFT">Change Account Password</Label>
+                    <Label fx:id="buttonPass2" alignment="CENTER_RIGHT" text=">"></Label>
                 </HBox>
-                <HBox fx:id="buttonImg" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="207">
-                    <Label alignment="CENTER_LEFT">Change Account Image</Label>
-                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                <HBox fx:id="buttonImg" alignment="CENTER_LEFT" maxWidth="380" minHeight="30" spacing="197">
+                    <Label fx:id="buttonImg1" alignment="CENTER_LEFT">Change Account Image</Label>
+                    <Label fx:id="buttonImg2" alignment="CENTER_RIGHT" text=">"></Label>
                 </HBox>
             </VBox>
         </VBox>
         <VBox>
             <Label fx:id="appLabel">DIY App</Label>
             <VBox alignment="CENTER">
-                <HBox fx:id="buttonAbout" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="300">
-                    <Label alignment="CENTER_LEFT">About Us</Label>
-                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                <HBox fx:id="buttonAbout" alignment="CENTER_LEFT" maxWidth="380" minHeight="30" spacing="283">
+                    <Label fx:id="buttonAbout1" alignment="CENTER_LEFT">About Us</Label>
+                    <Label fx:id="buttonAbout2" alignment="CENTER_RIGHT" text=">"></Label>
                 </HBox>
             </VBox>
         </VBox>
@@ -87,7 +94,7 @@
     <Region VBox.vgrow="ALWAYS"></Region>
     <VBox alignment="BOTTOM_LEFT">
         <padding>
-            <Insets bottom="15" left="10"/>
+            <Insets bottom="25" left="20"/>
         </padding>
         <Button fx:id="buttonLogout">Logout</Button>
     </VBox>
