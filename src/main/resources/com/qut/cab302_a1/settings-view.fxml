@@ -47,22 +47,40 @@
         <VBox>
             <Label fx:id="settingsLabel2">Settings</Label>
             <VBox alignment="CENTER" spacing="5">
-                <Button fx:id="buttonLang">Change App Language ></Button>
-                <Button fx:id="buttonTypo">Change App Typography ></Button>
+                <HBox fx:id="buttonLang" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="213">
+                    <Label alignment="CENTER_LEFT">Change App Language</Label>
+                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                </HBox>
+                <HBox fx:id="buttonTypo" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="200">
+                    <Label alignment="CENTER_LEFT">Change App Typography</Label>
+                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                </HBox>
             </VBox>
         </VBox>
         <VBox>
             <Label fx:id="accountLabel">Account</Label>
             <VBox alignment="CENTER" spacing="5">
-                <Button fx:id="buttonAccount">Change Account Name ></Button>
-                <Button fx:id="buttonPass">Change Account Password ></Button>
-                <Button fx:id="buttonImg">Change Account Image ></Button>
+                <HBox fx:id="buttonAccount" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="211">
+                    <Label alignment="CENTER_LEFT">Change Account Name</Label>
+                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                </HBox>
+                <HBox fx:id="buttonPass" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="187">
+                    <Label alignment="CENTER_LEFT">Change Account Password</Label>
+                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                </HBox>
+                <HBox fx:id="buttonImg" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="207">
+                    <Label alignment="CENTER_LEFT">Change Account Image</Label>
+                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                </HBox>
             </VBox>
         </VBox>
         <VBox>
             <Label fx:id="appLabel">DIY App</Label>
             <VBox alignment="CENTER">
-                <Button fx:id="buttonAbout">About Us ></Button>
+                <HBox fx:id="buttonAbout" alignment="CENTER_LEFT" maxWidth="Infinity" minHeight="30" spacing="300">
+                    <Label alignment="CENTER_LEFT">About Us</Label>
+                    <Label alignment="CENTER_RIGHT" text=">"></Label>
+                </HBox>
             </VBox>
         </VBox>
     </VBox>

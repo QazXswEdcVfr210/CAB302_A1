@@ -11,14 +11,19 @@
 }
 
 #settingsLabel {
-
+    -fx-font-size: 1.7em;
+    -fx-text-fill: white;
 }
 
 #settingsLabel2, #accountLabel, #appLabel {
 
 }
 
-#buttonAbout,
+#buttonAbout, #buttonAccount, #buttonLang, #buttonImg, #buttonTypo, #buttonPass {
+    -fx-pref-width: 340px;
+    -fx-background-color: black;
+    -fx-text-fill: grey;
+}
 
 #buttonLogout{
 
