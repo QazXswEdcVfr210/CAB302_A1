@@ -52,8 +52,8 @@
             <Insets bottom="15.0"/>
         </padding>
         <Label fx:id="orLabel">-----------------------------or------------------------------</Label>
-        <Button fx:id="googleButton">Register with Google</Button>
-        <Button fx:id="appleButton">Register with Apple</Button>
+        <Button fx:id="googleButton" onAction="#google">Register with Google</Button>
+        <Button fx:id="appleButton" onAction="#apple">Register with Apple</Button>
 
         <VBox alignment="CENTER">
             <padding>

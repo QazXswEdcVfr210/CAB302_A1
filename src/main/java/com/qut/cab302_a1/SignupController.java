@@ -113,4 +113,16 @@ public class SignupController {
             failLabel.setVisible(true);
         }
     }
+
+    @FXML
+    protected void google(){
+        failLabel.setText("Feature coming soon");
+        failLabel.setVisible(true);
+    }
+
+    @FXML
+    protected void apple(){
+        failLabel.setText("Feature coming soon");
+        failLabel.setVisible(true);
+    }
 }

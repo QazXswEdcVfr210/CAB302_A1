@@ -48,8 +48,8 @@
       <Insets bottom="15.0"/>
     </padding>
     <Label fx:id="orLabel">-----------------------------or------------------------------</Label>
-    <Button fx:id="googleButton">Login with Google</Button>
-    <Button fx:id="appleButton">Login with Apple</Button>
+    <Button fx:id="googleButton" onAction="#google">Login with Google</Button>
+    <Button fx:id="appleButton" onAction="#apple">Login with Apple</Button>
 
     <VBox alignment="CENTER">
       <padding>

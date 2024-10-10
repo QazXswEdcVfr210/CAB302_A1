@@ -103,3 +103,7 @@
 #SignUpLink{
     -fx-text-fill: white;
 }
+
+#incorrectPasswordLabel {
+    -fx-text-fill: rgba(200, 0, 0, 0.6);
+}

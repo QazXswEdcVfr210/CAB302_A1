@@ -114,4 +114,16 @@ public class LoginController {
         SettingsController.setState(Settings.LOGIN);
         stage.setScene(scene);
     }
+
+    @FXML
+    protected void google(){
+        incorrectPasswordLabel.setText("Feature coming soon");
+        incorrectPasswordLabel.setVisible(true);
+    }
+
+    @FXML
+    protected void apple(){
+        incorrectPasswordLabel.setText("Feature coming soon");
+        incorrectPasswordLabel.setVisible(true);
+    }
 }
