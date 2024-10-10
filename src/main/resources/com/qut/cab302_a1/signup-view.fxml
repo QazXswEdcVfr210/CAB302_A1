@@ -42,7 +42,7 @@
             <Label fx:id="confirmLabel">Confirm Password</Label>
         </VBox>
         <PasswordField fx:id="confirmField"></PasswordField>
-        <Label fx:id="incorrectPasswordLabel" visible="false">Incorrect Password</Label>
+        <Label fx:id="failLabel" visible="false">Incorrect Password</Label>
         <Button fx:id="registerButton" onAction="#signupButton" text="Register"/>
     </VBox>
 

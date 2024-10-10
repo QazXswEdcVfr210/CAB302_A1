@@ -1,11 +1,11 @@
 
 
-#sideVBox, #basePane{
+#basePane{
     -fx-background-color: #25262b;
 }
 
 
-#mainVbox, #mainScrollPane {
+#mainVbox, #mainScrollPane, #sideVBox {
 
     -fx-background-color: rgba(28,28,28,255);
 }
