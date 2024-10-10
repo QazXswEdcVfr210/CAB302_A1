@@ -10,7 +10,7 @@ import java.io.IOException;
 //USE login admin@admin.admin password adminadmin
 public class LoginApplication extends Application {
     public static final int WIDTH = 400;
-    public static final int HEIGHT = 600;
+    public static final int HEIGHT = 650;
     public static final String TITLE = "Login";
 
     @Override
