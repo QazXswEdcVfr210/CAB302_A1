@@ -1,7 +1,10 @@
-package com.qut.cab302_a1;
+package com.qut.cab302_a1.controllers;
 
 import java.io.IOException;
 import java.util.*;
+
+import com.qut.cab302_a1.LoginApplication;
+import com.qut.cab302_a1.ObserverPane;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -65,7 +68,7 @@ public class ProjectController   {
     @FXML
     public void initialize(){
         try{
-        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+            basePane.getStylesheets().add(getClass().getResource("/com/qut/cab302_a1/stylesheets/projectControllerStyle.css").toExternalForm());
         }
         catch (Exception e){
             System.out.println("Stylesheet failed to load");
@@ -211,7 +214,10 @@ public class ProjectController   {
     private CustomStackPane createProjectPane (){
         CustomStackPane overLay = new CustomStackPane(testTitle);
         overLay.setId("overlayID");
-        VBox projectPane = createMainPane(overLay);
+        VBox projectPane = createMainPane(overLay); //here pane
+
+        VBox madeProjectPane = madeProjectPane(); //Need to find a way to check if there is an object passed in, then pass it in.
+
         HBox bigPane = createBigPane();
         projectPane.setId("projectPane");
         bigPane.setId("bigPane");
@@ -246,6 +252,12 @@ public class ProjectController   {
 
         overLay.getChildren().addAll(projectPane, bigPane);
         return overLay;
+    }
+
+    public VBox madeProjectPane(){
+        VBox pane = new VBox();
+
+        return pane;
     }
 
     /**
@@ -630,9 +642,6 @@ public class ProjectController   {
             e.printStackTrace();
         }
     }
-
-
-
 }
 
 //TODO

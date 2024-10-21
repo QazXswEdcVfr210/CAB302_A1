@@ -1,5 +1,6 @@
-package com.qut.cab302_a1;
+package com.qut.cab302_a1.controllers;
 
+import com.qut.cab302_a1.LoginApplication;
 import com.qut.cab302_a1.models.Settings;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
@@ -26,7 +27,7 @@ public class LoginController {
     @FXML
     public void initialize() {
         try{
-            loginMain.getStylesheets().add(getClass().getResource("stylesheets/loginStylesheet.css").toExternalForm());
+            loginMain.getStylesheets().add(getClass().getResource("/com/qut/cab302_a1/stylesheets/loginStylesheet.css").toExternalForm());
         }
         catch (Exception e){
             System.out.println("Stylesheet failed to load");

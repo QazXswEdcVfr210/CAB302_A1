@@ -1,5 +1,6 @@
-package com.qut.cab302_a1;
+package com.qut.cab302_a1.controllers;
 
+import com.qut.cab302_a1.LoginApplication;
 import com.qut.cab302_a1.models.Settings;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
@@ -43,7 +44,7 @@ public class SignupController {
     @FXML
     public void initialize() {
         try{
-            signupMain.getStylesheets().add(getClass().getResource("stylesheets/signupStylesheet.css").toExternalForm());
+            signupMain.getStylesheets().add(getClass().getResource("/com/qut/cab302_a1/stylesheets/signupStylesheet.css").toExternalForm());
         }
         catch (Exception e){
             System.out.println("Stylesheet failed to load");
@@ -54,7 +55,7 @@ public class SignupController {
     @FXML
     public void loginClick() throws IOException {
         Stage stage = (Stage) loginLink.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(SignupController.class.getResource("login-view.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
         stage.setTitle("Login");
         stage.setWidth(LoginApplication.WIDTH);

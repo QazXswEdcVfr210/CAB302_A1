@@ -1,5 +1,4 @@
-import com.qut.cab302_a1.ProjectController;
-import javafx.scene.control.Label;
+import com.qut.cab302_a1.controllers.ProjectController;
 import javafx.scene.paint.Color;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;

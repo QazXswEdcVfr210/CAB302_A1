@@ -10,14 +10,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.Region?>
 
-<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.ProjectController" fx:id="basePane">
+<HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.controllers.ProjectController" fx:id="basePane">
     <VBox fx:id="sideVBox" spacing="15.0" minWidth="200.00" >
         <HBox spacing="55.0" alignment="TOP_LEFT">
             <padding>
                 <Insets left="20.00" top="35.00"></Insets>
             </padding>
             <Label fx:id="sidebarProjects0">Projects</Label>
-            <Button fx:id="buttonP">+</Button> <!--Change to an icon -->
+            <Button fx:id="buttonP" onAction="#onCreatePanelAction">+</Button> <!--Change to an icon -->
         </HBox>
 
         <VBox alignment="TOP_LEFT">
@@ -98,7 +98,7 @@
         <Insets left="10.0" right="10.0" top="30.0"/>
     </padding>
         <VBox spacing="15.0" alignment="CENTER" fx:id="mainVbox">
-            <Button fx:id="CreatePanel" onAction="#onCreatePanelAction" text="Create Panel"></Button>
+
             <Label fx:id="projectName">All Projects</Label>
         </VBox>
     </ScrollPane>

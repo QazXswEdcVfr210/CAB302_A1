@@ -19,4 +19,6 @@ module com.qut.cab302_a1 {
 
     opens com.qut.cab302_a1 to javafx.fxml;
     exports com.qut.cab302_a1;
+    exports com.qut.cab302_a1.controllers;
+    opens com.qut.cab302_a1.controllers to javafx.fxml;
 }

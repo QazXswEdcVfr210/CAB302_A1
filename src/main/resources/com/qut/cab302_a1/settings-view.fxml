@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.geometry.Insets?>
-<VBox xmlns:fx="http://javafx.com/fxml" fx:id="settingsMain" fx:controller="com.qut.cab302_a1.SettingsController">
+<VBox xmlns:fx="http://javafx.com/fxml" fx:id="settingsMain" fx:controller="com.qut.cab302_a1.controllers.SettingsController">
 
     <VBox alignment="CENTER">
         <VBox alignment="CENTER_LEFT">
