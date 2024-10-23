@@ -1,0 +1,86 @@
+#settingsMain{
+    -fx-background-color: rgba(28,28,28,255);
+}
+
+#rec1, #rec2 {
+    -fx-fill: #3D6794;
+}
+
+#rec1Label1, #rec1Label2, #rec2Label1, #rec2Label2 {
+    -fx-text-fill: white;
+}
+
+#settingsLabel {
+    -fx-font-size: 1.7em;
+    -fx-text-fill: white;
+}
+
+#settingsLabel2, #accountLabel, #appLabel {
+-fx-text-fill: grey;
+}
+
+#buttonAbout, #buttonAccount, #buttonLang, #buttonImg, #buttonTypo, #buttonPass {
+    -fx-pref-width: 340px;
+
+}
+
+#buttonAbout:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonAccount:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonLang:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonImg:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonTypo:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonPass:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonAbout1, #buttonAccount1, #buttonLang1, #buttonImg1, #buttonTypo1, #buttonPass1, #buttonAbout2, #buttonAccount2, #buttonLang2, #buttonImg2, #buttonTypo2, #buttonPass2 {
+    -fx-text-fill: white;
+    -fx-font-size: 1em;
+}
+
+#backButton{
+    -fx-text-fill: white;
+    -fx-pref-height: 40px;
+    -fx-pref-width: 40px;
+    -fx-background-color: transparent;
+    -fx-background-radius: 10;
+}
+
+#backButton:hover{
+    -fx-background-color: rgba(0, 0, 0, 0.1);
+    -fx-cursor: hand;
+}
+
+#buttonLogout{
+    -fx-text-fill: rgba(200, 0, 0, 0.6);
+    -fx-font-size: 1em;
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+#buttonLogout:hover{
+    -fx-text-fill: rgba(200, 0, 0, 1);
+    -fx-cursor: hand;
+
+}

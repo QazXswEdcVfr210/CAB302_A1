@@ -1,5 +1,6 @@
 package com.qut.cab302_a1;
 
+import com.qut.cab302_a1.models.Settings;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,6 +16,9 @@ public class LoginController {
     public static final int MAIN_HEIGHT = 600;
 
     private String user;
+
+    @FXML
+    private Button settingsButton;
 
     @FXML
     private VBox loginMain;
@@ -97,9 +101,29 @@ public class LoginController {
 
             e.printStackTrace();
         }
+    }
 
+    @FXML
+    public void settingsClick() throws IOException {
+        Stage stage = (Stage) settingsButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("settings-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
+        stage.setTitle("Settings");
+        stage.setWidth(LoginApplication.WIDTH);
+        stage.setHeight(LoginApplication.HEIGHT);
+        SettingsController.setState(Settings.LOGIN);
+        stage.setScene(scene);
+    }
 
+    @FXML
+    protected void google(){
+        incorrectPasswordLabel.setText("Feature coming soon");
+        incorrectPasswordLabel.setVisible(true);
+    }
 
-
+    @FXML
+    protected void apple(){
+        incorrectPasswordLabel.setText("Feature coming soon");
+        incorrectPasswordLabel.setVisible(true);
     }
 }
