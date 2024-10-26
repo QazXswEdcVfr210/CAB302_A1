@@ -87,7 +87,7 @@
 
             <Button fx:id="logoutButton" onAction="#onLogoutAction"> Logout</Button>
 
-            <Button fx:id="buttonA">*</Button>
+            <Button fx:id="buttonA">⚙</Button>
         </HBox>
     </VBox>
 

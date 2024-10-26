@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.qut.cab302_a1.LoginApplication;
 import com.qut.cab302_a1.ObserverPane;
+import com.qut.cab302_a1.models.Project;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -27,6 +28,12 @@ public class ProjectController   {
     private List<CustomStackPane> projectList = new ArrayList<>();
     private static List<ObserverPane> paneObservers =  new ArrayList<>();
     public static int testTitle = 10;
+    public static int projectLoaded = 0;
+    String[] users = {"Damon"};
+
+    Project selectedProject;
+
+    Project test = new Project("Something", "Steps are cool", 1, 1, 4, 2, users, 0, "This is a test description");
 
     @FXML
     private Button buttonV;
@@ -73,6 +80,10 @@ public class ProjectController   {
         catch (Exception e){
             System.out.println("Stylesheet failed to load");
         }
+
+        setProject(test); //TESTING
+        projectLoaded = 1;
+
         mainScrollPane.setFitToWidth(true);
         mainScrollPane.setFitToHeight(true);
 
@@ -88,6 +99,14 @@ public class ProjectController   {
     @FXML
     private ScrollPane mainScrollPane;
 
+    public void setProject(Project newProject){
+        selectedProject = newProject;
+    }
+
+    public Project getSelectedProject(){
+        return selectedProject;
+    }
+
 
     public class CustomStackPane extends StackPane implements ObserverPane {
 
@@ -102,8 +121,6 @@ public class ProjectController   {
             for(CustomStackPane pane: projectList){
                 System.out.print(pane.getPosition() + ", ");
             }
-
-            System.out.println("");
 
             notifiedObservers();
 
@@ -199,8 +216,6 @@ public class ProjectController   {
                 merged.add(second.get(j));
                 j++;
             }
-
-
             // 2 for loops
             return merged;
         }
@@ -214,50 +229,107 @@ public class ProjectController   {
     private CustomStackPane createProjectPane (){
         CustomStackPane overLay = new CustomStackPane(testTitle);
         overLay.setId("overlayID");
-        VBox projectPane = createMainPane(overLay); //here pane
 
-        VBox madeProjectPane = madeProjectPane(); //Need to find a way to check if there is an object passed in, then pass it in.
+        if (projectLoaded == 0) {
+            VBox projectPane = createMainPane(overLay); //here pane
+            projectPane.setId("projectPane");
 
-        HBox bigPane = createBigPane();
-        projectPane.setId("projectPane");
-        bigPane.setId("bigPane");
-        //Rounding corners
-        overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
-        projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
-        bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+            overLay.getChildren().addAll(projectPane);
+        }
+        else {
+            VBox madeProjectPane = madeProjectPane(); //Need to find a way to check if there is an object passed in, then pass it in.
 
 
-        // Lambda function that handles expanding the vbox when clicked.
-        projectPane.setOnMouseClicked(actionEvent -> {
-            hideAllPanes();
-            //animation goes here
-
-            double scrollVal = mainScrollPane.getVvalue();
-            bigPane.setVisible(true);
-            projectPane.setVisible(false);
-            bigPane.setPrefSize(260, 260);
-
-            bigPane.layout();
-
-            overLay.setPrefSize(260, 260);
-            bigPane.layout();
+            HBox bigPane = createBigPane();
+            madeProjectPane.setId("madeProjectPane");
+            bigPane.setId("bigPane");
+            //Rounding corners
+            overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+            madeProjectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+            bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
 
 
-            mainScrollPane.setVvalue(scrollVal);
-        });
+            // Lambda function that handles expanding the vbox when clicked.
+            madeProjectPane.setOnMouseClicked(actionEvent -> {
+                hideAllPanes();
+                //animation goes here
 
-        bigPane.setOnMouseClicked(actionEvent -> {
-            System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
-        });
+                double scrollVal = mainScrollPane.getVvalue();
+                bigPane.setVisible(true);
+                madeProjectPane.setVisible(false);
+                bigPane.setPrefSize(260, 260);
 
-        overLay.getChildren().addAll(projectPane, bigPane);
+                bigPane.layout();
+
+                overLay.setPrefSize(260, 260);
+                bigPane.layout();
+
+
+                mainScrollPane.setVvalue(scrollVal);
+            });
+
+            bigPane.setOnMouseClicked(actionEvent -> {
+                System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
+            });
+
+            projectLoaded = 0;
+            overLay.getChildren().addAll(madeProjectPane, bigPane);
+        }
         return overLay;
     }
 
     public VBox madeProjectPane(){
-        VBox pane = new VBox();
+        VBox Vpane = new VBox();
+        HBox bothSides = new HBox();
+        VBox rightSide = new VBox();
+        VBox leftSide = new VBox();
 
-        return pane;
+        Project selectedProjected = getSelectedProject();
+
+        Label projectName = new Label();
+        projectName.setText(selectedProjected.project);
+
+
+        HBox progressBox = new HBox(20);
+        progressBox.setSpacing(185);
+        // = should be changed to a settings icon
+        Label progressLabel = new Label("=  Progress");
+
+        progressLabel.setId("progressLabelID");
+        Label tipsLabel = new Label(selectedProjected.tips + "/" + selectedProjected.completedTips);
+        tipsLabel.setId("tipsLabelID");
+
+        progressBox.getChildren().addAll(progressLabel, tipsLabel);
+        final int MAX_RANGE = 270;
+        final int MAX_WIDTH = 5;
+        int progressRange = calculateProgress(MAX_RANGE, selectedProjected.completedTips, selectedProjected.tips);
+
+        StackPane progressPane = new StackPane();
+        Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+
+        backBar.setArcWidth(10);
+        backBar.setArcHeight(2);
+        backBar.setFill(Color.GRAY);
+
+        //progress bar gradient should range from blue to red.
+        Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
+        Color colorPicker = pickColor(MAX_RANGE, progressRange);
+
+        progressionBar.setFill(colorPicker);
+        backBar.setArcWidth(10);
+        backBar.setArcHeight(2);
+
+        progressPane.setAlignment(Pos.CENTER_LEFT);
+        progressPane.getChildren().addAll(backBar, progressionBar);
+
+        rightSide.getChildren().addAll(progressBox, progressPane);
+
+
+        leftSide.getChildren().addAll(projectName);
+        bothSides.getChildren().addAll(leftSide ,rightSide);
+        Vpane.getChildren().add(bothSides);
+
+        return Vpane;
     }
 
     /**
@@ -433,7 +505,7 @@ public class ProjectController   {
         HBox bigPane = new HBox(20);
 
         int totalProgress = 10; // testing values
-        int currentProgress = 9; //testing values
+        int currentProgress = 3; //testing values
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
@@ -513,12 +585,6 @@ public class ProjectController   {
         return bigPane;
     }
 
-
-    public void movePanes(){
-        if (testTitle % 2 == 0){
-            //moving panes around method values above are for testing
-        }
-    }
 
     /**Gets the string of title and sets it to a text format
      * checks the width and returns double value

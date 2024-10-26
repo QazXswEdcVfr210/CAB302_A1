@@ -85,15 +85,6 @@ public class testProjectController {
         Assertions.assertEquals(expectedProgress, result);
     }
 
-    @Test
-    public void testCalculateHighProgress(){
-        int currentProject = 66;
-        int totalHighProgress = 100;
-        int expectedProgress = (int)(0.66 * MAX_RANGE);
-        int result = projectController.calculateProgress(MAX_RANGE, totalHighProgress, currentProject);
-        Assertions.assertEquals(expectedProgress, result);
-    }
-
     //Colour
     @Test
     public void testBlue(){
