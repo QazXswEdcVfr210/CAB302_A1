@@ -8,6 +8,8 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import javafx.util.Pair;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 
 // This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
@@ -71,9 +73,40 @@ public class FirestoreHandler {
     }
 
 
-    public static Boolean ModifyFieldValue(String collectionName, String documentName, String fieldName, String newValue) {
+    public static Pair<Boolean, String> ModifyFieldValue(String collection, String document, String field, Map<String, Object> data) throws Exception {
 
-        return false;
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+            JsonFactory jsonFactory = new GsonFactory();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document + "?updateMask.fieldPaths=" + field;
+
+            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
+            FirebaseJSONPackage p = new FirebaseJSONPackage();
+            Map<String, Object> packageData = p
+                    .AddKVP("fields", data)
+                    .getData();
+
+            // Make PATCH request
+            // Because java doesn't recognise PATCH as a supported request method for some reason we have to do this workaround :(
+            URL url = new URL(firebaseUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST"); // Create the request as a POST request, then modify it
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH"); // thank you stack overflow
+
+            // Handle response
+            String response = connection.getResponseMessage();
+            System.out.println(response);
+
+            // Return the name of the new document
+            return new Pair<>(true, response);
+
+        } catch (HttpResponseException e) {
+            e.printStackTrace();
+            return new Pair<>(false, "");
+        }
     }
 
     public static Boolean DeleteField(String name) {
