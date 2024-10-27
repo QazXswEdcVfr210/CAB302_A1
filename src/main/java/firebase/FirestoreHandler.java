@@ -8,7 +8,9 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import javafx.util.Pair;
 
+import java.net.URL;
 import java.util.Map;
+import java.net.HttpURLConnection;
 
 // This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
 public class FirestoreHandler {
@@ -86,16 +88,18 @@ public class FirestoreHandler {
                     .getData();
 
             // Make PATCH request
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-            GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, packageData);
+            // Because java doesn't recognise PATCH as a supported request method for some reason we have to do this workaround :(
+            URL url = new URL(firebaseUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST"); // Create the request as a POST request, then modify it
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH"); // thank you stack overflow
 
             // Handle response
-            HttpResponse response = requestFactory.buildPatchRequest(url, content).execute();
-            String responseBody = response.parseAsString();
+            String response = connection.getResponseMessage();
+            System.out.println(response);
 
             // Return the name of the new document
-            return new Pair<>(true, responseBody);
+            return new Pair<>(true, response);
 
         } catch (HttpResponseException e) {
             e.printStackTrace();

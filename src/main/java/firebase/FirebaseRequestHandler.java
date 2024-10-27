@@ -30,7 +30,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 public class FirebaseRequestHandler {
 
     public static void main(String[] args) throws Exception {
-        TryLogin("admin@admin.admin", "adminadmin", false);
+        //TryLogin("admin@admin.admin", "adminadmin", false);
     }
 
     // Not a security risk as auth keys are distributed on user login
@@ -212,7 +212,7 @@ public class FirebaseRequestHandler {
             Map<String, Object> projectIDs = new HashMap<String, Object>();
 
             fields.put("username", username);
-            username.put("stringValue", "testUsername"); // TODO: remove placeholder
+            username.put("stringValue", "testUsername");
 
             fields.put("projectIDs", projectIDs);
             projectIDs.put("arrayValue", new HashMap<String, Object>());
@@ -223,6 +223,4 @@ public class FirebaseRequestHandler {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
         }
     }
-
-    // TODO: Create functions MakePostRequest(), MakeGetRequest()
 }
