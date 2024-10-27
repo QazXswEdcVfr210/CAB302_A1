@@ -29,15 +29,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class FirebaseRequestHandler {
 
-    public static void main(String[] args) throws Exception {
-        //TryLogin("admin@admin.admin", "adminadmin", false);
-    }
-
     // Not a security risk as auth keys are distributed on user login
     private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
-    // TODO: USE THE createAuthUri RESOURCE TO **VERIFY** THAT THERE IS AN ACCOUNT WITH THE EMAIL FOR EXTRA SECURITY BEFORE SENDING PASSWORD INFO
     public static Boolean TryLogin(String email, String pass, Boolean bPrintResponse) throws Exception {
         try{
             // Set up request
@@ -71,7 +66,6 @@ public class FirebaseRequestHandler {
 
             // Get the user's project list
             GetProjectIds();
-            CreateProject("ASDASDASD", "ASDASDASD");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -143,28 +137,34 @@ public class FirebaseRequestHandler {
             // Create payload
             Map<String, Object> projectFields = new HashMap<String, Object>();
 
+            // Add project name to payload
             Map<String, Object> projectName = new HashMap<String, Object>();
             projectFields.put("projectName", projectName);
             projectName.put("stringValue", _projectName);
 
+            // Add project description to payload
             Map<String, Object> projectDescription = new HashMap<String, Object>();
             projectFields.put("projectDescription", projectDescription);
             projectDescription.put("stringValue", _projectDescription);
 
+            // Add project steps to payload
             Map<String, Object> projectSteps = new HashMap<String, Object>();
             projectFields.put("projectSteps", projectSteps);
             projectSteps.put("arrayValue", new HashMap<String, Object>());
 
+            // Create a new document with a randomly-generated projectID using the data provided in the projectFields payload
             Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, projectFields);
 
             // TODO: Add reference to this project in Users/{uid}/projectIDs
-            Map<String, Object> userFields = new HashMap<String, Object>();
+            // If the document was successfully created, add a reference to the project in the user's list of projectIDs
+            if(results.getKey()) {
+                Map<String, Object> userFields = new HashMap<String, Object>();     // Main kvp to be sent
+                Map<String, Object> projectIDs = new HashMap<String, Object>();     // projectIDs field data
+                userFields.put("projectIDs", projectIDs);              // Add projectIDs to main kvp
+                projectIDs.put("arrayValue", projectID);               // Add projectID to projectIDs as an arrayValue
 
-            Map<String, Object> projectIDs = new HashMap<String, Object>();
-            userFields.put("projectIDs", projectIDs);
-            projectIDs.put("arrayValue", projectID);
-
-            FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", userFields);
+                FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", userFields);
+            }
 
             return "success";
 
@@ -174,7 +174,7 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // Creates a new project step
+    // TODO: Creates a new project step
     public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
         return false;
     }

@@ -278,7 +278,7 @@ public class ProjectController   {
     private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
         try {
             // This calls the FirebaseRequestHandler to save the project in the db
-            String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
+            String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
 
             if (result.equals("success")) {
                 // Show success message if saved to db
@@ -322,7 +322,7 @@ public class ProjectController   {
             if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
                 try {
                     // Call the backend function to create a new project and update the database
-                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
+                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
 
                     if (result.equals("success")) {
                         // Success case: disable editing and buttons

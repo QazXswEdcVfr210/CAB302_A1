@@ -51,28 +51,32 @@ public class FirestoreHandler {
         }
     }
 
+    // TODO
     public static Boolean GetDocumentContents(String name) {
         return false;
     }
 
+    // TODO
     public static Boolean DeleteDocument(String name) {
         return false;
     }
 
+    // TODO
     public static Boolean CheckDocumentExists(String name) {
         return false;
     }
 
-    // Interacting with Fields
+    // TODO
     public static Boolean CreateField(String name, Map<String, Object> data) {
         return false;
     }
 
+    // TODO
     public static Boolean ReadFieldValue(String name) {
         return false;
     }
 
-
+    // Modifies a field value (TODO i think)
     public static Pair<Boolean, String> ModifyFieldValue(String collection, String document, String field, Map<String, Object> data) throws Exception {
 
         try {
@@ -109,10 +113,12 @@ public class FirestoreHandler {
         }
     }
 
+    // TODO
     public static Boolean DeleteField(String name) {
         return false;
     }
 
+    // TODO
     public static Boolean CheckFieldExists(String name) {
         return false;
     }
