@@ -357,29 +357,30 @@ public class ProjectController   {
             String projectResources = projectResourcesField.getText();
             String projectTools = projectToolsField.getText();
 
-            // Create a new StackPane for the duplicated fields
-            StackPane duplicateProjectPane = createProjectPane();
+            // Create a completely new instance of CustomStackPane for the duplicated project
+            CustomStackPane duplicateProjectPane = createProjectPane();
             duplicateProjectPane.setId("duplicateProjectPaneID");
 
-            // Get the VBox from the new pane (children at index 0)
+            // Get the VBox from the new pane (first child)
             VBox newProjectPane = (VBox) duplicateProjectPane.getChildren().get(0);
 
-            // Get the text fields from the new pane and set their values to the duplicated values
-            TextField duplicateNameField = (TextField) newProjectPane.getChildren().get(0);
-            TextField duplicateDescriptionField = (TextField) newProjectPane.getChildren().get(1);
-            TextField duplicateResourcesField = (TextField) newProjectPane.getChildren().get(2);
-            TextField duplicateToolsField = (TextField) newProjectPane.getChildren().get(3);
+            // Set text fields in the new pane to duplicated values
+            ((TextField) newProjectPane.getChildren().get(0)).setText(projectName);
+            ((TextField) newProjectPane.getChildren().get(1)).setText(projectDescription);
+            ((TextField) newProjectPane.getChildren().get(2)).setText(projectResources);
+            ((TextField) newProjectPane.getChildren().get(3)).setText(projectTools);
 
-            duplicateNameField.setText(projectName);
-            duplicateDescriptionField.setText(projectDescription);
-            duplicateResourcesField.setText(projectResources);
-            duplicateToolsField.setText(projectTools);
+            // Add the duplicated pane to the main VBox if it doesn't already contain it
+            if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
+                mainVbox.getChildren().add(duplicateProjectPane);
+            } else {
+                System.out.println("Duplicate panel already exists in mainVbox!");
+            }
 
-            // Add the duplicated pane to the main VBox
-            mainVbox.getChildren().add(duplicateProjectPane);
-            hideAllPanes(); // This for some reason fixes the size of panes.
+            hideAllPanes(); // Adjust visibility as needed
             handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools);
         });
+
 
         // Edit Button
         Button editButton = new Button("Edit");

@@ -71,7 +71,7 @@ public class FirebaseRequestHandler {
 
             // Get the user's project list
             GetProjectIds();
-            CreateProject("ASDASDASD", "ASDASDASD");
+            CreateProject("ASDASDASD", "ASDASDASD", "ASDASDASDASD", "ASDASASDASDASD");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -129,7 +129,7 @@ public class FirebaseRequestHandler {
     }
 
     // Creates a new project, the returned string is either representative of success or an error code
-    public static String CreateProject(String _projectName, String _projectDescription) throws Exception {
+    public static String CreateProject(String _projectName, String _projectDescription, String _projectResources, String _projectTools) throws Exception {
         try{
 
             // Generate random project ID and check if project exists
@@ -150,6 +150,14 @@ public class FirebaseRequestHandler {
             Map<String, Object> projectDescription = new HashMap<String, Object>();
             projectFields.put("projectDescription", projectDescription);
             projectDescription.put("stringValue", _projectDescription);
+
+            Map<String, Object> projectResources = new HashMap<String, Object>();
+            projectFields.put("projectResources", projectResources);
+            projectResources.put("stringValue", _projectResources);
+
+            Map<String, Object> projectTools = new HashMap<String, Object>();
+            projectFields.put("projectTools", projectTools);
+            projectTools.put("stringValue", _projectTools);
 
             Map<String, Object> projectSteps = new HashMap<String, Object>();
             projectFields.put("projectSteps", projectSteps);
