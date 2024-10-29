@@ -29,6 +29,10 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class FirebaseRequestHandler {
 
+    public static void main(String[] args) throws Exception{
+        TryLogin("admin@admin.admin", "adminadmin", false);
+    }
+
     // Not a security risk as auth keys are distributed on user login
     private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
@@ -66,6 +70,8 @@ public class FirebaseRequestHandler {
 
             // Get the user's project list
             GetProjectIds();
+
+            // ######################### DEBUG GOES HERE #########################
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -174,8 +180,8 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // TODO: Creates a new project step
-    public static Boolean CreateProjectStep(String _projectName, String _projectStepName, String _projectStepDescription) throws Exception {
+    // TODO: Creates a new project step and adds it to a project
+    public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
         return false;
     }
 

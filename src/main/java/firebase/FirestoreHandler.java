@@ -8,6 +8,7 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import javafx.util.Pair;
 
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -52,13 +53,13 @@ public class FirestoreHandler {
     }
 
     // TODO
-    public static Boolean GetDocumentContents(String name) {
-        return false;
+    public static Pair<Boolean, String> GetDocumentContents(String name) {
+        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
     }
 
     // TODO
-    public static Boolean DeleteDocument(String name) {
-        return false;
+    public static Pair<Boolean, String> DeleteDocument(String name) {
+        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
     }
 
     // TODO
@@ -67,16 +68,16 @@ public class FirestoreHandler {
     }
 
     // TODO
-    public static Boolean CreateField(String name, Map<String, Object> data) {
-        return false;
+    public static Pair<Boolean, String> CreateField(String name, Map<String, Object> data) {
+        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
     }
 
     // TODO
-    public static Boolean ReadFieldValue(String name) {
-        return false;
+    public static Pair<Boolean, String> ReadFieldValue(String name) {
+        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
     }
 
-    // Modifies a field value (TODO i think)
+    // Modifies a field value
     public static Pair<Boolean, String> ModifyFieldValue(String collection, String document, String field, Map<String, Object> data) throws Exception {
 
         try {
@@ -93,19 +94,17 @@ public class FirestoreHandler {
                     .AddKVP("fields", data)
                     .getData();
 
-            // Make PATCH request
-            // Because java doesn't recognise PATCH as a supported request method for some reason we have to do this workaround :(
-            URL url = new URL(firebaseUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST"); // Create the request as a POST request, then modify it
-            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH"); // thank you stack overflow
+            // Build PATCH request - because PATCH is not supported by our client we must build the request as a POST request and then override it
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpContent content = new JsonHttpContent(jsonFactory, packageData);
+            HttpRequest request = requestFactory.buildPostRequest(url, content);
+            request.getHeaders().set("X-HTTP-Method-Override", "PATCH");
+            HttpResponse response = request.execute();
 
-            // Handle response
-            String response = connection.getResponseMessage();
-            System.out.println(response);
-
-            // Return the name of the new document
-            return new Pair<>(true, response);
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
             e.printStackTrace();
@@ -114,8 +113,8 @@ public class FirestoreHandler {
     }
 
     // TODO
-    public static Boolean DeleteField(String name) {
-        return false;
+    public static Pair<Boolean, String> DeleteField(String name) {
+        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
     }
 
     // TODO
