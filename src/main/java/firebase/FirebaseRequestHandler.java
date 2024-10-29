@@ -77,7 +77,9 @@ public class FirebaseRequestHandler {
 
             // ######################### DEBUG GOES HERE #########################
             //CreateProject("TESTPROJ", "TESTDESC");
-            GetProjects();
+            //GetProjects();
+            CreateProjectStep("TObrfclvoABbIZhn", "NAME", "DESC");
+            CreateProjectStep("TObrfclvoABbIZhn", "NAME2", "DESC2");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -166,6 +168,38 @@ public class FirebaseRequestHandler {
 
     // TODO: Creates a new project step and adds it to a project
     public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
+        try {
+
+            // Get existing project steps
+            Map<String, Object> currentStepData = new HashMap<>();
+            
+
+            // Create project step data (i love json)
+            Map<String, Object> newProjectStep = Map.of(
+                    "projectSteps", Map.of(
+                            "mapValue", Map.of(
+                                    "fields", Map.of(
+                                            _projectStepName, Map.of(
+                                                    "mapValue", Map.of(
+                                                            "fields", Map.of(
+                                                                    "name", Map.of("stringValue", _projectStepName),
+                                                                    "desc", Map.of("stringValue", _projectStepDescription),
+                                                                    "isComplete", Map.of("booleanValue", false)
+                                                            )
+                                                    )
+                                            )
+                                    )
+                            )
+                    )
+            );
+
+            // Create PATCH request to update document
+            FirestoreHandler.ModifyFieldValue("Projects", _projectID, "projectSteps", newProjectStep);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         return false;
     }
 
@@ -198,7 +232,6 @@ public class FirebaseRequestHandler {
         // Iterate through user projects ID list
         for(String projectID : FirebaseDataStorage.getProjectIDs()) {
             try{
-
                 // Try to get project
                 Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
 
@@ -215,6 +248,7 @@ public class FirebaseRequestHandler {
             }
         }
         return false;
+
     }
 
     // Creates a new user document, then populates the new document with required fields.

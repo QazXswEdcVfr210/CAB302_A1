@@ -21,4 +21,13 @@ public class Project {
         this.stepsCount = projectSteps.size();
     }
 
+    // Dumps project info to console
+    public void DebugProjectData() {
+        System.out.printf("Project Data:\nName: %s%n\nDescription: %s%n\n Number of Steps: %s%n\n", this.name, this.description, this.stepsCount);
+
+        for(ProjectStep step : projectSteps) {
+            step.DebugProjectStepData();
+        }
+    }
+
 }
