@@ -35,10 +35,6 @@ import java.math.*;
 
 public class FirebaseRequestHandler {
 
-    public static void main(String[] args) throws Exception{
-        TryLogin("admin@admin.admin", "adminadmin", false);
-    }
-
     // Not a security risk as auth keys are distributed on user login
     private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
@@ -76,11 +72,6 @@ public class FirebaseRequestHandler {
 
             // Get the user's project list
             GetProjectIds();
-
-            // ######################### DEBUG GOES HERE #########################
-            //CreateProject("TESTPROJ", "TESTDESC");
-            GetProjects();
-            CreateProjectStep("TObrfclvoABbIZhn", String.valueOf(Math.random()), "testDesc");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
