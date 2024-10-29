@@ -117,12 +117,18 @@ public class FirebaseJSONUnpacker {
             // Extract project details
             String projectName = jsonObject.getAsJsonObject("projectName").get("stringValue").getAsString();
             String projectDescription = jsonObject.getAsJsonObject("projectDescription").get("stringValue").getAsString();
+            String projectID = jsonObject.getAsJsonObject("projectID").get("stringValue").getAsString();
 
-            // Store project steps
-            List<ProjectStep> projectSteps = ExtractProjectStepsFromJson(jsonObject.getAsJsonObject("projectSteps").getAsJsonObject("mapValue").getAsJsonObject("fields"));
+            // Store project steps (try/catch block will catch null reference if there are no steps)
+            List<ProjectStep> projectSteps = new ArrayList<>();
+            try{
+                projectSteps = ExtractProjectStepsFromJson(jsonObject.getAsJsonObject("projectSteps").getAsJsonObject("mapValue").getAsJsonObject("fields"));
+            } catch (NullPointerException e) {
+                System.out.println("project has no steps");
+            }
 
             // Create Project instance and append to project list
-            Project project = new Project(projectName, projectDescription, projectSteps);
+            Project project = new Project(projectID, projectName, projectDescription, projectSteps);
             FirebaseDataStorage.appendProject(project);
 
         } catch (Exception e) {

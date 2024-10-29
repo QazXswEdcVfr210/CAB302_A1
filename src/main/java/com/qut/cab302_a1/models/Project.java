@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Project {
 
+    public String id;
     private String name;
     private String description;
     private int stepsCount;
@@ -14,7 +15,8 @@ public class Project {
     // List of the currently logged-in user's project steps
     private List<ProjectStep> projectSteps;
 
-    public Project(String name, String description, List<ProjectStep> projectSteps) {
+    public Project(String id, String name, String description, List<ProjectStep> projectSteps) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.projectSteps = projectSteps;
@@ -23,11 +25,22 @@ public class Project {
 
     // Dumps project info to console
     public void DebugProjectData() {
-        System.out.printf("Project Data:\nName: %s%n\nDescription: %s%n\n Number of Steps: %s%n\n", this.name, this.description, this.stepsCount);
+        System.out.printf("Project Data:\nID: %s%n\nName: %s%n\nDescription: %s%n\n Number of Steps: %s%n\n", this.id, this.name, this.description, this.stepsCount);
 
         for(ProjectStep step : projectSteps) {
             step.DebugProjectStepData();
         }
+    }
+
+    // Getters
+    public String getID() {
+        return this.id;
+    }
+    public String getName() {
+        return this.name;
+    }
+    public List<ProjectStep> getProjectSteps() {
+        return this.projectSteps;
     }
 
 }

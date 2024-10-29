@@ -5,6 +5,7 @@ import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 // This class stores commonly-accessed user data from Firebase so that we don't have to keep making requests.
 public class FirebaseDataStorage {
@@ -63,9 +64,18 @@ public class FirebaseDataStorage {
     public static List<Project> getProjects() {
         return FirebaseDataStorage.projects;
     }
+    // Get by ID
+    public static Project getProjectByID(String id) {
+        for(Project project : projects) {
+            if(id.equals(project.getID())) {
+                return project;
+            }
+        }
+
+        return new Project("null", "null", "null", new ArrayList<>());
+    }
     // Append
     public static void appendProject(Project project) {
-        FirebaseDataStorage.projects.add(project);
-    }
+        projects.add(project);}
 
 }

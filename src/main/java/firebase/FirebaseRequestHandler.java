@@ -25,6 +25,8 @@ import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.math.*;
+
 /*
     This class handles making requests to Firebase through REST API requests.
     Down the line this might be replaced with making requests to cloud functions for security purposes.
@@ -77,9 +79,8 @@ public class FirebaseRequestHandler {
 
             // ######################### DEBUG GOES HERE #########################
             //CreateProject("TESTPROJ", "TESTDESC");
-            //GetProjects();
-            CreateProjectStep("TObrfclvoABbIZhn", "NAME", "DESC");
-            CreateProjectStep("TObrfclvoABbIZhn", "NAME2", "DESC2");
+            GetProjects();
+            CreateProjectStep("TObrfclvoABbIZhn", String.valueOf(Math.random()), "testDesc");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -152,6 +153,7 @@ public class FirebaseRequestHandler {
             projectFields.put("projectName", Map.of("stringValue", _projectName));                  // Add project name to payload
             projectFields.put("projectDescription", Map.of("stringValue", _projectDescription));    // Add project description to payload
             projectFields.put("projectSteps", Map.of("mapValue", new HashMap<String, Object>()));   // Add project steps to payload
+            projectFields.put("projectID", Map.of("stringValue", projectID));                       // Add project ID to payload
 
             // Create a new document with a randomly-generated projectID using the data provided in the projectFields payload
             Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, projectFields);
@@ -166,35 +168,50 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // TODO: Creates a new project step and adds it to a project
+    // Creates a new project step and adds it to a project
     public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
         try {
 
             // Get existing project steps
-            Map<String, Object> currentStepData = new HashMap<>();
-            
+            Map<String, Object> stepData = new HashMap<>();
+            Project project = FirebaseDataStorage.getProjectByID(_projectID);
 
-            // Create project step data (i love json)
+            // Create step data for existing steps
+            for(ProjectStep step : project.getProjectSteps()) {
+                stepData.put(step.getName(), Map.of(
+                        "mapValue", Map.of(
+                                "fields", Map.of(
+                                        "name", Map.of("stringValue", step.getName()),
+                                        "desc", Map.of("stringValue", step.getDescription()),
+                                        "isComplete", Map.of("booleanValue", step.getbIsCompleted())
+                                )
+                        )
+                ));
+            }
+
+            // Create step data for new step
+            stepData.put(_projectStepName, Map.of(
+                    "mapValue", Map.of(
+                            "fields", Map.of(
+                                    "name", Map.of("stringValue", _projectStepName),
+                                    "desc", Map.of("stringValue", _projectStepDescription),
+                                    "isComplete", Map.of("booleanValue", false)
+                            )
+                    )
+            ));
+
+            // Create payload for PATCH request
             Map<String, Object> newProjectStep = Map.of(
                     "projectSteps", Map.of(
-                            "mapValue", Map.of(
-                                    "fields", Map.of(
-                                            _projectStepName, Map.of(
-                                                    "mapValue", Map.of(
-                                                            "fields", Map.of(
-                                                                    "name", Map.of("stringValue", _projectStepName),
-                                                                    "desc", Map.of("stringValue", _projectStepDescription),
-                                                                    "isComplete", Map.of("booleanValue", false)
-                                                            )
-                                                    )
-                                            )
-                                    )
-                            )
+                            "mapValue", Map.of("fields", stepData)
                     )
             );
 
             // Create PATCH request to update document
             FirestoreHandler.ModifyFieldValue("Projects", _projectID, "projectSteps", newProjectStep);
+
+            // Updates our copy of our projects
+            GetProjects();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -287,7 +304,11 @@ public class FirebaseRequestHandler {
         projects.add(Map.of("stringValue", projectID));
 
         // Update request body and perform PATCH request
-        requestBody.put("projectIDs", Map.of("arrayValue", Map.of("values", projects)));
+        requestBody.put("projectIDs", Map.of(
+                "arrayValue", Map.of(
+                        "values", projects
+                )
+        ));
         FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", requestBody);
 
         // Update our projectID list by just appending to it instead of making another request

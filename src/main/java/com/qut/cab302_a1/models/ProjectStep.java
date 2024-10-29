@@ -17,4 +17,17 @@ public class ProjectStep {
         System.out.printf("Project Step Data:\nName: %s%n\nDescription: %s%n\nIs Complete: %s%n\n", this.name, this.description, this.bIsCompleted);
     }
 
+    // Getters
+    public String getName() {
+        return this.name;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public Boolean getbIsCompleted() {
+        return this.bIsCompleted;
+    }
+
 }
