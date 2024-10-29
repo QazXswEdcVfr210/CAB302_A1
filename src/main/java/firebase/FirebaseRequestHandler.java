@@ -213,7 +213,7 @@ public class FirebaseRequestHandler {
 
     // ######## these functions aren't used outside of this script and now live at the bottom of this page ########
 
-    // Gets the list of the current user's projects.
+    // Gets the list of the current user's projects - called on login
     private static void GetProjectIds() throws Exception {
         try {
             // Set up request
@@ -235,7 +235,7 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // Gets all projects that the currently logged-in user owns and saves them to FirebaseDataStorage.projects
+    // Gets all projects that the currently logged-in user owns and saves them to FirebaseDataStorage.projects - called on login
     private static Boolean GetProjects() throws Exception{
         // Iterate through user projects ID list
         for(String projectID : FirebaseDataStorage.getProjectIDs()) {
