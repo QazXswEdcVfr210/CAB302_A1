@@ -4,11 +4,9 @@ import java.util.List;
 
 public class Project {
 
-    private String project;
-    private String steps;
+    private String name;
+    private String description;
     private int stepsCount;
-    private int stepsCompleted;
-    private String[] users;
 
     // this can be calculated as (number of completed steps / number of total steps)
     private int status; //0 = ongoing, 4 complete etc format not yet decided
@@ -16,12 +14,11 @@ public class Project {
     // List of the currently logged-in user's project steps
     private List<ProjectStep> projectSteps;
 
-    private Project(String project, String steps, int stepsCount, int stepsCompleted, List<ProjectStep> projectSteps) {
-        this.project = project;
-        this.steps = steps;
-        this.stepsCount = stepsCount;
-        this.stepsCompleted = stepsCompleted;
+    public Project(String name, String description, List<ProjectStep> projectSteps) {
+        this.name = name;
+        this.description = description;
         this.projectSteps = projectSteps;
+        this.stepsCount = projectSteps.size();
     }
 
 }

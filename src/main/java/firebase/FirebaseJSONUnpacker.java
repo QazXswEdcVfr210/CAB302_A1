@@ -2,13 +2,18 @@ package firebase;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.qut.cab302_a1.models.Project;
+import com.qut.cab302_a1.models.ProjectStep;
 import javafx.util.Pair;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 // This is a class that unpacks JSON responses received from Firebase and extracts context-specific data.
 public class FirebaseJSONUnpacker {
@@ -102,5 +107,48 @@ public class FirebaseJSONUnpacker {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void ExtractProjectInformation(String json) throws Exception {
+        try{
+            // Google-recommended way to parse JSON
+            JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject().getAsJsonObject("fields");
+
+            // Extract project details
+            String projectName = jsonObject.getAsJsonObject("projectName").get("stringValue").getAsString();
+            String projectDescription = jsonObject.getAsJsonObject("projectDescription").get("stringValue").getAsString();
+
+            // Store project steps
+            List<ProjectStep> projectSteps = ExtractProjectStepsFromJson(jsonObject.getAsJsonObject("projectSteps").getAsJsonObject("mapValue").getAsJsonObject("fields"));
+
+            // Create Project instance and append to project list
+            Project project = new Project(projectName, projectDescription, projectSteps);
+            FirebaseDataStorage.appendProject(project);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static List<ProjectStep> ExtractProjectStepsFromJson(JsonObject jsonObject) {
+        List<ProjectStep> steps = new ArrayList<>();
+
+        // Iterate over each step
+        Set<String> keys = jsonObject.keySet();
+
+        for(String key : keys) {
+            // Get fields
+            JsonObject fields = jsonObject.getAsJsonObject(key).getAsJsonObject("mapValue").getAsJsonObject("fields");
+
+            // Extract information
+            String stepName = fields.getAsJsonObject("name").get("stringValue").getAsString();
+            String stepDesc = fields.getAsJsonObject("desc").get("stringValue").getAsString();
+            Boolean stepComplete = fields.getAsJsonObject("isComplete").get("booleanValue").getAsBoolean();
+
+            ProjectStep newStep = new ProjectStep(stepName, stepDesc, stepComplete);
+            steps.add(newStep);
+        }
+
+        return steps;
     }
 }

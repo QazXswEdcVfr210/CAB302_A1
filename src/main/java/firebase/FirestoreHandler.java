@@ -26,7 +26,7 @@ public class FirestoreHandler {
             // URL to send our request to
             String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "?documentId=" + document;
 
-            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
+            // Create payload
             FirebaseJSONPackage p = new FirebaseJSONPackage();
             Map<String, Object> packageData = p
                     .AddKVP("fields", data)
@@ -36,12 +36,10 @@ public class FirestoreHandler {
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
             HttpContent content = new JsonHttpContent(jsonFactory, packageData);
-
-            // Handle response
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
-            String responseBody = response.parseAsString();
 
-            // Return the name of the new document
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
@@ -52,8 +50,28 @@ public class FirestoreHandler {
     }
 
     // TODO
-    public static Pair<Boolean, String> GetDocumentContents(String name) {
-        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
+    public static Pair<Boolean, String> GetDocument(String collection, String document) throws Exception {
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+            JsonFactory jsonFactory = new GsonFactory();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document;
+
+            // Make GET request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpResponse response = requestFactory.buildGetRequest(url).execute();
+
+            // Handle response
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
+
+        } catch (HttpResponseException e) {
+            e.printStackTrace();
+            return new Pair<>(false, "ERROR CODE GOES HERE"); // TODO: Extract error code
+        }
     }
 
     // TODO

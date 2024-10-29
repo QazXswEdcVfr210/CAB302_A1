@@ -1,7 +1,9 @@
 package firebase;
 
+import com.qut.cab302_a1.models.Project;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 // This class stores commonly-accessed user data from Firebase so that we don't have to keep making requests.
@@ -54,4 +56,16 @@ public class FirebaseDataStorage {
     public static void appendProjectID(String id) {
         FirebaseDataStorage.projectIDs.add(id);
     }
+
+    // The user's list of project instances
+    private static List<Project> projects = new ArrayList<>();
+    // Getter
+    public static List<Project> getProjects() {
+        return FirebaseDataStorage.projects;
+    }
+    // Append
+    public static void appendProject(Project project) {
+        FirebaseDataStorage.projects.add(project);
+    }
+
 }

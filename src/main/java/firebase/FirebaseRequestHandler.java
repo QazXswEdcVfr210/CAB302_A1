@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qut.cab302_a1.models.Project;
+import com.qut.cab302_a1.models.ProjectStep;
 import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
@@ -74,7 +76,8 @@ public class FirebaseRequestHandler {
             GetProjectIds();
 
             // ######################### DEBUG GOES HERE #########################
-            CreateProject("TEST2", "TESTDESC");
+            //CreateProject("TESTPROJ", "TESTDESC");
+            GetProjects();
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -85,8 +88,7 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // Attempts to create an account with the provided credentials, if successful then returns true,
-    // if not then returns false and prints the error to the console.
+    // Attempts to create an account with the provided credentials, if successful then returns true, if not then returns false and prints the error to the console.
     public static Boolean TrySignup(String email, String pass, String username, Boolean bPrintResponse) throws Exception {
         try{
             // Set up request
@@ -145,21 +147,9 @@ public class FirebaseRequestHandler {
 
             // Create payload
             Map<String, Object> projectFields = new HashMap<String, Object>();
-
-            // Add project name to payload
-            Map<String, Object> projectName = new HashMap<String, Object>();
-            projectFields.put("projectName", projectName);
-            projectName.put("stringValue", _projectName);
-
-            // Add project description to payload
-            Map<String, Object> projectDescription = new HashMap<String, Object>();
-            projectFields.put("projectDescription", projectDescription);
-            projectDescription.put("stringValue", _projectDescription);
-
-            // Add project steps to payload
-            Map<String, Object> projectSteps = new HashMap<String, Object>();
-            projectFields.put("projectSteps", projectSteps);
-            projectSteps.put("arrayValue", new HashMap<String, Object>());
+            projectFields.put("projectName", Map.of("stringValue", _projectName));                  // Add project name to payload
+            projectFields.put("projectDescription", Map.of("stringValue", _projectDescription));    // Add project description to payload
+            projectFields.put("projectSteps", Map.of("mapValue", new HashMap<String, Object>()));   // Add project steps to payload
 
             // Create a new document with a randomly-generated projectID using the data provided in the projectFields payload
             Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, projectFields);
@@ -201,6 +191,30 @@ public class FirebaseRequestHandler {
         } catch (HttpResponseException e) {
             System.out.printf("Error getting user projects: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
         }
+    }
+
+    // Gets all projects that the currently logged-in user owns and saves them to FirebaseDataStorage.projects
+    private static Boolean GetProjects() throws Exception{
+        // Iterate through user projects ID list
+        for(String projectID : FirebaseDataStorage.getProjectIDs()) {
+            try{
+
+                // Try to get project
+                Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
+
+                // If the project exists, add it to the user's list of projects
+                if(result.getKey()) {
+                    // Extract information and save to FirebaseDataStorage.projects
+                    FirebaseJSONUnpacker.ExtractProjectInformation(result.getValue());
+                }
+
+                return true;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        return false;
     }
 
     // Creates a new user document, then populates the new document with required fields.
