@@ -50,4 +50,8 @@ public class FirebaseDataStorage {
     public static void setProjectIDs(List<String> projectIDs){
         FirebaseDataStorage.projectIDs = projectIDs;
     }
+    // Append
+    public static void appendProjectID(String id) {
+        FirebaseDataStorage.projectIDs.add(id);
+    }
 }

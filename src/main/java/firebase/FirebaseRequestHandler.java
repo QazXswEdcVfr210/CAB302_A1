@@ -14,7 +14,9 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.json.JsonHttpContent;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javafx.util.Pair;
@@ -72,6 +74,7 @@ public class FirebaseRequestHandler {
             GetProjectIds();
 
             // ######################### DEBUG GOES HERE #########################
+            CreateProject("TEST2", "TESTDESC");
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -161,17 +164,8 @@ public class FirebaseRequestHandler {
             // Create a new document with a randomly-generated projectID using the data provided in the projectFields payload
             Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, projectFields);
 
-            // TODO: Add reference to this project in Users/{uid}/projectIDs
             // If the document was successfully created, add a reference to the project in the user's list of projectIDs
-            if(results.getKey()) {
-                Map<String, Object> userFields = new HashMap<String, Object>();     // Main kvp to be sent
-                Map<String, Object> projectIDs = new HashMap<String, Object>();     // projectIDs field data
-                userFields.put("projectIDs", projectIDs);              // Add projectIDs to main kvp
-                projectIDs.put("arrayValue", projectID);               // Add projectID to projectIDs as an arrayValue
-
-                FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", userFields);
-            }
-
+            if(results.getKey()) { AppendProjectToProfile(projectID);}
             return "success";
 
         } catch (HttpResponseException e) {
@@ -228,5 +222,27 @@ public class FirebaseRequestHandler {
         } catch (HttpResponseException e) {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
         }
+    }
+
+    // Adds a reference to a newly-created project to the user's profile
+    private static void AppendProjectToProfile(String projectID) throws Exception{
+        // Create request body
+        Map<String, Object> requestBody = new HashMap<>();
+
+        // Get existing user projects
+        List<Map<String, String>> projects = new ArrayList<>();
+        for(String p : FirebaseDataStorage.getProjectIDs()) {
+            projects.add(Map.of("stringValue", p));
+        }
+
+        // Add the new projectID to the map
+        projects.add(Map.of("stringValue", projectID));
+
+        // Update request body and perform PATCH request
+        requestBody.put("projectIDs", Map.of("arrayValue", Map.of("values", projects)));
+        FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", requestBody);
+
+        // Update our projectID list by just appending to it instead of making another request
+        FirebaseDataStorage.appendProjectID(projectID);
     }
 }

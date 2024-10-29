@@ -42,7 +42,6 @@ public class FirestoreHandler {
             String responseBody = response.parseAsString();
 
             // Return the name of the new document
-            System.out.println((responseBody));
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
