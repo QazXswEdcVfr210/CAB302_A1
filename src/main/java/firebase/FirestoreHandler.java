@@ -40,8 +40,6 @@ public class FirestoreHandler {
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
-            //System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
-            e.printStackTrace();
             return new Pair<>(false, "ERROR CODE GOES HERE"); // TODO: Extract error code
         }
     }
@@ -66,8 +64,7 @@ public class FirestoreHandler {
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
-            e.printStackTrace();
-            return new Pair<>(false, "ERROR CODE GOES HERE"); // TODO: Extract error code
+            return new Pair<>(false, "ERROR CODE GOES HERE");
         }
     }
 
@@ -96,9 +93,14 @@ public class FirestoreHandler {
 
     }
 
-    // TODO
-    public static Boolean CheckDocumentExists(String name) {
-        return false;
+    // Checks to see if a certain document exists
+    public static Boolean CheckDocumentExists(String collection, String document) throws Exception {
+        try{
+            Pair<Boolean, String> results = GetDocument(collection, document);
+            return results.getKey();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // TODO

@@ -134,7 +134,7 @@ public class FirebaseRequestHandler {
             boolean cont = true;
             while(cont) {
                 projectID = RandomStringUtils.randomAlphabetic(16);
-                cont = FirestoreHandler.CheckDocumentExists(projectID);
+                cont = FirestoreHandler.CheckDocumentExists("Projects", projectID);
             }
 
             // Create payload
