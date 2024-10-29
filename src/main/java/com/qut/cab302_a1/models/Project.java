@@ -36,11 +36,12 @@ public class Project {
     public String getID() {
         return this.id;
     }
-    public String getName() {
-        return this.name;
-    }
     public List<ProjectStep> getProjectSteps() {
         return this.projectSteps;
     }
+
+    // Setters
+    public void setName(String name) { this.name = name; }
+    public void setDescription(String description) { this.description = description; }
 
 }

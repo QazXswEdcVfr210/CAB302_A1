@@ -70,6 +70,7 @@ public class FirebaseRequestHandler {
 
             // Get the user's project list
             GetProjectIds();
+            GetProjects();
 
             return response.getStatusCode() == 200; // 200 response code means OK, everything else is treated as a login error
 
@@ -157,6 +158,72 @@ public class FirebaseRequestHandler {
         }
     }
 
+    // Modifies the name of a project
+    public static Boolean UpdateProjectName(String projectID, String newName) throws Exception{
+
+        Pair<Boolean, String> response;
+
+        // Try to update the server's copy of the project
+        try{
+            // Create request body
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("projectName", Map.of(
+                    "stringValue", newName
+            ));
+
+            // Send request
+            response = FirestoreHandler.ModifyFieldValue("Projects", projectID, "projectName", requestBody);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // If we were able to update the server's copy, update our local copy
+        if(response.getKey()) {
+            Pair<Project, Integer> projectIntegerPair = FirebaseDataStorage.getProjectByID(projectID);
+
+            Project updatedProject = projectIntegerPair.getKey();
+            updatedProject.setName(newName);
+
+            FirebaseDataStorage.updateProject(updatedProject, projectIntegerPair.getValue());
+        }
+
+        return response.getKey();
+    }
+
+    // Modifies the description of a project
+    public static Boolean UpdateProjectDescription(String projectID, String newDescription) throws Exception{
+
+        Pair<Boolean, String> response;
+
+        // Try to update the server's copy of the project
+        try{
+            // Create request body
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("projectDescription", Map.of(
+                    "stringValue", newDescription
+            ));
+
+            // Send request
+            response = FirestoreHandler.ModifyFieldValue("Projects", projectID, "projectDescription", requestBody);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        // If we were able to update the server's copy, update our local copy
+        if(response.getKey()) {
+            Pair<Project, Integer> projectIntegerPair = FirebaseDataStorage.getProjectByID(projectID);
+
+            Project updatedProject = projectIntegerPair.getKey();
+            updatedProject.setDescription(newDescription);
+
+            FirebaseDataStorage.updateProject(updatedProject, projectIntegerPair.getValue());
+        }
+
+        return response.getKey();
+    }
+
     // Deletes a project
     public static Boolean DeleteProject(String projectName) throws Exception {
         try{
@@ -173,7 +240,7 @@ public class FirebaseRequestHandler {
 
             // Get existing project steps
             Map<String, Object> stepData = new HashMap<>();
-            Project project = FirebaseDataStorage.getProjectByID(_projectID);
+            Project project = FirebaseDataStorage.getProjectByID(_projectID).getKey();
 
             // Create step data for existing steps
             for(ProjectStep step : project.getProjectSteps()) {
@@ -217,6 +284,17 @@ public class FirebaseRequestHandler {
         }
 
         return false;
+    }
+
+    // Deletes a project step from a project
+    public static Boolean DeleteProjectStep() throws Exception {
+        try{
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // ######## these functions aren't used outside of this script and now live at the bottom of this page ########

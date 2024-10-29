@@ -103,16 +103,6 @@ public class FirestoreHandler {
         }
     }
 
-    // TODO
-    public static Pair<Boolean, String> CreateField(String name, Map<String, Object> data) {
-        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
-    }
-
-    // TODO
-    public static Pair<Boolean, String> ReadFieldValue(String name) {
-        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
-    }
-
     // Modifies a field value
     public static Pair<Boolean, String> ModifyFieldValue(String collection, String document, String field, Map<String, Object> data) throws Exception {
 

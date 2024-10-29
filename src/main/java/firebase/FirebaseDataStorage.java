@@ -64,18 +64,22 @@ public class FirebaseDataStorage {
     public static List<Project> getProjects() {
         return FirebaseDataStorage.projects;
     }
-    // Get by ID
-    public static Project getProjectByID(String id) {
+    // Get by ID - returns project instance + index in projects list
+    public static Pair<Project, Integer> getProjectByID(String id) {
         for(Project project : projects) {
             if(id.equals(project.getID())) {
-                return project;
+                return new Pair<Project, Integer>(project, projects.indexOf(project));
             }
         }
 
-        return new Project("null", "null", "null", new ArrayList<>());
+        return new Pair<Project, Integer>(new Project("null", "null", "null", new ArrayList<>()), 0);
     }
     // Append
     public static void appendProject(Project project) {
         projects.add(project);}
-
+    // Update - effectively replaces the project at this.projects[index] with a new project
+    public static void updateProject(Project project, Integer index) {
+        projects.set(index, project);
+    }
+    // Delete
 }
