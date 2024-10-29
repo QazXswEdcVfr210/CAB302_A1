@@ -8,15 +8,12 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import javafx.util.Pair;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Map;
 
 // This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
 public class FirestoreHandler {
 
-    // Interacting with Documents
+    // Creates a document
     public static Pair<Boolean, String> CreateDocument(String collection, String document, Map<String, Object> data) throws Exception{
         try {
             // Set up request
@@ -49,7 +46,7 @@ public class FirestoreHandler {
         }
     }
 
-    // TODO
+    // Retrieves the contents of a document
     public static Pair<Boolean, String> GetDocument(String collection, String document) throws Exception {
         try {
             // Set up request
@@ -74,9 +71,29 @@ public class FirestoreHandler {
         }
     }
 
-    // TODO
-    public static Pair<Boolean, String> DeleteDocument(String name) {
-        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
+    // Deletes a document
+    public static Pair<Boolean, String> DeleteDocument(String collection, String document) throws Exception {
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+            JsonFactory jsonFactory = new GsonFactory();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document;
+
+            // Make DELETE request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpResponse response = requestFactory.buildDeleteRequest(url).execute();
+
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
+
+        } catch (Exception e) {
+            return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
+        }
+
     }
 
     // TODO

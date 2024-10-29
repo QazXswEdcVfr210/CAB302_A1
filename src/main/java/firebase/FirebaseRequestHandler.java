@@ -25,8 +25,6 @@ import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.math.*;
-
 /*
     This class handles making requests to Firebase through REST API requests.
     Down the line this might be replaced with making requests to cloud functions for security purposes.
@@ -128,7 +126,7 @@ public class FirebaseRequestHandler {
     }
 
     // Creates a new project, the returned string is either representative of success or an error code
-    public static String CreateProject(String _projectName, String _projectDescription) throws Exception {
+    public static String CreateProject(String projectName, String projectDescription) throws Exception {
         try{
 
             // Generate random project ID and check if project exists
@@ -141,8 +139,8 @@ public class FirebaseRequestHandler {
 
             // Create payload
             Map<String, Object> projectFields = new HashMap<String, Object>();
-            projectFields.put("projectName", Map.of("stringValue", _projectName));                  // Add project name to payload
-            projectFields.put("projectDescription", Map.of("stringValue", _projectDescription));    // Add project description to payload
+            projectFields.put("projectName", Map.of("stringValue", projectName));                   // Add project name to payload
+            projectFields.put("projectDescription", Map.of("stringValue", projectDescription));     // Add project description to payload
             projectFields.put("projectSteps", Map.of("mapValue", new HashMap<String, Object>()));   // Add project steps to payload
             projectFields.put("projectID", Map.of("stringValue", projectID));                       // Add project ID to payload
 
@@ -157,6 +155,16 @@ public class FirebaseRequestHandler {
             // Print to console if anything goes wrong
             return FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent());
         }
+    }
+
+    // Deletes a project
+    public static Boolean DeleteProject(String projectName) throws Exception {
+        try{
+            FirestoreHandler.DeleteDocument("Projects", projectName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Creates a new project step and adds it to a project
