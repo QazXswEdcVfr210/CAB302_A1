@@ -222,7 +222,7 @@ public class ProjectController   {
     @FXML
     public void initialize(){
         try{
-        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+            basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
         }
         catch (Exception e){
             System.out.println("Stylesheet failed to load");
@@ -742,75 +742,75 @@ public class ProjectController   {
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
 
-            VBox pictureBox = new VBox(20);
-            pictureBox.fillWidthProperty();
-            // top, right?, left?, bottom?
-            pictureBox.setPadding(new Insets(25, 0, 0, 25));
-            Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
-            ImageView imageView = new ImageView(placeholder);
-            imageView.setFitHeight(180);
-            imageView.setFitWidth(180);
-            imageView.setStyle("-fx-background-radius: 20px;"); //come back to this later.
-            imageView.setDisable(true);
+        VBox pictureBox = new VBox(20);
+        pictureBox.fillWidthProperty();
+        // top, right?, left?, bottom?
+        pictureBox.setPadding(new Insets(25, 0, 0, 25));
+        Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
+        ImageView imageView = new ImageView(placeholder);
+        imageView.setFitHeight(180);
+        imageView.setFitWidth(180);
+        imageView.setStyle("-fx-background-radius: 20px;"); //come back to this later.
+        imageView.setDisable(true);
 
-            pictureBox.getChildren().addAll(imageView);
-            //Right side
-            VBox rightSide = new VBox(20);
+        pictureBox.getChildren().addAll(imageView);
+        //Right side
+        VBox rightSide = new VBox(20);
 
-            //Left side of rightSide panel
-            rightSide.setPadding(new Insets(40, 0, 0, 0));
-                HBox middlePane = new HBox(20);
-                Label title = new Label("Title" + testTitle); // no more than 25 Char
-                testTitle--;
-                int MAX_SPACING = 400;
-                title.setId("titleID");
+        //Left side of rightSide panel
+        rightSide.setPadding(new Insets(40, 0, 0, 0));
+        HBox middlePane = new HBox(20);
+        Label title = new Label("Title" + testTitle); // no more than 25 Char
+        testTitle--;
+        int MAX_SPACING = 400;
+        title.setId("titleID");
 
-                        // progressbar right side of right side
-                        VBox progressBar = new VBox(20);
-                            //top row
-                            HBox progressBox = new HBox(20);
-                            progressBox.setSpacing(185);
-                            // = should be changed to a settings icon
-                            Label progressLabel = new Label("=  Progress");
+        // progressbar right side of right side
+        VBox progressBar = new VBox(20);
+        //top row
+        HBox progressBox = new HBox(20);
+        progressBox.setSpacing(185);
+        // = should be changed to a settings icon
+        Label progressLabel = new Label("=  Progress");
 
-                            progressLabel.setId("progressLabelID");
-                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
-                            tipsLabel.setId("tipsLabelID");
+        progressLabel.setId("progressLabelID");
+        Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+        tipsLabel.setId("tipsLabelID");
 
-                            progressBox.getChildren().addAll(progressLabel, tipsLabel);
-                                final int MAX_RANGE = 270;
-                                final int MAX_WIDTH = 5;
-                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+        progressBox.getChildren().addAll(progressLabel, tipsLabel);
+        final int MAX_RANGE = 270;
+        final int MAX_WIDTH = 5;
+        int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-                                HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
-                                StackPane progressPane = new StackPane();
-                                Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+        HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
+        StackPane progressPane = new StackPane();
+        Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
 
-                                backBar.setArcWidth(10);
-                                backBar.setArcHeight(2);
-                                backBar.setFill(Color.GRAY);
+        backBar.setArcWidth(10);
+        backBar.setArcHeight(2);
+        backBar.setFill(Color.GRAY);
 
-                                //progress bar gradient should range from blue to red.
-                                Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
-                                Color colorPicker = pickColor(MAX_RANGE, progressRange);
+        //progress bar gradient should range from blue to red.
+        Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
+        Color colorPicker = pickColor(MAX_RANGE, progressRange);
 
-                                progressionBar.setFill(colorPicker);
-                                backBar.setArcWidth(10);
-                                backBar.setArcHeight(2);
+        progressionBar.setFill(colorPicker);
+        backBar.setArcWidth(10);
+        backBar.setArcHeight(2);
 
-                                progressPane.setAlignment(Pos.CENTER_LEFT);
-                                progressPane.getChildren().addAll(backBar, progressionBar);
+        progressPane.setAlignment(Pos.CENTER_LEFT);
+        progressPane.getChildren().addAll(backBar, progressionBar);
 
-                        progressBar.getChildren().addAll(progressBox, progressPane);
-                    middlePane.getChildren().addAll(title, progressBar);
+        progressBar.getChildren().addAll(progressBox, progressPane);
+        middlePane.getChildren().addAll(title, progressBar);
 
-                    // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
-                    String titleString = title.toString();
-                    double titleWidth = calculateTextSize(titleString);
-                    middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
+        // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
+        String titleString = title.toString();
+        double titleWidth = calculateTextSize(titleString);
+        middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
 
-                TextArea textArea = getTextArea();
-            rightSide.getChildren().addAll(middlePane, textArea);
+        TextArea textArea = getTextArea();
+        rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
         bigPane.setMinSize(150, 150);
@@ -832,10 +832,10 @@ public class ProjectController   {
      */
     public double calculateTextSize(String title){
 
-    Text titleText = new Text(title);
-    titleText.setFont(Font.font("-fx-font-size: 1.5"));
-    double width = titleText.getLayoutBounds().getWidth();
-    return width;
+        Text titleText = new Text(title);
+        titleText.setFont(Font.font("-fx-font-size: 1.5"));
+        double width = titleText.getLayoutBounds().getWidth();
+        return width;
     }
 
     /**
@@ -932,15 +932,15 @@ public class ProjectController   {
     private Button logoutButton;
 
     @FXML
-   protected void onLogoutAction(){
+    protected void onLogoutAction(){
         try{
-        Stage stage = (Stage) logoutButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
-        stage.setTitle("Project Partner");
-        stage.setWidth(LoginApplication.WIDTH);
-        stage.setHeight(LoginApplication.HEIGHT);
-        stage.setScene(scene);
+            Stage stage = (Stage) logoutButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
+            Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
+            stage.setTitle("Project Partner");
+            stage.setWidth(LoginApplication.WIDTH);
+            stage.setHeight(LoginApplication.HEIGHT);
+            stage.setScene(scene);
         }
         catch(IOException e){
             e.printStackTrace();
