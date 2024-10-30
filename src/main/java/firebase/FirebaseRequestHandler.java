@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.util.Pair;
 
 import com.qut.cab302_a1.models.Project;
 import com.qut.cab302_a1.models.ProjectStep;
-import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -121,8 +121,9 @@ public class FirebaseRequestHandler {
 
     }
 
-    // Creates a new project, the returned string is either representative of success or an error code
-    public static String CreateProject(String projectName, String projectDescription) throws Exception {
+    // Creates a new project, first returned string is either success or an error code, the second string is the project ID
+    public static Pair<String, String> CreateProject(String projectName, String projectDescription) throws Exception {
+
         try{
 
             // Generate random project ID and check if project exists
@@ -145,11 +146,11 @@ public class FirebaseRequestHandler {
 
             // If the document was successfully created, add a reference to the project in the user's list of projectIDs
             if(results.getKey()) { AppendProjectToProfile(projectID);}
-            return "success";
+            return new Pair<String, String>("success", projectID);
 
         } catch (HttpResponseException e) {
             // Print to console if anything goes wrong
-            return FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent());
+            return new Pair<String, String>(FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()), null);
         }
     }
 

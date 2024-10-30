@@ -2,6 +2,7 @@ package com.qut.cab302_a1;
 
 import java.io.IOException;
 import java.util.*;
+import javafx.util.Pair;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -278,7 +279,8 @@ public class ProjectController   {
     private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
         try {
             // This calls the FirebaseRequestHandler to save the project in the db
-            String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
+            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
+            String result = rawResult.getKey();
 
             if (result.equals("success")) {
                 // Show success message if saved to db
@@ -325,7 +327,8 @@ public class ProjectController   {
 
             if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
                 try {
-                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+                    Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+                    String result = rawResult.getKey();
 
                     if (result.equals("success")) {
                         // Success case: disable editing and buttons
