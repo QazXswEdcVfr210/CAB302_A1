@@ -19,10 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javafx.util.Pair;
 
 import com.qut.cab302_a1.models.Project;
 import com.qut.cab302_a1.models.ProjectStep;
-import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -121,8 +121,9 @@ public class FirebaseRequestHandler {
 
     }
 
-    // Creates a new project, the returned string is either representative of success or an error code
-    public static String CreateProject(String projectName, String projectDescription) throws Exception {
+    // Creates a new project, first returned string is either success or an error code, the second string is the project ID
+    public static Pair<String, String> CreateProject(String projectName, String projectDescription) throws Exception {
+
         try{
 
             // Generate random project ID and check if project exists
@@ -145,11 +146,11 @@ public class FirebaseRequestHandler {
 
             // If the document was successfully created, add a reference to the project in the user's list of projectIDs
             if(results.getKey()) { AppendProjectToProfile(projectID);}
-            return "success";
+            return new Pair<String, String>("success", projectID);
 
         } catch (HttpResponseException e) {
             // Print to console if anything goes wrong
-            return FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent());
+            return new Pair<String, String>(FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()), null);
         }
     }
 
@@ -220,14 +221,19 @@ public class FirebaseRequestHandler {
     }
 
     // Deletes a project
-    public static Boolean DeleteProject(String projectName) throws Exception {
-        try{
-            FirestoreHandler.DeleteDocument("Projects", projectName);
+    public static Boolean DeleteProject(String projectID) {
+        try {
+            // Attempt to delete the document from Firestore
+            FirestoreHandler.DeleteDocument("Projects", projectID);
+            System.out.println("Project deletion successful for ID: " + projectID);
+            return true; // Return true if deletion was successful
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Project deletion failed for ID: " + projectID);
+            return false; // Return false if an error occurred
         }
-        return null;
     }
+
 
     // Creates a new project step and adds it to a project
     public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
