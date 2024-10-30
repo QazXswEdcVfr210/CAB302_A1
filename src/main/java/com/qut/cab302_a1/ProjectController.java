@@ -2,6 +2,9 @@ package com.qut.cab302_a1;
 
 import java.io.IOException;
 import java.util.*;
+
+import com.qut.cab302_a1.models.Project;
+import firebase.FirebaseDataStorage;
 import javafx.util.Pair;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
@@ -22,9 +25,14 @@ import javafx.stage.Stage;
 
 
 public class ProjectController   {
+    public static String setUser;
+
     private List<CustomStackPane> projectList = new ArrayList<>();
     private static List<ObserverPane> paneObservers =  new ArrayList<>();
     public static int testTitle = 10;
+    public List<Project> usersProjects;
+
+    public Project currentProject;
 
     @FXML
     private Button buttonV;
@@ -75,6 +83,7 @@ public class ProjectController   {
         mainScrollPane.setFitToHeight(true);
 
         mainVbox.setFillWidth(true);
+        populateList();
 
         hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
         sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
@@ -85,6 +94,16 @@ public class ProjectController   {
 
     @FXML
     private ScrollPane mainScrollPane;
+
+    public void populateList(){
+        usersProjects = FirebaseDataStorage.getProjects();
+
+        for (Project project : usersProjects){
+            currentProject = project;
+
+            CustomStackPane projectPan = createProjectPane();
+        }
+    }
 
 
     public class CustomStackPane extends StackPane implements ObserverPane {
@@ -217,7 +236,7 @@ public class ProjectController   {
      */
     @FXML
     private CustomStackPane createProjectPane (){
-        CustomStackPane overLay = new CustomStackPane(testTitle);
+        CustomStackPane overLay = new CustomStackPane(0);
         overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
@@ -249,7 +268,20 @@ public class ProjectController   {
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
-            System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
+
+            try{
+                Stage stage = (Stage) bigPane.getScene().getWindow();
+                FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("selectedProject-view.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), LoginController.MAIN_WIDTH, LoginController.MAIN_HEIGHT);
+                stage.setTitle("Project");
+                stage.setWidth(LoginController.MAIN_WIDTH);
+                stage.setHeight(LoginController.MAIN_HEIGHT);
+                stage.setScene(scene);
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
@@ -266,7 +298,7 @@ public class ProjectController   {
      */
     private void hideAllPanes(){
         if (projectList.size() >= 3){
-            mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly big. DO NOT REMOVE
+            mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly bug. DO NOT REMOVE
         }
         else if (projectList.size() <3){
             mainScrollPane.setFitToHeight(true);
@@ -675,7 +707,11 @@ public class ProjectController   {
     @FXML
     protected void onCreatePanelAction(){
         System.out.println("Created Panel!");
+
+        currentProject = null;
         CustomStackPane projectPan = createProjectPane();
+
+
 
 
         //mainVbox.getChildren().add(projectPan);
