@@ -8,14 +8,13 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import javafx.util.Pair;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 // This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
 public class FirestoreHandler {
 
-    // Interacting with Documents
+    // Creates a document
     public static Pair<Boolean, String> CreateDocument(String collection, String document, Map<String, Object> data) throws Exception{
         try {
             // Set up request
@@ -25,54 +24,84 @@ public class FirestoreHandler {
             // URL to send our request to
             String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "?documentId=" + document;
 
-            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
-            FirebaseJSONPackage p = new FirebaseJSONPackage();
-            Map<String, Object> packageData = p
-                    .AddKVP("fields", data)
-                    .getData();
+            // Create payload
+            Map<String, Object> packageData = new HashMap<>();
+            packageData.put("fields", data);
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
             HttpContent content = new JsonHttpContent(jsonFactory, packageData);
-
-            // Handle response
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
-            String responseBody = response.parseAsString();
 
-            // Return the name of the new document
-            System.out.println((responseBody));
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
-            //System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
-            e.printStackTrace();
             return new Pair<>(false, "ERROR CODE GOES HERE"); // TODO: Extract error code
         }
     }
 
-    public static Boolean GetDocumentContents(String name) {
-        return false;
+    // Retrieves the contents of a document
+    public static Pair<Boolean, String> GetDocument(String collection, String document) throws Exception {
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+            JsonFactory jsonFactory = new GsonFactory();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document;
+
+            // Make GET request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpResponse response = requestFactory.buildGetRequest(url).execute();
+
+            // Handle response
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
+
+        } catch (HttpResponseException e) {
+            return new Pair<>(false, "ERROR CODE GOES HERE");
+        }
     }
 
-    public static Boolean DeleteDocument(String name) {
-        return false;
+    // Deletes a document
+    public static Pair<Boolean, String> DeleteDocument(String collection, String document) throws Exception {
+        try {
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document;
+
+            // Make DELETE request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpResponse response = requestFactory.buildDeleteRequest(url).execute();
+
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
+
+        } catch (Exception e) {
+            return new Pair<>(false, "ERROR DELETING DOCUMENT");
+        }
+
     }
 
-    public static Boolean CheckDocumentExists(String name) {
-        return false;
+    // Checks to see if a certain document exists
+    public static Boolean CheckDocumentExists(String collection, String document) throws Exception {
+        try{
+            Pair<Boolean, String> results = GetDocument(collection, document);
+            return results.getKey();
+        } catch (Exception e) {
+            return false;
+        }
     }
 
-    // Interacting with Fields
-    public static Boolean CreateField(String name, Map<String, Object> data) {
-        return false;
-    }
-
-    public static Boolean ReadFieldValue(String name) {
-        return false;
-    }
-
-
+    // Modifies a field value
     public static Pair<Boolean, String> ModifyFieldValue(String collection, String document, String field, Map<String, Object> data) throws Exception {
 
         try {
@@ -83,25 +112,21 @@ public class FirestoreHandler {
             // URL to send our request to
             String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document + "?updateMask.fieldPaths=" + field;
 
-            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
-            FirebaseJSONPackage p = new FirebaseJSONPackage();
-            Map<String, Object> packageData = p
-                    .AddKVP("fields", data)
-                    .getData();
+            // Create Payload
+            Map<String, Object> fields = new HashMap<>();
+            fields.put("fields", data);
 
-            // Make PATCH request
-            // Because java doesn't recognise PATCH as a supported request method for some reason we have to do this workaround :(
-            URL url = new URL(firebaseUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST"); // Create the request as a POST request, then modify it
-            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH"); // thank you stack overflow
+            // Build PATCH request - because PATCH is not supported by our client we must build the request as a POST request and then override it
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpContent content = new JsonHttpContent(jsonFactory, fields);
+            HttpRequest request = requestFactory.buildPostRequest(url, content);
+            request.getHeaders().set("X-HTTP-Method-Override", "PATCH");
+            HttpResponse response = request.execute();
 
-            // Handle response
-            String response = connection.getResponseMessage();
-            System.out.println(response);
-
-            // Return the name of the new document
-            return new Pair<>(true, response);
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
             e.printStackTrace();
@@ -109,12 +134,31 @@ public class FirestoreHandler {
         }
     }
 
-    public static Boolean DeleteField(String name) {
-        return false;
-    }
+    // Deletes a field from a document
+    public static Pair<Boolean, String> DeleteField(String collection, String document, String field) throws Exception {
+        try{
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
 
-    public static Boolean CheckFieldExists(String name) {
-        return false;
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document + "?updateMask.fieldPaths=" + field;
+
+            // Make PATCH request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpContent content = new JsonHttpContent(new GsonFactory(), new HashMap<>());
+            HttpRequest request = requestFactory.buildPostRequest(url, content);
+            request.getHeaders().set("X-HTTP-Method-Override", "PATCH");
+            HttpResponse response = request.execute();
+
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Pair<>(false, "ERROR DELETING FIELD");
+        }
     }
 
 }

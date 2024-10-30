@@ -18,17 +18,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.KeyCode;
-import javafx.scene.Scene;
 
 
-
-public class ProjectController {
+public class ProjectController   {
     private List<CustomStackPane> projectList = new ArrayList<>();
-    private static List<ObserverPane> paneObservers = new ArrayList<>();
+    private static List<ObserverPane> paneObservers =  new ArrayList<>();
     public static int testTitle = 10;
 
     @FXML
@@ -42,6 +36,7 @@ public class ProjectController {
     private Label sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3;
     Label[] sidepartLabels = new Label[7];
 
+
     @FXML
     private void minimiseActon() {
         if (hyperlink1.isVisible()) {
@@ -52,7 +47,8 @@ public class ProjectController {
                 label.setVisible(false);
             }
             buttonV.setText("-");
-        } else {
+        }
+        else{
             for (Hyperlink link : hyperlinks) {
                 link.setVisible(true);
             }
@@ -67,10 +63,11 @@ public class ProjectController {
     private HBox basePane;
 
     @FXML
-    public void initialize() {
-        try {
-            basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
-        } catch (Exception e) {
+    public void initialize(){
+        try{
+        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+        }
+        catch (Exception e){
             System.out.println("Stylesheet failed to load");
         }
         mainScrollPane.setFitToWidth(true);
@@ -78,10 +75,9 @@ public class ProjectController {
 
         mainVbox.setFillWidth(true);
 
-        hyperlinks = new Hyperlink[]{hyperlink0, hyperlink1, hyperlink2, hyperlink3};
-        sidepartLabels = new Label[]{sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
-
-   }
+        hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
+        sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
+    }
 
     @FXML
     private VBox mainVbox;
@@ -282,7 +278,7 @@ public class ProjectController {
     private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
         try {
             // This calls the FirebaseRequestHandler to save the project in the db
-            String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
+            String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
 
             if (result.equals("success")) {
                 // Show success message if saved to db
@@ -299,37 +295,37 @@ public class ProjectController {
 
     private VBox createMainPane(CustomStackPane overLay) {
         VBox projectPane = new VBox(20);
-        projectPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
-        projectPane.setPrefSize(150, 150);
+        projectPane.getStyleClass().add("project-pane");
 
         // Project details
         TextField projectNameField = new TextField();
         projectNameField.setPromptText("Enter project name");
+        projectNameField.getStyleClass().add("project-text-field");
 
         TextField projectDescriptionField = new TextField();
         projectDescriptionField.setPromptText("Enter project description");
+        projectDescriptionField.getStyleClass().add("project-text-field");
 
         TextField projectResourcesField = new TextField();
         projectResourcesField.setPromptText("Enter list of required resources");
+        projectResourcesField.getStyleClass().add("project-text-field");
 
         TextField projectToolsField = new TextField();
         projectToolsField.setPromptText("Enter list of required tools");
+        projectToolsField.getStyleClass().add("project-text-field");
 
         // Save Button
         Button saveButton = new Button("Save");
-
-
+        saveButton.getStyleClass().add("round-button");
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
             String projectDescription = projectDescriptionField.getText();
             String projectResources = projectResourcesField.getText();
             String projectTools = projectToolsField.getText();
 
-
             if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
                 try {
-                    // Call the backend function to create a new project and update the database
-                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
+                    String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
 
                     if (result.equals("success")) {
                         // Success case: disable editing and buttons
@@ -339,133 +335,49 @@ public class ProjectController {
                         projectToolsField.setEditable(false);
                         saveButton.setDisable(true);
 
-                        // Optionally, show a success message
                         showSuccessAlert("Project Created", "Project was successfully saved to the database!");
                     } else {
-                        // Handle the error returned by the backend
                         showErrorAlert("Error creating project", result);
                     }
                 } catch (Exception e) {
-                    // Handle exceptions from backend
                     showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
                 }
             } else {
-                // Show error if fields are empty
                 showErrorAlert("Validation Error", "Project name and description cannot be empty.");
             }
         });
 
-        //ctrl + S shortcut
-        projectPane.setOnKeyPressed(event -> {
-            if (new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_DOWN).match(event)) {
-                String projectName = projectNameField.getText();
-                String projectDescription = projectDescriptionField.getText();
-                String projectResources = projectResourcesField.getText();
-                String projectTools = projectToolsField.getText();
-
-                if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
-                    try {
-                        // Call the backend function to create a new project and update the database
-                        String result = FirebaseRequestHandler.CreateProject(projectName, projectDescription, projectResources, projectTools);
-
-                        if (result.equals("success")) {
-                            // Success case: disable editing and buttons
-                            projectNameField.setEditable(false);
-                            projectDescriptionField.setEditable(false);
-                            projectResourcesField.setEditable(false);
-                            projectToolsField.setEditable(false);
-                            saveButton.setDisable(true);
-
-                            // Optionally, show a success message
-                            showSuccessAlert("Project Created", "Project was successfully saved to the database!");
-                        } else {
-                            // Handle the error returned by the backend
-                            showErrorAlert("Error creating project", result);
-                        }
-                    } catch (Exception e) {
-                        // Handle exceptions from backend
-                        showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
-                    }
-                } else {
-                    // Show error if fields are empty
-                    showErrorAlert("Validation Error", "Project name and description cannot be empty.");
-                }
-
-
-            }
-        });
-
-
         // Duplicate button
         Button duplicateButton = new Button("Duplicate");
+        duplicateButton.getStyleClass().add("round-button");
         duplicateButton.setOnAction(event -> {
-            // Retrieve the values from the existing fields
             String projectName = projectNameField.getText();
             String projectDescription = projectDescriptionField.getText();
             String projectResources = projectResourcesField.getText();
             String projectTools = projectToolsField.getText();
 
-            // Create a completely new instance of CustomStackPane for the duplicated project
             CustomStackPane duplicateProjectPane = createProjectPane();
             duplicateProjectPane.setId("duplicateProjectPaneID");
 
-            // Get the VBox from the new pane (first child)
             VBox newProjectPane = (VBox) duplicateProjectPane.getChildren().get(0);
-
-            // Set text fields in the new pane to duplicated values
             ((TextField) newProjectPane.getChildren().get(0)).setText(projectName);
             ((TextField) newProjectPane.getChildren().get(1)).setText(projectDescription);
             ((TextField) newProjectPane.getChildren().get(2)).setText(projectResources);
             ((TextField) newProjectPane.getChildren().get(3)).setText(projectTools);
 
-            // Add the duplicated pane to the main VBox if it doesn't already contain it
             if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
                 mainVbox.getChildren().add(duplicateProjectPane);
             } else {
                 System.out.println("Duplicate panel already exists in mainVbox!");
             }
 
-            hideAllPanes(); // Adjust visibility as needed
+            hideAllPanes();
             handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools);
-        });
-
-        //Duplicate button shortcut (ctrl + d)
-
-        projectPane.setOnKeyPressed(event -> {
-            if (new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN).match(event)) {
-                // Retrieve the values from the existing fields
-                String projectName = projectNameField.getText();
-                String projectDescription = projectDescriptionField.getText();
-                String projectResources = projectResourcesField.getText();
-                String projectTools = projectToolsField.getText();
-
-                // Create a completely new instance of CustomStackPane for the duplicated project
-                CustomStackPane duplicateProjectPane = createProjectPane();
-                duplicateProjectPane.setId("duplicateProjectPaneID");
-
-                // Get the VBox from the new pane (first child)
-                VBox newProjectPane = (VBox) duplicateProjectPane.getChildren().get(0);
-
-                // Set text fields in the new pane to duplicated values
-                ((TextField) newProjectPane.getChildren().get(0)).setText(projectName);
-                ((TextField) newProjectPane.getChildren().get(1)).setText(projectDescription);
-                ((TextField) newProjectPane.getChildren().get(2)).setText(projectResources);
-                ((TextField) newProjectPane.getChildren().get(3)).setText(projectTools);
-
-                // Add the duplicated pane to the main VBox if it doesn't already contain it
-                if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
-                    mainVbox.getChildren().add(duplicateProjectPane);
-                } else {
-                    System.out.println("Duplicate panel already exists in mainVbox!");
-                }
-
-                hideAllPanes(); // Adjust visibility as needed
-                handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools);
-            }
         });
 
         // Edit Button
         Button editButton = new Button("Edit");
+        editButton.getStyleClass().add("round-button");
         editButton.setOnAction(event -> {
             projectNameField.setEditable(true);
             projectDescriptionField.setEditable(true);
@@ -474,106 +386,37 @@ public class ProjectController {
             saveButton.setDisable(false);
         });
 
-        //Code for edit shortcut (ctrl + e)
-
-        projectPane.setOnKeyPressed(event -> {
-            KeyCodeCombination ctrlE = new KeyCodeCombination(KeyCode.BACK_SPACE, KeyCombination.CONTROL_DOWN);
-
-            if (ctrlE.match(event))  {
-                projectNameField.setEditable(true);
-                projectDescriptionField.setEditable(true);
-                projectResourcesField.setEditable(true);
-                projectToolsField.setEditable(true);
-                saveButton.setDisable(false);
-            }
-        });
-
-        //Delete Button
+        // Delete Button
         Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("round-button");
         deleteButton.setOnAction(event -> {
-            // Create a confirmation alert
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirm Deletion");
             alert.setHeaderText("Are you sure you want to delete this project?");
             alert.setContentText("This action cannot be undone.");
 
-            // Get the current window (stage)
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            alert.initOwner(stage);  // Center the alert relative to the current window
+            alert.initOwner(stage);
 
             ButtonType deleteButtonType = new ButtonType("Delete");
-
             ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
             alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
 
-            ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
-            buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
-            buttonBar.setStyle("-fx-alignment: center;");
-
-            //User Input
             Optional<ButtonType> result = alert.showAndWait();
             if (result.isPresent() && result.get() == deleteButtonType) {
                 mainVbox.getChildren().remove(overLay);
                 paneObservers.remove(overLay);
-                projectList.remove(overLay);  // Remove from the list of projects
+                projectList.remove(overLay);
             }
         });
-
-        // Delete shortcut code (ctrl + DEL AND ctrl + Backspace keys)
-        projectPane.setOnKeyPressed(event -> {
-            KeyCodeCombination ctrlBackspace = new KeyCodeCombination(KeyCode.BACK_SPACE, KeyCombination.CONTROL_DOWN);
-            KeyCodeCombination ctrlDelete = new KeyCodeCombination(KeyCode.DELETE, KeyCombination.CONTROL_DOWN);
-
-            if (ctrlBackspace.match(event) || ctrlDelete.match(event)) {
-                // Create a confirmation alert
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                alert.setTitle("Confirm Deletion");
-                alert.setHeaderText("Are you sure you want to delete this project?");
-                alert.setContentText("This action cannot be undone.");
-
-                // Get the current window (stage)
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                alert.initOwner(stage);  // Center the alert relative to the current window
-
-                ButtonType deleteButtonType = new ButtonType("Delete");
-                ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-
-                alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
-
-                ButtonBar buttonBar = (ButtonBar) alert.getDialogPane().lookup(".button-bar");
-                buttonBar.setButtonOrder(ButtonBar.BUTTON_ORDER_NONE);
-                buttonBar.setStyle("-fx-alignment: center;");
-
-                // User Input
-                Optional<ButtonType> result = alert.showAndWait();
-                if (result.isPresent() && result.get() == deleteButtonType) {
-                    mainVbox.getChildren().remove(overLay);
-                    paneObservers.remove(overLay);
-                    projectList.remove(overLay);  // Remove from the list of projects
-                }
-            }
-        });
-
-
-
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
         projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
 
-        // Highlight effect on hover
-        projectPane.setOnMouseEntered(event -> {
-            projectPane.setStyle("-fx-border-color: blue; -fx-border-width: 2;");
-        });
-
-        projectPane.setOnMouseExited(event -> {
-            projectPane.setStyle("-fx-border-color: black; -fx-border-width: null;");
-        });
-
-
         return projectPane;
     }
+
 
     // Method to display success alerts
     private void showSuccessAlert(String title, String message) {
@@ -818,6 +661,8 @@ public class ProjectController {
             e.printStackTrace();
         }
     }
+
+
 
 }
 
