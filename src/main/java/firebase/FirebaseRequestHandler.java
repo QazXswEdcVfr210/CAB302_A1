@@ -287,9 +287,9 @@ public class FirebaseRequestHandler {
     }
 
     // Deletes a project step from a project
-    public static Boolean DeleteProjectStep() throws Exception {
+    public static Boolean DeleteProjectStep(String projectID, String projectStepName) throws Exception {
         try{
-
+            FirestoreHandler.DeleteField("Projects", projectID, String.format("projectSteps.`%s`", projectStepName));
             return true;
         } catch (Exception e) {
             e.printStackTrace();

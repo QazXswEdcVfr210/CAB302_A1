@@ -8,6 +8,7 @@ import com.google.api.client.json.gson.GsonFactory;
 
 import javafx.util.Pair;
 
+import java.util.HashMap;
 import java.util.Map;
 
 // This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
@@ -73,7 +74,6 @@ public class FirestoreHandler {
         try {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
-            JsonFactory jsonFactory = new GsonFactory();
 
             // URL to send our request to
             String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document;
@@ -88,7 +88,7 @@ public class FirestoreHandler {
             return new Pair<>(true, responseBody);
 
         } catch (Exception e) {
-            return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
+            return new Pair<>(false, "ERROR DELETING DOCUMENT");
         }
 
     }
@@ -138,9 +138,31 @@ public class FirestoreHandler {
         }
     }
 
-    // TODO
-    public static Pair<Boolean, String> DeleteField(String name) {
-        return new Pair<>(false, "FUNCTION NOT IMPLEMENTED");
+    // Deletes a field from a document
+    public static Pair<Boolean, String> DeleteField(String collection, String document, String field) throws Exception {
+        try{
+            // Set up request
+            HttpTransport httpTransport = new NetHttpTransport();
+
+            // URL to send our request to
+            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document + "?updateMask.fieldPaths=" + field;
+
+            // Make PATCH request
+            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
+            GenericUrl url = new GenericUrl(firebaseUrl);
+            HttpContent content = new JsonHttpContent(new GsonFactory(), new HashMap<>());
+            HttpRequest request = requestFactory.buildPostRequest(url, content);
+            request.getHeaders().set("X-HTTP-Method-Override", "PATCH");
+            HttpResponse response = request.execute();
+
+            // Handle response and return the name of the new document
+            String responseBody = response.parseAsString();
+            return new Pair<>(true, responseBody);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Pair<>(false, "ERROR DELETING FIELD");
+        }
     }
 
     // TODO
