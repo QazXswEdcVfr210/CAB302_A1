@@ -81,6 +81,7 @@ public class FirebaseRequestHandler {
 
     // Attempts to create an account with the provided credentials, if successful then returns true, if not then returns false and prints the error to the console.
     public static Boolean TrySignup(String email, String pass, String username, Boolean bPrintResponse) throws Exception {
+
         try{
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
@@ -106,12 +107,9 @@ public class FirebaseRequestHandler {
                 System.out.println(responseBody);
             }
 
-            // TODO: unpack data to see if the operation was a success or not.
-            // TODO: sign in after making an account
-            // TODO: send email after sign in
-
-            SetUpNewUser();
-
+            // Finish setting up user and attempt to login
+            SetUpNewUser(username);
+            TryLogin(email, pass, false);
             return true;
 
         } catch (HttpResponseException e){
@@ -119,6 +117,7 @@ public class FirebaseRequestHandler {
             System.out.printf("Error creating account: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
             return false;
         }
+
     }
 
     // Creates a new project, the returned string is either representative of success or an error code
@@ -341,18 +340,12 @@ public class FirebaseRequestHandler {
     }
 
     // Creates a new user document, then populates the new document with required fields.
-    private static void SetUpNewUser() throws Exception {
+    private static void SetUpNewUser(String username) throws Exception {
         try {
-            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
+            // Create payload
             Map<String, Object> fields = new HashMap<String, Object>();
-            Map<String, Object> username = new HashMap<String, Object>();
-            Map<String, Object> projectIDs = new HashMap<String, Object>();
-
-            fields.put("username", username);
-            username.put("stringValue", "testUsername");
-
-            fields.put("projectIDs", projectIDs);
-            projectIDs.put("arrayValue", new HashMap<String, Object>());
+            fields.put("username", Map.of("stringValue", username));
+            fields.put("projectIDs", Map.of("arrayValue", new HashMap<String, Object>()));
 
             FirestoreHandler.CreateDocument("Users", FirebaseDataStorage.getUid(), fields);
 
