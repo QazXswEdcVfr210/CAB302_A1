@@ -221,14 +221,19 @@ public class FirebaseRequestHandler {
     }
 
     // Deletes a project
-    public static Boolean DeleteProject(String projectName) throws Exception {
-        try{
-            FirestoreHandler.DeleteDocument("Projects", projectName);
+    public static Boolean DeleteProject(String projectID) {
+        try {
+            // Attempt to delete the document from Firestore
+            FirestoreHandler.DeleteDocument("Projects", projectID);
+            System.out.println("Project deletion successful for ID: " + projectID);
+            return true; // Return true if deletion was successful
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Project deletion failed for ID: " + projectID);
+            return false; // Return false if an error occurred
         }
-        return null;
     }
+
 
     // Creates a new project step and adds it to a project
     public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
