@@ -45,12 +45,10 @@ public class FirebaseRequestHandler {
             String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s", FirebaseID);
 
             // Create payload
-            FirebaseJSONPackage p = new FirebaseJSONPackage();
-            Map<String, Object> data = p
-                    .AddKVP("email", email)
-                    .AddKVP("password", pass)
-                    .AddKVP("returnSecureToken", "true")
-                    .getData();
+            Map<String, Object> data = new HashMap<>();
+            data.put("email", email);
+            data.put("password", pass);
+            data.put("returnSecureToken", "true");
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
@@ -90,14 +88,11 @@ public class FirebaseRequestHandler {
             String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s", FirebaseID);
 
             // Create payload
-            FirebaseJSONPackage p = new FirebaseJSONPackage();
-            Map<String, Object> data = p
-                    .AddKVP("email", email)
-                    .AddKVP("password", pass)
-                    .AddKVP("displayName", username)
-                    .AddKVP("returnSecureToken", "true")
-                    .getData();
-
+            Map<String, Object> data = new HashMap<>();
+            data.put("email", email);
+            data.put("password", pass);
+            data.put("displayName", username);
+            data.put("returnSecureToken", "true");
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
@@ -297,7 +292,7 @@ public class FirebaseRequestHandler {
         }
     }
 
-    // ######## these functions aren't used outside of this script and now live at the bottom of this page ########
+    // ######## these functions are used to abstract some of the above functions to improve readability ########
 
     // Gets the list of the current user's projects - called on login
     private static void GetProjectIds() throws Exception {

@@ -25,10 +25,8 @@ public class FirestoreHandler {
             String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "?documentId=" + document;
 
             // Create payload
-            FirebaseJSONPackage p = new FirebaseJSONPackage();
-            Map<String, Object> packageData = p
-                    .AddKVP("fields", data)
-                    .getData();
+            Map<String, Object> packageData = new HashMap<>();
+            packageData.put("fields", data);
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
@@ -114,16 +112,14 @@ public class FirestoreHandler {
             // URL to send our request to
             String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/" + collection + "/" + document + "?updateMask.fieldPaths=" + field;
 
-            // Create payload (for some reason this is what firebase requires to create two fields - one empty array called projectIDs and one string for the username
-            FirebaseJSONPackage p = new FirebaseJSONPackage();
-            Map<String, Object> packageData = p
-                    .AddKVP("fields", data)
-                    .getData();
+            // Create Payload
+            Map<String, Object> fields = new HashMap<>();
+            fields.put("fields", data);
 
             // Build PATCH request - because PATCH is not supported by our client we must build the request as a POST request and then override it
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, packageData);
+            HttpContent content = new JsonHttpContent(jsonFactory, fields);
             HttpRequest request = requestFactory.buildPostRequest(url, content);
             request.getHeaders().set("X-HTTP-Method-Override", "PATCH");
             HttpResponse response = request.execute();
@@ -163,11 +159,6 @@ public class FirestoreHandler {
             e.printStackTrace();
             return new Pair<>(false, "ERROR DELETING FIELD");
         }
-    }
-
-    // TODO
-    public static Boolean CheckFieldExists(String name) {
-        return false;
     }
 
 }
