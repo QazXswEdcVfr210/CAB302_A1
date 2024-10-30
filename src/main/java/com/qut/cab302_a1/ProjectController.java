@@ -88,13 +88,14 @@ public class ProjectController   {
 
 
     public class CustomStackPane extends StackPane implements ObserverPane {
-
+        private String projectID; // Add this variable to store the project ID
         int position; //set to 0 later
         public CustomStackPane(int position) {
             super();
             this.position = position;
             paneObservers.add(this);
             projectList.add(this);
+
 
             //test
             for(CustomStackPane pane: projectList){
@@ -122,6 +123,12 @@ public class ProjectController   {
 
         }
 
+        public String getProjectID() {
+            return projectID;
+        }
+        public void setProjectID(String projectID) {
+            this.projectID = projectID;
+        }
         public int getPosition(){
             return position;
         }
@@ -331,6 +338,8 @@ public class ProjectController   {
                     String result = rawResult.getKey();
 
                     if (result.equals("success")) {
+
+                        overLay.setProjectID(rawResult.getValue());
                         // Success case: disable editing and buttons
                         projectNameField.setEditable(false);
                         projectDescriptionField.setEditable(false);
@@ -393,6 +402,14 @@ public class ProjectController   {
         Button deleteButton = new Button("Delete");
         deleteButton.getStyleClass().add("round-button");
         deleteButton.setOnAction(event -> {
+            String projectID = overLay.getProjectID();
+
+            if (projectID == null || projectID.isEmpty()) {
+                showErrorAlert("Validation Error", "Project ID cannot be empty.");
+                return;
+            }
+
+            // Confirm Deletion Alert
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirm Deletion");
             alert.setHeaderText("Are you sure you want to delete this project?");
@@ -406,12 +423,32 @@ public class ProjectController   {
             alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
 
             Optional<ButtonType> result = alert.showAndWait();
+
             if (result.isPresent() && result.get() == deleteButtonType) {
-                mainVbox.getChildren().remove(overLay);
-                paneObservers.remove(overLay);
-                projectList.remove(overLay);
+                try {
+                    // Attempt to delete the project from the database
+                    Boolean deletionResult = FirebaseRequestHandler.DeleteProject(projectID);
+
+                    if (Boolean.TRUE.equals(deletionResult)) {
+                        // Remove the pane from the UI only if deletion was successful
+                        mainVbox.getChildren().remove(overLay);
+                        paneObservers.remove(overLay);
+                        projectList.remove(overLay);
+
+                        // Show success alert
+                        showSuccessAlert("Project Deleted", "Project was successfully deleted from the database!");
+                    } else {
+                        // Show error alert if deletion failed
+                        showErrorAlert("Error Deleting Project", "Failed to delete project from the database.");
+                    }
+                } catch (Exception e) {
+                    // Handle exceptions and show error message
+                    showErrorAlert("Exception", "Failed to delete the project: " + e.getMessage());
+                }
             }
         });
+
+
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
