@@ -123,8 +123,36 @@ public class ProjectController   {
         HBox bigPane = createBigPane();
         overlay.getChildren().addAll(projectPane, bigPane);
 
+        // Set up the text fields for editing functionality
+        TextField projectNameField = (TextField) projectPane.getChildren().get(0);
+        TextField projectDescriptionField = (TextField) projectPane.getChildren().get(1);
+
+        // Add focus listeners for automatic saving
+        projectNameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Focus lost
+                try {
+                    FirebaseRequestHandler.UpdateProjectName(overlay.getProjectID(), projectNameField.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showErrorAlert("Error", "Failed to update project name: " + e.getMessage());
+                }
+            }
+        });
+
+        projectDescriptionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Focus lost
+                try {
+                    FirebaseRequestHandler.UpdateProjectDescription(overlay.getProjectID(), projectDescriptionField.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showErrorAlert("Error", "Failed to update project description: " + e.getMessage());
+                }
+            }
+        });
+
         return overlay;
     }
+
 
 
 
@@ -454,16 +482,36 @@ public class ProjectController   {
         }
     }
 
-    // Method to handle the saving of duplicated projects to db
+    // Method to handle the saving of duplicated projects to db and frontend
     private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
         try {
-            // This calls the FirebaseRequestHandler to save the project in the db
-            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
+            // Create a duplicate in the backend
+            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
             String result = rawResult.getKey();
+            String newProjectID = rawResult.getValue();
 
             if (result.equals("success")) {
                 // Show success message if saved to db
                 showSuccessAlert("Project Duplicated", "The duplicated project was successfully saved to the database!");
+
+                // Create a new pane for the duplicated project on the frontend
+                CustomStackPane duplicateProjectPane = createProjectPaneWithData(
+                        newProjectID, // Newly generated project ID
+                        projectName,
+                        projectDescription,
+                        projectResources,
+                        projectTools
+                );
+
+                // Add the duplicate project pane to mainVbox if it’s not already there
+                if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
+                    mainVbox.getChildren().add(duplicateProjectPane);
+                } else {
+                    System.out.println("Duplicate panel already exists in mainVbox!");
+                }
+
+                hideAllPanes(); // Adjust pane sizes as needed
+
             } else {
                 // Show error message if it fails
                 showErrorAlert("Error", "Failed to duplicate project: " + result);
@@ -473,6 +521,7 @@ public class ProjectController   {
             showErrorAlert("Error", "An error occurred while duplicating the project: " + e.getMessage());
         }
     }
+
 
     private VBox createMainPane(CustomStackPane overlay) {
         VBox projectPane = new VBox(20);
