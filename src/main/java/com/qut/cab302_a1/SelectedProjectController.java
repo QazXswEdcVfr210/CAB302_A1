@@ -1,22 +1,47 @@
 package com.qut.cab302_a1;
 
+import com.qut.cab302_a1.models.Project;
 import firebase.FirebaseDataStorage;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class SelectedProjectController {
 
+    static Project loadedProject;
+
+    public static void setProject(Project project){
+        loadedProject = project;
+    }
+
     @FXML
     private Button returnButton;
 
-    public void initialize() {
+    @FXML
+    private Label projectName;
 
+    @FXML
+    private Label projectionLabel;
+
+    @FXML
+    private TextArea projectDescription;
+
+    public void initialize() {
+        setText();
         getTipsList();
+    }
+
+    public void setText(){
+        projectName.setText(loadedProject.getName());
+        projectDescription.setText(loadedProject.getDescription());
+
+
     }
 
     public void getTipsList(){

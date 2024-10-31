@@ -42,6 +42,14 @@ public class Project {
         return this.projectSteps;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
+    public String getDescription() {
+        return this.description;
+    }
+
     // Setters
     public void setName(String name) { this.name = name; }
     public void setDescription(String description) { this.description = description; }
