@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.sun.jdi.event.ExceptionEvent;
 import javafx.util.Pair;
 
 import com.qut.cab302_a1.models.Project;
@@ -326,6 +328,7 @@ public class FirebaseRequestHandler {
     private static Boolean GetProjects() throws Exception{
         // Iterate through user projects ID list
         for(String projectID : FirebaseDataStorage.getProjectIDs()) {
+
             try{
                 // Try to get project
                 Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
@@ -336,13 +339,12 @@ public class FirebaseRequestHandler {
                     FirebaseJSONUnpacker.ExtractProjectInformation(result.getValue());
                 }
 
-                return true;
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
-        return false;
+        return true;
 
     }
 

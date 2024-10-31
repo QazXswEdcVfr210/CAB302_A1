@@ -5,8 +5,10 @@ import java.util.List;
 public class Project {
 
     public String id;
-    private String name;
-    private String description;
+    public String name;
+    public String description;
+    public String resources;
+    public String tools;
     private int stepsCount;
 
     // this can be calculated as (number of completed steps / number of total steps)
