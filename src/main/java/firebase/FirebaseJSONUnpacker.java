@@ -98,7 +98,6 @@ public class FirebaseJSONUnpacker {
                 for (JsonElement element : projectIDsArray) {
                     projectIDs.add(element.getAsJsonObject().get("stringValue").getAsString());
                 }
-
             }
 
             // Save to local storage

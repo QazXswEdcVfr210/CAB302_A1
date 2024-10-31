@@ -47,15 +47,15 @@ public class FirebaseDataStorage {
     private static List<String> projectIDs;
     // Getter
     public static List<String> getProjectIDs() {
-        return FirebaseDataStorage.projectIDs;
+        return projectIDs;
     }
     // Setter
-    public static void setProjectIDs(List<String> projectIDs){
-        FirebaseDataStorage.projectIDs = projectIDs;
+    public static void setProjectIDs(List<String> _projectIDs){
+        projectIDs = _projectIDs;
     }
     // Append
     public static void appendProjectID(String id) {
-        FirebaseDataStorage.projectIDs.add(id);
+        projectIDs.add(id);
     }
 
     // The user's list of project instances
