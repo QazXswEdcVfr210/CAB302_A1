@@ -790,17 +790,44 @@ public class ProjectController   {
 
     @FXML
     protected void onCreatePanelAction() {
-        System.out.println("Created Panel!");
-        CustomStackPane projectPan = createProjectPane();
+        System.out.println("Creating a new project in the backend!");
 
-        if (!mainVbox.getChildren().contains(projectPan)) {
-            mainVbox.getChildren().add(projectPan);
-        } else {
-            System.out.println("Project panel already exists in mainVbox!");
+        // Attempt to create a new project in the backend first
+        try {
+            // Default project details for a new project
+            String projectName = "New Project";
+            String projectDescription = "Enter description here";
+
+            // Create the project in the backend only once here
+            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+            String result = rawResult.getKey();
+
+            if (result.equals("success")) {
+                // Pass the new project's ID and details to create a pane with these details
+                CustomStackPane projectPane = createProjectPaneWithData(
+                        rawResult.getValue(), // projectID
+                        projectName,
+                        projectDescription,
+                        "", // Empty resources for new project
+                        ""  // Empty tools for new project
+                );
+
+                if (!mainVbox.getChildren().contains(projectPane)) {
+                    mainVbox.getChildren().add(projectPane);
+                } else {
+                    System.out.println("Project panel already exists in mainVbox!");
+                }
+
+                hideAllPanes(); // Adjust pane sizes as needed
+            } else {
+                showErrorAlert("Error", "Failed to create project: " + result);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Error", "An error occurred while creating the project: " + e.getMessage());
         }
-
-        hideAllPanes(); // This adjusts the size of the panes.
     }
+
 
 
     @FXML
