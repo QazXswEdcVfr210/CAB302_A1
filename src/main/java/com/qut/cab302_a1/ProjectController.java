@@ -101,57 +101,53 @@ public class ProjectController   {
     }
 
 
+    @FXML
     private CustomStackPane createProjectPaneWithData(String projectID, String projectName, String projectDescription, String projectResources, String projectTools) {
         CustomStackPane overlay = new CustomStackPane(testTitle);
         overlay.setProjectID(projectID);
         overlay.setId("overlayID");
 
+        // Create main project pane for project overview
         VBox projectPane = createMainPaneWithoutBackend(overlay, projectName, projectDescription, projectResources, projectTools);
 
-        // Attach the duplicate button
-        Button duplicateButton = new Button("Duplicate");
-        duplicateButton.getStyleClass().add("round-button");
-        duplicateButton.setOnAction(event -> handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools));
-
-        // Attach the delete button using the independent delete function
-        Button deleteButton = createDeleteButton(overlay);
-
-        // Add buttons to the layout
-        HBox buttonBox = new HBox(10, duplicateButton, deleteButton);
-        projectPane.getChildren().add(buttonBox);
-
+        // Create expanded (detailed) view
         HBox bigPane = createBigPane();
+        bigPane.setVisible(false);  // Initially hidden until clicked
+
+        // Set IDs for styling
+        projectPane.setId("projectPane");
+        bigPane.setId("bigPane");
+
+        // Set rounded corner styles for both panes
+        overlay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+        bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
+
+        // Click listener to toggle to bigPane (expanded view) when projectPane is clicked
+        projectPane.setOnMouseClicked(actionEvent -> {
+            hideAllPanes();  // Hide other panes when this one is clicked
+            bigPane.setVisible(true);  // Show the detailed view
+            projectPane.setVisible(false);  // Hide the project overview
+
+            // Adjust size for the expanded view
+            double scrollVal = mainScrollPane.getVvalue();
+            bigPane.setPrefSize(260, 260);
+            overlay.setPrefSize(260, 260);
+            mainScrollPane.setVvalue(scrollVal);  // Maintain scroll position
+        });
+
+        // Click listener to revert back to projectPane when bigPane is clicked
+        bigPane.setOnMouseClicked(actionEvent -> {
+            bigPane.setVisible(false);  // Hide the expanded view
+            projectPane.setVisible(true);  // Show the overview view
+        });
+
+        // Add both views to the overlay so they can toggle visibility
         overlay.getChildren().addAll(projectPane, bigPane);
-
-        // Set up the text fields for editing functionality
-        TextField projectNameField = (TextField) projectPane.getChildren().get(0);
-        TextField projectDescriptionField = (TextField) projectPane.getChildren().get(1);
-
-        // Add focus listeners for automatic saving
-        projectNameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Focus lost
-                try {
-                    FirebaseRequestHandler.UpdateProjectName(overlay.getProjectID(), projectNameField.getText());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Error", "Failed to update project name: " + e.getMessage());
-                }
-            }
-        });
-
-        projectDescriptionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Focus lost
-                try {
-                    FirebaseRequestHandler.UpdateProjectDescription(overlay.getProjectID(), projectDescriptionField.getText());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Error", "Failed to update project description: " + e.getMessage());
-                }
-            }
-        });
 
         return overlay;
     }
+
 
 
 
@@ -401,7 +397,7 @@ public class ProjectController   {
         overLay.setId("overlayID");
 
         // Extract initial details from the text fields
-        String projectName = "New Project"; // You can make this more dynamic
+        String projectName = "New Project"; // Default project name
         String projectDescription = "Enter description here";
         String projectResources = "Enter resources here";
         String projectTools = "Enter tools here";
@@ -414,7 +410,6 @@ public class ProjectController   {
             if (result.equals("success")) {
                 // Set the generated project ID to the CustomStackPane
                 overLay.setProjectID(rawResult.getValue());
-
             } else {
                 showErrorAlert("Error", "Failed to create project: " + result);
             }
@@ -429,31 +424,42 @@ public class ProjectController   {
         projectPane.setId("projectPane");
         bigPane.setId("bigPane");
 
-        // Rounding corners
+        // Rounding corners for UI aesthetics
         overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
 
-        // Add mouse-click listener for expanding the pane
+        // Add mouse-click listener for selecting/expanding the project pane
         projectPane.setOnMouseClicked(actionEvent -> {
+            // Hide all other panes when selecting this project
             hideAllPanes();
+
+            // Store the current scroll position to restore it after expansion
             double scrollVal = mainScrollPane.getVvalue();
+
+            // Show the expanded view (bigPane) and hide the projectPane view
             bigPane.setVisible(true);
             projectPane.setVisible(false);
+
+            // Adjust sizes to expand the selected pane
             bigPane.setPrefSize(260, 260);
             bigPane.layout();
             overLay.setPrefSize(260, 260);
             bigPane.layout();
-            mainScrollPane.setVvalue(scrollVal);
+            mainScrollPane.setVvalue(scrollVal); // Restore scroll position
         });
 
+        // Optional listener to log dimensions when bigPane is clicked
         bigPane.setOnMouseClicked(actionEvent -> {
             System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
         });
 
+        // Add both projectPane and bigPane to the overlay
         overLay.getChildren().addAll(projectPane, bigPane);
+
         return overLay;
     }
+
 
 
     /**
