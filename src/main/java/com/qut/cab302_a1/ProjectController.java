@@ -257,30 +257,29 @@ public class ProjectController   {
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(260, 260);
-
-            bigPane.layout();
-
             overLay.setPrefSize(260, 260);
-            bigPane.layout();
-
-
             mainScrollPane.setVvalue(scrollVal);
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
 
-            try{
-                Stage stage = (Stage) bigPane.getScene().getWindow();
-                FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("selectedProject-view.fxml"));
-                Scene scene = new Scene(fxmlLoader.load(), LoginController.MAIN_WIDTH, LoginController.MAIN_HEIGHT);
-                stage.setTitle("Project");
-                stage.setWidth(LoginController.MAIN_WIDTH);
-                stage.setHeight(LoginController.MAIN_HEIGHT);
-                stage.setScene(scene);
+
+            if (currentProject != null){
+                SelectedProjectController.setProject(currentProject); // Change this to the pane's project.
+                try{
+                    Stage stage = (Stage) bigPane.getScene().getWindow();
+                    FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("selectedProject-view.fxml"));
+                    Scene scene = new Scene(fxmlLoader.load(), LoginController.MAIN_WIDTH, LoginController.MAIN_HEIGHT);
+                    stage.setTitle("Project");
+                    stage.setWidth(LoginController.MAIN_WIDTH);
+                    stage.setHeight(LoginController.MAIN_HEIGHT);
+                    stage.setScene(scene);
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
             }
-            catch(IOException e){
-                e.printStackTrace();
-            }
+
 
         });
 
@@ -547,7 +546,14 @@ public class ProjectController   {
             //Left side of rightSide panel
             rightSide.setPadding(new Insets(40, 0, 0, 0));
                 HBox middlePane = new HBox(20);
-                Label title = new Label("Title" + testTitle); // no more than 25 Char
+                Label title;
+                if (currentProject == null){
+                    title = new Label("Null ID"); //Needs to be set first. Can change this value later.
+                }
+                else{
+                    title = new Label(currentProject.getName()); // no more than 25 Char
+                }
+
                 testTitle--;
                 int MAX_SPACING = 400;
                 title.setId("titleID");

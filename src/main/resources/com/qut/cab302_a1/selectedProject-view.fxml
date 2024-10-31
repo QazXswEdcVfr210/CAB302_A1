@@ -38,7 +38,7 @@
         </VBox>
         <VBox>
             <HBox spacing="400.0" alignment="CENTER">
-                <Label fx:id="progressLabel">Projress</Label>
+                <Label fx:id="progressLabel">Progress</Label>
                 <Label fx:id="progressionLabel">x/x</Label>
             </HBox>
             <StackPane fx:id="progressBarPane">
