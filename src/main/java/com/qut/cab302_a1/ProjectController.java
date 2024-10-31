@@ -2,6 +2,9 @@ package com.qut.cab302_a1;
 
 import java.io.IOException;
 import java.util.*;
+
+import com.qut.cab302_a1.models.Project;
+import firebase.FirebaseDataStorage;
 import javafx.util.Pair;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
@@ -78,7 +81,52 @@ public class ProjectController   {
 
         hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
         sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
+
+        loadUserProjects();
     }
+
+
+    public void printUserProjectsToConsole() {
+        List<Project> userProjects = FirebaseDataStorage.getProjects();
+
+        // Print the number of projects retrieved
+        System.out.println("Total Projects Retrieved: " + userProjects.size());
+
+        // Print each project's details
+        for (Project project : userProjects) {
+            System.out.println("---- Project ----");
+            project.DebugProjectData(); // Use the method to print details
+            System.out.println("---- End of Project ----");
+        }
+    }
+
+
+    private CustomStackPane createProjectPaneWithData(String projectID, String projectName, String projectDescription, String projectResources, String projectTools) {
+        CustomStackPane overlay = new CustomStackPane(testTitle);
+        overlay.setProjectID(projectID);
+        overlay.setId("overlayID");
+
+        VBox projectPane = createMainPaneWithoutBackend(overlay, projectName, projectDescription, projectResources, projectTools);
+
+        // Attach the duplicate button
+        Button duplicateButton = new Button("Duplicate");
+        duplicateButton.getStyleClass().add("round-button");
+        duplicateButton.setOnAction(event -> handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools));
+
+        // Attach the delete button using the independent delete function
+        Button deleteButton = createDeleteButton(overlay);
+
+        // Add buttons to the layout
+        HBox buttonBox = new HBox(10, duplicateButton, deleteButton);
+        projectPane.getChildren().add(buttonBox);
+
+        HBox bigPane = createBigPane();
+        overlay.getChildren().addAll(projectPane, bigPane);
+
+        return overlay;
+    }
+
+
 
     @FXML
     private VBox mainVbox;
@@ -86,6 +134,106 @@ public class ProjectController   {
     @FXML
     private ScrollPane mainScrollPane;
 
+    private void loadUserProjects() {
+        try {
+            // Fetch all user projects from Firebase
+            List<Project> projects = FirebaseDataStorage.getProjects();
+
+            for (Project project : projects) {
+                // Use the updated `createProjectPaneWithData` to avoid any database interaction
+                CustomStackPane projectPane = createProjectPaneWithData(
+                        project.id, project.name, project.description,
+                        project.resources, project.tools
+                );
+
+                if (!mainVbox.getChildren().contains(projectPane)) {
+                    mainVbox.getChildren().add(projectPane);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showErrorAlert("Error", "Failed to load user projects: " + e.getMessage());
+        }
+    }
+
+    private Button createDeleteButton(CustomStackPane overlay) {
+        Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("round-button");
+        deleteButton.setOnAction(event -> {
+            String projectID = overlay.getProjectID();
+
+            if (projectID == null || projectID.isEmpty()) {
+                showErrorAlert("Validation Error", "Project ID cannot be empty.");
+                return;
+            }
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Are you sure you want to delete this project?");
+            alert.setContentText("This action cannot be undone.");
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            alert.initOwner(stage);
+
+            ButtonType deleteButtonType = new ButtonType("Delete");
+            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent() && result.get() == deleteButtonType) {
+                try {
+                    Boolean deletionResult = FirebaseRequestHandler.DeleteProject(projectID);
+
+                    if (Boolean.TRUE.equals(deletionResult)) {
+                        mainVbox.getChildren().remove(overlay);
+                        paneObservers.remove(overlay);
+                        projectList.remove(overlay);
+                    } else {
+                        showErrorAlert("Error Deleting Project", "Failed to delete project from the database.");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showErrorAlert("Exception", "Failed to delete the project: " + e.getMessage());
+                }
+            }
+        });
+        return deleteButton;
+    }
+
+
+
+    private CustomStackPane createDisplayOnlyPane(String projectID, String projectName,
+                                                  String projectDescription,
+                                                  String projectResources,
+                                                  String projectTools) {
+        CustomStackPane overlay = new CustomStackPane(testTitle);
+        overlay.setProjectID(projectID);
+        overlay.setId("overlayID");
+
+        VBox projectPane = createMainPaneWithoutBackend(overlay, projectName,
+                projectDescription,
+                projectResources,
+                projectTools);
+
+        HBox bigPane = createBigPane();
+        overlay.getChildren().addAll(projectPane, bigPane);
+        return overlay;
+    }
+
+    private VBox createMainPaneWithoutBackend(CustomStackPane overlay,
+                                              String projectName,
+                                              String projectDescription,
+                                              String projectResources,
+                                              String projectTools) {
+        VBox projectPane = new VBox(20);
+        TextField nameField = new TextField(projectName);
+        TextField descriptionField = new TextField(projectDescription);
+        TextField resourcesField = new TextField(projectResources);
+        TextField toolsField = new TextField(projectTools);
+        projectPane.getChildren().addAll(nameField, descriptionField, resourcesField, toolsField);
+        return projectPane;
+    }
 
     public class CustomStackPane extends StackPane implements ObserverPane {
         private String projectID; // Add this variable to store the project ID
@@ -178,6 +326,9 @@ public class ProjectController   {
 
             return mergeLists(list, firstHalf, secondHalf);
         }
+
+
+
 
         public List<CustomStackPane> mergeLists(List<CustomStackPane> original, List<CustomStackPane> first, List<CustomStackPane> second){
             List<CustomStackPane> merged = new ArrayList<>();
@@ -323,7 +474,7 @@ public class ProjectController   {
         }
     }
 
-    private VBox createMainPane(CustomStackPane overLay) {
+    private VBox createMainPane(CustomStackPane overlay) {
         VBox projectPane = new VBox(20);
         projectPane.getStyleClass().add("project-pane");
 
@@ -339,7 +490,7 @@ public class ProjectController   {
             String result = rawResult.getKey();
 
             if (result.equals("success")) {
-                overLay.setProjectID(rawResult.getValue());
+                overlay.setProjectID(rawResult.getValue());
             } else {
                 showErrorAlert("Error", "Failed to create project: " + result);
             }
@@ -369,7 +520,7 @@ public class ProjectController   {
         projectNameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // Focus lost
                 try {
-                    FirebaseRequestHandler.UpdateProjectName(overLay.getProjectID(), projectNameField.getText());
+                    FirebaseRequestHandler.UpdateProjectName(overlay.getProjectID(), projectNameField.getText());
                 } catch (Exception e) {
                     e.printStackTrace();
                     showErrorAlert("Error", "Failed to update project name: " + e.getMessage());
@@ -380,7 +531,7 @@ public class ProjectController   {
         projectDescriptionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!newValue) { // Focus lost
                 try {
-                    FirebaseRequestHandler.UpdateProjectDescription(overLay.getProjectID(), projectDescriptionField.getText());
+                    FirebaseRequestHandler.UpdateProjectDescription(overlay.getProjectID(), projectDescriptionField.getText());
                 } catch (Exception e) {
                     e.printStackTrace();
                     showErrorAlert("Error", "Failed to update project description: " + e.getMessage());
@@ -410,47 +561,8 @@ public class ProjectController   {
             hideAllPanes();
         });
 
-        Button deleteButton = new Button("Delete");
-        deleteButton.getStyleClass().add("round-button");
-        deleteButton.setOnAction(event -> {
-            String projectID = overLay.getProjectID();
-
-            if (projectID == null || projectID.isEmpty()) {
-                showErrorAlert("Validation Error", "Project ID cannot be empty.");
-                return;
-            }
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirm Deletion");
-            alert.setHeaderText("Are you sure you want to delete this project?");
-            alert.setContentText("This action cannot be undone.");
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            alert.initOwner(stage);
-
-            ButtonType deleteButtonType = new ButtonType("Delete");
-            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
-
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if (result.isPresent() && result.get() == deleteButtonType) {
-                try {
-                    Boolean deletionResult = FirebaseRequestHandler.DeleteProject(projectID);
-
-                    if (Boolean.TRUE.equals(deletionResult)) {
-                        mainVbox.getChildren().remove(overLay);
-                        paneObservers.remove(overLay);
-                        projectList.remove(overLay);
-                    } else {
-                        showErrorAlert("Error Deleting Project", "Failed to delete project from the database.");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Exception", "Failed to delete the project: " + e.getMessage());
-                }
-            }
-        });
+        // Attach the new delete button
+        Button deleteButton = createDeleteButton(overlay);
 
         // Add buttons to the layout
         HBox buttonBox = new HBox(10, duplicateButton, deleteButton);
@@ -458,6 +570,7 @@ public class ProjectController   {
 
         return projectPane;
     }
+
 
 
 
