@@ -37,6 +37,10 @@ public class FirebaseRequestHandler {
     // Not a security risk as auth keys are distributed on user login
     private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
 
+    public static void main(String[] args) throws Exception {
+        TrySignup("TEST@TEST.TEST", "TESTESTESTTEST", "TESTUSERNAME", false);
+    }
+
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     public static Boolean TryLogin(String email, String pass, Boolean bPrintResponse) throws Exception {
         try{
@@ -101,16 +105,14 @@ public class FirebaseRequestHandler {
             GenericUrl url = new GenericUrl(firebaseUrl);
             HttpContent content = new JsonHttpContent(jsonFactory, data);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
+            String responseBody = response.parseAsString();
 
             // Handle response (print response body to console if bPrintResponse is true.
-            if(bPrintResponse) {
-                String responseBody = response.parseAsString();
-                System.out.println(responseBody);
-            }
+            if(bPrintResponse) {System.out.println(responseBody);}
 
             // Finish setting up user and attempt to login
-            SetUpNewUser(username);
-            TryLogin(email, pass, false);
+            FirebaseJSONUnpacker.ExtractBasicUserInformationFromAuth(responseBody, true);
+            SetUpNewUser(email, username, pass);
             return true;
 
         } catch (HttpResponseException e){
@@ -318,6 +320,12 @@ public class FirebaseRequestHandler {
 
     // Gets all projects that the currently logged-in user owns and saves them to FirebaseDataStorage.projects - called on login
     private static Boolean GetProjects() throws Exception{
+
+        // If the user has no projects, return early
+        if(FirebaseDataStorage.getProjectIDs() == null) {
+            return false;
+        }
+
         // Iterate through user projects ID list
         for(String projectID : FirebaseDataStorage.getProjectIDs()) {
             try{
@@ -341,14 +349,15 @@ public class FirebaseRequestHandler {
     }
 
     // Creates a new user document, then populates the new document with required fields.
-    private static void SetUpNewUser(String username) throws Exception {
+    private static void SetUpNewUser(String email, String username, String password) throws Exception {
         try {
             // Create payload
-            Map<String, Object> fields = new HashMap<String, Object>();
+            Map<String, Object> fields = new HashMap<>();
             fields.put("username", Map.of("stringValue", username));
             fields.put("projectIDs", Map.of("arrayValue", new HashMap<String, Object>()));
 
             FirestoreHandler.CreateDocument("Users", FirebaseDataStorage.getUid(), fields);
+            TryLogin(email, password, false);
 
         } catch (HttpResponseException e) {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));

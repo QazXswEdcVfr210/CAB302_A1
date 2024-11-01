@@ -39,7 +39,8 @@ public class FirestoreHandler {
             return new Pair<>(true, responseBody);
 
         } catch (HttpResponseException e) {
-            return new Pair<>(false, "ERROR CODE GOES HERE"); // TODO: Extract error code
+            e.printStackTrace();
+            return new Pair<>(false, "ERROR"); // TODO: Extract error code
         }
     }
 
