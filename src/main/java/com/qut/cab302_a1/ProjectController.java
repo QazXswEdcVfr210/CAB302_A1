@@ -101,54 +101,30 @@ public class ProjectController   {
     }
 
 
-    @FXML
     private CustomStackPane createProjectPaneWithData(String projectID, String projectName, String projectDescription, String projectResources, String projectTools) {
         CustomStackPane overlay = new CustomStackPane(testTitle);
         overlay.setProjectID(projectID);
         overlay.setId("overlayID");
 
-        // Create main project pane for project overview
         VBox projectPane = createMainPaneWithoutBackend(overlay, projectName, projectDescription, projectResources, projectTools);
 
-        // Create expanded (detailed) view
+        // Attach the duplicate button
+        Button duplicateButton = new Button("Duplicate");
+        duplicateButton.getStyleClass().add("round-button");
+        duplicateButton.setOnAction(event -> handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools));
+
+        // Attach the delete button using the independent delete function
+        Button deleteButton = createDeleteButton(overlay);
+
+        // Add buttons to the layout
+        HBox buttonBox = new HBox(10, duplicateButton, deleteButton);
+        projectPane.getChildren().add(buttonBox);
+
         HBox bigPane = createBigPane();
-        bigPane.setVisible(false);  // Initially hidden until clicked
-
-        // Set IDs for styling
-        projectPane.setId("projectPane");
-        bigPane.setId("bigPane");
-
-        // Set rounded corner styles for both panes
-        overlay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
-        projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
-        bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
-
-        // Click listener to toggle to bigPane (expanded view) when projectPane is clicked
-        projectPane.setOnMouseClicked(actionEvent -> {
-            hideAllPanes();  // Hide other panes when this one is clicked
-            bigPane.setVisible(true);  // Show the detailed view
-            projectPane.setVisible(false);  // Hide the project overview
-
-            // Adjust size for the expanded view
-            double scrollVal = mainScrollPane.getVvalue();
-            bigPane.setPrefSize(260, 260);
-            overlay.setPrefSize(260, 260);
-            mainScrollPane.setVvalue(scrollVal);  // Maintain scroll position
-        });
-
-        // Click listener to revert back to projectPane when bigPane is clicked
-        bigPane.setOnMouseClicked(actionEvent -> {
-            bigPane.setVisible(false);  // Hide the expanded view
-            projectPane.setVisible(true);  // Show the overview view
-        });
-
-        // Add both views to the overlay so they can toggle visibility
         overlay.getChildren().addAll(projectPane, bigPane);
 
         return overlay;
     }
-
-
 
 
 
@@ -422,7 +398,7 @@ public class ProjectController   {
         overLay.setId("overlayID");
 
         // Extract initial details from the text fields
-        String projectName = "New Project"; // Default project name
+        String projectName = "New Project"; // You can make this more dynamic
         String projectDescription = "Enter description here";
         String projectResources = "Enter resources here";
         String projectTools = "Enter tools here";
@@ -435,6 +411,7 @@ public class ProjectController   {
             if (result.equals("success")) {
                 // Set the generated project ID to the CustomStackPane
                 overLay.setProjectID(rawResult.getValue());
+
             } else {
                 showErrorAlert("Error", "Failed to create project: " + result);
             }
@@ -449,42 +426,31 @@ public class ProjectController   {
         projectPane.setId("projectPane");
         bigPane.setId("bigPane");
 
-        // Rounding corners for UI aesthetics
+        // Rounding corners
         overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
 
-        // Add mouse-click listener for selecting/expanding the project pane
+        // Add mouse-click listener for expanding the pane
         projectPane.setOnMouseClicked(actionEvent -> {
-            // Hide all other panes when selecting this project
             hideAllPanes();
-
-            // Store the current scroll position to restore it after expansion
             double scrollVal = mainScrollPane.getVvalue();
-
-            // Show the expanded view (bigPane) and hide the projectPane view
             bigPane.setVisible(true);
             projectPane.setVisible(false);
-
-            // Adjust sizes to expand the selected pane
             bigPane.setPrefSize(260, 260);
             bigPane.layout();
             overLay.setPrefSize(260, 260);
             bigPane.layout();
-            mainScrollPane.setVvalue(scrollVal); // Restore scroll position
+            mainScrollPane.setVvalue(scrollVal);
         });
 
-        // Optional listener to log dimensions when bigPane is clicked
         bigPane.setOnMouseClicked(actionEvent -> {
             System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
         });
 
-        // Add both projectPane and bigPane to the overlay
         overLay.getChildren().addAll(projectPane, bigPane);
-
         return overLay;
     }
-
 
 
     /**
@@ -513,36 +479,16 @@ public class ProjectController   {
         }
     }
 
-    // Method to handle the saving of duplicated projects to db and frontend
+    // Method to handle the saving of duplicated projects to db
     private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
         try {
-            // Create a duplicate in the backend
-            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+            // This calls the FirebaseRequestHandler to save the project in the db
+            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
             String result = rawResult.getKey();
-            String newProjectID = rawResult.getValue();
 
             if (result.equals("success")) {
                 // Show success message if saved to db
                 showSuccessAlert("Project Duplicated", "The duplicated project was successfully saved to the database!");
-
-                // Create a new pane for the duplicated project on the frontend
-                CustomStackPane duplicateProjectPane = createProjectPaneWithData(
-                        newProjectID, // Newly generated project ID
-                        projectName,
-                        projectDescription,
-                        projectResources,
-                        projectTools
-                );
-
-                // Add the duplicate project pane to mainVbox if it’s not already there
-                if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
-                    mainVbox.getChildren().add(duplicateProjectPane);
-                } else {
-                    System.out.println("Duplicate panel already exists in mainVbox!");
-                }
-
-                hideAllPanes(); // Adjust pane sizes as needed
-
             } else {
                 // Show error message if it fails
                 showErrorAlert("Error", "Failed to duplicate project: " + result);
@@ -552,7 +498,6 @@ public class ProjectController   {
             showErrorAlert("Error", "An error occurred while duplicating the project: " + e.getMessage());
         }
     }
-
 
     private VBox createMainPane(CustomStackPane overlay) {
         VBox projectPane = new VBox(20);
