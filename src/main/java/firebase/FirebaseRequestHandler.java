@@ -20,11 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.jdi.event.ExceptionEvent;
-import javafx.util.Pair;
-
 import com.qut.cab302_a1.models.Project;
 import com.qut.cab302_a1.models.ProjectStep;
+import javafx.util.Pair;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
@@ -38,6 +36,10 @@ public class FirebaseRequestHandler {
 
     // Not a security risk as auth keys are distributed on user login
     private static final String FirebaseID = "AIzaSyA6q25fgqzmNdyO0jAYlWnSj259Aw7Dhr8";
+
+    public static void main(String[] args) throws Exception {
+        TrySignup("TEST@TEST.TEST", "TESTESTESTTEST", "TESTUSERNAME", false);
+    }
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     public static Boolean TryLogin(String email, String pass, Boolean bPrintResponse) throws Exception {
@@ -103,16 +105,14 @@ public class FirebaseRequestHandler {
             GenericUrl url = new GenericUrl(firebaseUrl);
             HttpContent content = new JsonHttpContent(jsonFactory, data);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
+            String responseBody = response.parseAsString();
 
             // Handle response (print response body to console if bPrintResponse is true.
-            if(bPrintResponse) {
-                String responseBody = response.parseAsString();
-                System.out.println(responseBody);
-            }
+            if(bPrintResponse) {System.out.println(responseBody);}
 
             // Finish setting up user and attempt to login
-            SetUpNewUser(username);
-            TryLogin(email, pass, false);
+            FirebaseJSONUnpacker.ExtractBasicUserInformationFromAuth(responseBody, true);
+            SetUpNewUser(email, username, pass);
             return true;
 
         } catch (HttpResponseException e){
@@ -123,9 +123,8 @@ public class FirebaseRequestHandler {
 
     }
 
-    // Creates a new project, first returned string is either success or an error code, the second string is the project ID
-    public static Pair<String, String> CreateProject(String projectName, String projectDescription) throws Exception {
-
+    // Creates a new project, the returned string is either representative of success or an error code
+    public static String CreateProject(String projectName, String projectDescription) throws Exception {
         try{
 
             // Generate random project ID and check if project exists
@@ -148,11 +147,11 @@ public class FirebaseRequestHandler {
 
             // If the document was successfully created, add a reference to the project in the user's list of projectIDs
             if(results.getKey()) { AppendProjectToProfile(projectID);}
-            return new Pair<String, String>("success", projectID);
+            return "success";
 
         } catch (HttpResponseException e) {
             // Print to console if anything goes wrong
-            return new Pair<String, String>(FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()), null);
+            return FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent());
         }
     }
 
@@ -223,19 +222,14 @@ public class FirebaseRequestHandler {
     }
 
     // Deletes a project
-    public static Boolean DeleteProject(String projectID) {
-        try {
-            // Attempt to delete the document from Firestore
-            FirestoreHandler.DeleteDocument("Projects", projectID);
-            System.out.println("Project deletion successful for ID: " + projectID);
-            return true; // Return true if deletion was successful
+    public static Boolean DeleteProject(String projectName) throws Exception {
+        try{
+            FirestoreHandler.DeleteDocument("Projects", projectName);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Project deletion failed for ID: " + projectID);
-            return false; // Return false if an error occurred
         }
+        return null;
     }
-
 
     // Creates a new project step and adds it to a project
     public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
@@ -326,9 +320,14 @@ public class FirebaseRequestHandler {
 
     // Gets all projects that the currently logged-in user owns and saves them to FirebaseDataStorage.projects - called on login
     private static Boolean GetProjects() throws Exception{
+
+        // If the user has no projects, return early
+        if(FirebaseDataStorage.getProjectIDs() == null) {
+            return false;
+        }
+
         // Iterate through user projects ID list
         for(String projectID : FirebaseDataStorage.getProjectIDs()) {
-
             try{
                 // Try to get project
                 Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
@@ -339,24 +338,26 @@ public class FirebaseRequestHandler {
                     FirebaseJSONUnpacker.ExtractProjectInformation(result.getValue());
                 }
 
+                return true;
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
-        return true;
+        return false;
 
     }
 
     // Creates a new user document, then populates the new document with required fields.
-    private static void SetUpNewUser(String username) throws Exception {
+    private static void SetUpNewUser(String email, String username, String password) throws Exception {
         try {
             // Create payload
-            Map<String, Object> fields = new HashMap<String, Object>();
+            Map<String, Object> fields = new HashMap<>();
             fields.put("username", Map.of("stringValue", username));
             fields.put("projectIDs", Map.of("arrayValue", new HashMap<String, Object>()));
 
             FirestoreHandler.CreateDocument("Users", FirebaseDataStorage.getUid(), fields);
+            TryLogin(email, password, false);
 
         } catch (HttpResponseException e) {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
