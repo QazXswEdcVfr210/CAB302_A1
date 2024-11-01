@@ -246,7 +246,7 @@ public class ProjectController   {
         bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
 
 
-        // Lambda function that handles expanding the vbox when clicked.
+        // Lambda function that handles expanding the vbox when clicked
         projectPane.setOnMouseClicked(actionEvent -> {
             hideAllPanes();
             //animation goes here
