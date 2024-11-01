@@ -486,8 +486,6 @@ public class ProjectController   {
             }
         });
 
-
-
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
         projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
@@ -688,7 +686,7 @@ public class ProjectController   {
      * @param currentProgress
      * @return size of the bar
      */
-    public int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+    public static int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
         if (currentProgress > totalProgress || totalProgress == currentProgress || totalProgress == 0){
             return MAX_RANGE;
         }
@@ -709,7 +707,7 @@ public class ProjectController   {
      * @param progressRange
      * @return Color for progressBar
      */
-    public Color pickColor(int MAX_RANGE, int progressRange){
+    public static Color pickColor(int MAX_RANGE, int progressRange){
         if (MAX_RANGE / 2 <= progressRange){ //Gradient this
             return Color.BLUE;
         }

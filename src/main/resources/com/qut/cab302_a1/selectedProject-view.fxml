@@ -24,6 +24,12 @@
             <Label fx:id="sidebarProjects0">Projects</Label>
             <Button fx:id="returnButton" onAction="#backAction" >Back</Button> <!--Change to an icon -->
         </HBox>
+        <VBox>
+            <padding>
+                <Insets top="25" left="15"/>
+            </padding>
+            <Button fx:id="createStep">New Step</Button>
+        </VBox>
     </VBox>
 
 
@@ -45,9 +51,8 @@
                 <Label fx:id="progressionLabel">x/x</Label>
 
             </HBox>
-            <StackPane fx:id="progressBarPane">
-                <Rectangle fx:id="backgroundBar"></Rectangle>
-                <Rectangle fx:id="progressBar"></Rectangle>
+            <StackPane fx:id="progressBarPane" alignment="CENTER">
+
             </StackPane>
         </VBox>
         <VBox spacing="200.0">
