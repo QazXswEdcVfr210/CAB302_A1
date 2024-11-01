@@ -245,19 +245,44 @@ public class ProjectController   {
         return overlay;
     }
 
-    private VBox createMainPaneWithoutBackend(CustomStackPane overlay,
-                                              String projectName,
-                                              String projectDescription,
-                                              String projectResources,
-                                              String projectTools) {
+    private VBox createMainPaneWithoutBackend(CustomStackPane overlay, String projectName, String projectDescription, String projectResources, String projectTools) {
         VBox projectPane = new VBox(20);
+
+        // Set up editable text fields
         TextField nameField = new TextField(projectName);
         TextField descriptionField = new TextField(projectDescription);
         TextField resourcesField = new TextField(projectResources);
         TextField toolsField = new TextField(projectTools);
+
+        // Add focus listeners for automatic saving
+        nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Focus lost
+                try {
+                    FirebaseRequestHandler.UpdateProjectName(overlay.getProjectID(), nameField.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showErrorAlert("Error", "Failed to update project name: " + e.getMessage());
+                }
+            }
+        });
+
+        descriptionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue) { // Focus lost
+                try {
+                    FirebaseRequestHandler.UpdateProjectDescription(overlay.getProjectID(), descriptionField.getText());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    showErrorAlert("Error", "Failed to update project description: " + e.getMessage());
+                }
+            }
+        });
+
+
+        // Add text fields to the project pane
         projectPane.getChildren().addAll(nameField, descriptionField, resourcesField, toolsField);
         return projectPane;
     }
+
 
     public class CustomStackPane extends StackPane implements ObserverPane {
         private String projectID; // Add this variable to store the project ID
