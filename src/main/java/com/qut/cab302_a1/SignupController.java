@@ -86,7 +86,7 @@ public class SignupController {
         if (passwordField.getText().equals(confirmField.getText())) {
             try {
                 Boolean registerSuccess = FirebaseRequestHandler.TrySignup(registerField.getText(), passwordField.getText(), registerField.getText(), false);
-
+                System.out.println("Signup Result: " + registerSuccess);
                 // If login is successful change scene
                 if (registerSuccess) {
                     user = registerField.getText();
