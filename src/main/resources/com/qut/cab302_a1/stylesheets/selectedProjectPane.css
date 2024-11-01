@@ -1,0 +1,58 @@
+
+
+#basePane{
+    -fx-background-color: #25262b;
+}
+
+
+ #sideVBox{
+
+    -fx-background-color: rgba(29,29,29,254);
+}
+
+
+#projectPanID, #mainVbox, #mainScrollPane, #scrollMainVBox{
+    -fx-background-color: rgba(28,28,28,255);
+}
+
+#projectName{
+    -fx-text-fill: white;
+    -fx-font-size: 2em;
+}
+
+
+#sidebarProjects0{
+    -fx-text-fill: white;
+    -fx-font-size: 2em;
+}
+
+
+#progressLabel, #progressionLabel{
+    -fx-text-fill: white;
+}
+
+
+#projectDescription, .content{
+    -fx-text-fill: grey;
+    -fx-background-color: rgba(28,28,28,255);
+    -fx-font-size: 1em;
+    -fx-spacing: 2px;
+
+}
+
+#projectDescription .scroll-bar, .thumb{
+    -fx-background-color: transparent;
+    -fx-opacity: 0;
+
+}
+
+#returnButton{
+    -fx-text-fill: white;
+    -fx-background-color: rgba(1,1,1,0.1);
+    -fx-border-color: transparent;
+}
+
+#returnButton:hover{
+    -fx-cursor: hand;
+    -fx-background-color: rgba(1,1,1,0.2);
+}

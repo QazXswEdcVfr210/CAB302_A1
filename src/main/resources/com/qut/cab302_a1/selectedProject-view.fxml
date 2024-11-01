@@ -14,11 +14,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.image.ImageView?>
 <HBox xmlns:fx="http://javafx.com/fxml" fx:controller="com.qut.cab302_a1.SelectedProjectController" fx:id="basePane">
     <VBox fx:id="sideVBox" spacing="15.0" minWidth="200.00" >
         <HBox spacing="55.0" alignment="TOP_LEFT">
             <padding>
-                <Insets left="20.00" top="35.00"></Insets>
+                <Insets left="15.00" top="35.00" right="10"></Insets>
             </padding>
             <Label fx:id="sidebarProjects0">Projects</Label>
             <Button fx:id="returnButton" onAction="#backAction" >Back</Button> <!--Change to an icon -->
@@ -29,17 +30,20 @@
     <!--Main page stuff -->
 
     <ScrollPane fx:id="mainScrollPane"  vbarPolicy="NEVER" hbarPolicy="NEVER" vvalue="0" HBox.hgrow="ALWAYS"> <!--Consider removing the NEVER statements and changing the appearence in css. -->
+        <VBox fx:id="scrollMainVBox">
         <padding>
             <Insets left="10.0" right="10.0" top="30.0"/>
         </padding>
         <VBox spacing="15.0" alignment="CENTER" fx:id="mainVbox">
+            <ImageView fx:id="imageView" fitWidth="300" fitHeight="300"></ImageView>
             <Label fx:id="projectName">Project</Label>
-            <TextArea fx:id="projectDescription">Description</TextArea>
+            <TextArea editable="false" fx:id="projectDescription">Description</TextArea>
         </VBox>
         <VBox>
             <HBox spacing="400.0" alignment="CENTER">
                 <Label fx:id="progressLabel">Progress</Label>
                 <Label fx:id="progressionLabel">x/x</Label>
+
             </HBox>
             <StackPane fx:id="progressBarPane">
                 <Rectangle fx:id="backgroundBar"></Rectangle>
@@ -53,6 +57,7 @@
             <HBox spacing="200.0">
                 <Rectangle></Rectangle>
             </HBox>
+        </VBox>
         </VBox>
     </ScrollPane>
 </HBox>

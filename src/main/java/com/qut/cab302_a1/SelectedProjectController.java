@@ -7,14 +7,24 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class SelectedProjectController {
 
     static Project loadedProject;
+    Image setPicture = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
+
+    @FXML
+    private ImageView imageView;
 
     public static void setProject(Project project){
         loadedProject = project;
@@ -32,9 +42,26 @@ public class SelectedProjectController {
     @FXML
     private TextArea projectDescription;
 
+    @FXML
+    private HBox basePane;
+
+   @FXML
+   private ScrollPane mainScrollPane;
+
     public void initialize() {
         setText();
         getTipsList();
+        mainScrollPane.setFitToWidth(true);
+
+        imageView.setImage(setPicture);
+
+
+        try{
+            basePane.getStylesheets().add(getClass().getResource("stylesheets/selectedProjectPane.css").toExternalForm());
+        }
+        catch (Exception e){
+            System.out.println("Stylesheet failed to load");
+        }
     }
 
     public void setText(){
