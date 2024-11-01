@@ -28,7 +28,7 @@
             <padding>
                 <Insets top="25" left="15"/>
             </padding>
-            <Button fx:id="createStep">New Step</Button>
+            <Button fx:id="createStep" onAction="#onCreateStep">New Step</Button>
         </VBox>
     </VBox>
 
@@ -55,13 +55,11 @@
 
             </StackPane>
         </VBox>
-        <VBox spacing="200.0">
+        <VBox spacing="200.0" fx:id="stepsPane">
             <padding>
-                <Insets left="20.0" right="20.0"/>
+                <Insets left="20.0" right="20.0" top="20"/>
             </padding>
-            <HBox spacing="200.0">
-                <Rectangle></Rectangle>
-            </HBox>
+
         </VBox>
         </VBox>
     </ScrollPane>

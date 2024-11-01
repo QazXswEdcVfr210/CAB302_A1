@@ -3,14 +3,12 @@ package com.qut.cab302_a1;
 import com.qut.cab302_a1.models.Project;
 import com.qut.cab302_a1.models.ProjectStep;
 import firebase.FirebaseDataStorage;
+import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -28,8 +26,13 @@ import java.util.Objects;
 
 public class SelectedProjectController {
 
+    int incompleteStepCount;
+    int completedSteps = 0;
+    int totalStepCount = 0;
     static Project loadedProject;
     public static List<ProjectStep> steps = new ArrayList<>();
+    ArrayList<HBox> stepBoxes = new ArrayList<>();
+    ArrayList<ProjectStep> newSteps = new ArrayList<>();
     Image setPicture = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
 
     @FXML
@@ -37,6 +40,9 @@ public class SelectedProjectController {
 
     @FXML
     private StackPane progressBarPane;
+
+    @FXML
+    private VBox stepsPane;
 
     public static void setProject(Project project){
         loadedProject = project;
@@ -49,7 +55,7 @@ public class SelectedProjectController {
     private Label projectName;
 
     @FXML
-    private Label projectionLabel;
+    private Label progressionLabel;
 
     @FXML
     private TextArea projectDescription;
@@ -62,10 +68,10 @@ public class SelectedProjectController {
 
     public void initialize() {
         setText();
-        getTipsList();
         mainScrollPane.setFitToWidth(true);
 
-        setLoadingBar();
+        loadSteps();
+        setLoadingBar(); //Set steps before this function
         imageView.setImage(setPicture);
 
 
@@ -82,10 +88,6 @@ public class SelectedProjectController {
         projectDescription.setText(loadedProject.getDescription());
 
 
-    }
-
-    public void getTipsList(){
-        //FirebaseDataStorage.
     }
 
     @FXML
@@ -112,7 +114,7 @@ public class SelectedProjectController {
 
         final int MAX_RANGE = 750;
         final int MAX_WIDTH = 5;
-        int progressRange = ProjectController.calculateProgress(MAX_RANGE, 10, 5);
+        int progressRange = ProjectController.calculateProgress(MAX_RANGE, totalStepCount, completedSteps);
 
         HBox.setHgrow(progressBarPane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
         StackPane progressPane = new StackPane();
@@ -140,19 +142,142 @@ public class SelectedProjectController {
     }
 
     public void loadSteps(){
-
-
         if (loadedProject.getProjectSteps() != null || loadedProject.getProjectSteps().size() > 0){
            steps = loadedProject.getProjectSteps();
 
            for (ProjectStep step : steps){
+               if (!step.getbIsCompleted()){
+                   incompleteStepCount++;
+               }
                createStep(step);
            }
+           setRatio();
         }
     }
 
+    public void setRatio(){
+        totalStepCount = steps.size();
+        completedSteps = totalStepCount - incompleteStepCount;
+        String completedStepsString = "" + completedSteps;
+        String totalStepsString = "" + totalStepCount;
+
+        progressionLabel.setText(completedStepsString + "/" + totalStepsString);
+    }
+
     public void createStep(ProjectStep step){
+        newSteps.add(step);
+        HBox hboxRow;
+
+        if (newSteps.size() % 2 != 0){
+            hboxRow = createHbox();
+            stepBoxes.add(hboxRow);
+            VBox leftSide = (VBox) hboxRow.getChildren().get(0);
+            leftSide.setPrefSize(200, 200);
+            leftSide.setAlignment(Pos.CENTER);
+            HBox complete = new HBox();
+            Label competeLabel = new Label(step.getbIsCompleted() ? "Completed" : "Incomplete");
+            RadioButton completeRadio = new RadioButton();
+
+            if (step.getbIsCompleted()){
+                completeRadio.setSelected(true);
+            }
+
+            completeRadio.setOnAction(actionEvent -> {
+                if (completeRadio.isSelected()){
+                    step.setCompleted(true);
+                    setRatio();
+                }
+                else{
+                    step.setCompleted(false);
+                    setRatio();
+                }
+            });
+            Label nameLabel = new Label(step.getName());
+            TextArea decriptionLabel = new TextArea(step.getDescription());
+
+            complete.getChildren().addAll(competeLabel, completeRadio);
+            leftSide.getChildren().addAll(complete, nameLabel, decriptionLabel);
+
+            stepsPane.getChildren().add(hboxRow);
+        }
+
+        else{
+            hboxRow = stepBoxes.getLast();
+            VBox rightSide = (VBox) hboxRow.getChildren().get(1);
+            rightSide.setPrefSize(200, 200);
+            rightSide.setAlignment(Pos.CENTER);
+
+            HBox complete = new HBox();
+            Label competeLabel = new Label(step.getbIsCompleted() ? "Completed" : "Incomplete");
+            RadioButton completeRadio = new RadioButton();
+
+            if (step.getbIsCompleted()){
+                completeRadio.setSelected(true);
+            }
+
+            completeRadio.setOnAction(actionEvent -> {
+                if (completeRadio.isSelected()){
+                    step.setCompleted(true);
+                    setRatio();
+                }
+                else{
+                    step.setCompleted(false);
+                    setRatio();
+                }
+            });
+            Label nameLabel = new Label(step.getName());
+            TextArea decriptionLabel = new TextArea(step.getDescription());
+
+            complete.getChildren().addAll(competeLabel, completeRadio);
+            rightSide.getChildren().addAll(complete, nameLabel, decriptionLabel);
+        }
 
     }
+
+    public HBox createHbox(){
+        HBox hboxRow = new HBox();
+        hboxRow.setAlignment(Pos.CENTER);
+        hboxRow.setSpacing(10);
+        VBox leftSide = new VBox();
+        VBox rightSide = new VBox();
+        hboxRow.getChildren().addAll(leftSide, rightSide);
+        return hboxRow;
+    }
+
+    public void onCreateStep(){
+
+        Dialog<String> popup = new Dialog<>();
+        popup.setTitle("Add Step");
+
+        TextField name = new TextField();
+        TextArea description = new TextArea();
+        VBox popupPane = new VBox();
+        popupPane.getChildren().addAll(name, description);
+        popup.getDialogPane().setContent(popupPane);
+
+        ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        popup.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+
+        // Handle the Save button click and retrieve input data
+        popup.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                // Combine or process the input values as needed
+                try {
+                    FirebaseRequestHandler.CreateProjectStep(loadedProject.getID(), name.getText(), description.getText());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            return null;
+        });
+
+        // Show the dialog and capture the result
+        popup.showAndWait().ifPresent(result -> {
+            System.out.println("User Details: " + result);
+            // Further processing of the saved details here, e.g., updating UI or storing data
+        });
+    }
+
 
 }
