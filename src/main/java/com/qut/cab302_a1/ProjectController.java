@@ -121,8 +121,6 @@ public class ProjectController   {
                 System.out.print(pane.getPosition() + ", ");
             }
 
-            System.out.println("");
-
             notifiedObservers();
 
             for (CustomStackPane pane: projectList) {
@@ -158,7 +156,6 @@ public class ProjectController   {
 
         // When a postion is changed this function is called which updates each observer
         public void notifiedObservers() {
-            System.out.println(testTitle);
             mergeOrderObservers();
         }
 
@@ -237,6 +234,7 @@ public class ProjectController   {
     @FXML
     private CustomStackPane createProjectPane (){
         CustomStackPane overLay = new CustomStackPane(0);
+        overLay.setUserData(currentProject);
         overLay.setId("overlayID");
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
@@ -264,8 +262,8 @@ public class ProjectController   {
         bigPane.setOnMouseClicked(actionEvent -> {
 
 
-            if (currentProject != null){
-                SelectedProjectController.setProject(currentProject); // Change this to the pane's project.
+            if (overLay.getUserData() != null){
+                SelectedProjectController.setProject((Project) bigPane.getUserData()); // Change this to the pane's project.
                 try{
                     Stage stage = (Stage) bigPane.getScene().getWindow();
                     FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("selectedProject-view.fxml"));
@@ -335,6 +333,7 @@ public class ProjectController   {
 
     private VBox createMainPane(CustomStackPane overLay) {
         VBox projectPane = new VBox(20);
+        projectPane.setUserData(currentProject);
         projectPane.getStyleClass().add("project-pane");
 
         // Project details
@@ -353,6 +352,14 @@ public class ProjectController   {
         TextField projectToolsField = new TextField();
         projectToolsField.setPromptText("Enter list of required tools");
         projectToolsField.getStyleClass().add("project-text-field");
+
+        Project current = (Project) projectPane.getUserData();
+
+        if (current != null){
+            projectNameField.setText(current.getName());
+            projectDescriptionField.setText(current.getDescription());
+
+        }
 
         // Save Button
         Button saveButton = new Button("Save");
@@ -527,6 +534,7 @@ public class ProjectController   {
 
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
+        bigPane.setUserData(currentProject);
 
             VBox pictureBox = new VBox(20);
             pictureBox.fillWidthProperty();
@@ -551,10 +559,11 @@ public class ProjectController   {
                     title = new Label("Null ID"); //Needs to be set first. Can change this value later.
                 }
                 else{
-                    title = new Label(currentProject.getName()); // no more than 25 Char
+                    Project current = (Project) bigPane.getUserData();
+                    title = new Label(current.getName()); // no more than 25 Char
                 }
 
-                testTitle--;
+
                 int MAX_SPACING = 400;
                 title.setId("titleID");
 
