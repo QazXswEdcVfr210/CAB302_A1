@@ -25,9 +25,14 @@ import javafx.stage.Stage;
 
 
 public class ProjectController   {
+    public static String setUser;
+
     private List<CustomStackPane> projectList = new ArrayList<>();
     private static List<ObserverPane> paneObservers =  new ArrayList<>();
     public static int testTitle = 10;
+    public List<Project> usersProjects;
+
+    public Project currentProject;
 
     @FXML
     private Button buttonV;
@@ -69,7 +74,7 @@ public class ProjectController   {
     @FXML
     public void initialize(){
         try{
-            basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
+        basePane.getStylesheets().add(getClass().getResource("stylesheets/projectControllerStyle.css").toExternalForm());
         }
         catch (Exception e){
             System.out.println("Stylesheet failed to load");
@@ -78,55 +83,11 @@ public class ProjectController   {
         mainScrollPane.setFitToHeight(true);
 
         mainVbox.setFillWidth(true);
+        populateList();
 
         hyperlinks = new Hyperlink[] {hyperlink0, hyperlink1, hyperlink2, hyperlink3};
         sidepartLabels = new Label[] {sidepart0, sidepart05, sidepart1, sidepart15, sidepart2, sidepart25, sidepart3};
-
-        loadUserProjects();
     }
-
-
-    public void printUserProjectsToConsole() {
-        List<Project> userProjects = FirebaseDataStorage.getProjects();
-
-        // Print the number of projects retrieved
-        System.out.println("Total Projects Retrieved: " + userProjects.size());
-
-        // Print each project's details
-        for (Project project : userProjects) {
-            System.out.println("---- Project ----");
-            project.DebugProjectData(); // Use the method to print details
-            System.out.println("---- End of Project ----");
-        }
-    }
-
-
-    private CustomStackPane createProjectPaneWithData(String projectID, String projectName, String projectDescription, String projectResources, String projectTools) {
-        CustomStackPane overlay = new CustomStackPane(testTitle);
-        overlay.setProjectID(projectID);
-        overlay.setId("overlayID");
-
-        VBox projectPane = createMainPaneWithoutBackend(overlay, projectName, projectDescription, projectResources, projectTools);
-
-        // Attach the duplicate button
-        Button duplicateButton = new Button("Duplicate");
-        duplicateButton.getStyleClass().add("round-button");
-        duplicateButton.setOnAction(event -> handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools));
-
-        // Attach the delete button using the independent delete function
-        Button deleteButton = createDeleteButton(overlay);
-
-        // Add buttons to the layout
-        HBox buttonBox = new HBox(10, duplicateButton, deleteButton);
-        projectPane.getChildren().add(buttonBox);
-
-        HBox bigPane = createBigPane();
-        overlay.getChildren().addAll(projectPane, bigPane);
-
-        return overlay;
-    }
-
-
 
     @FXML
     private VBox mainVbox;
@@ -134,129 +95,14 @@ public class ProjectController   {
     @FXML
     private ScrollPane mainScrollPane;
 
-    private void loadUserProjects() {
-        try {
-            // Fetch all user projects from Firebase
-            List<Project> projects = FirebaseDataStorage.getProjects();
+    public void populateList(){
+        usersProjects = FirebaseDataStorage.getProjects();
 
-            for (Project project : projects) {
-                // Use the updated `createProjectPaneWithData` to avoid any database interaction
-                CustomStackPane projectPane = createProjectPaneWithData(
-                        project.id, project.name, project.description,
-                        project.resources, project.tools
-                );
+        for (Project project : usersProjects){
+            currentProject = project;
 
-                if (!mainVbox.getChildren().contains(projectPane)) {
-                    mainVbox.getChildren().add(projectPane);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showErrorAlert("Error", "Failed to load user projects: " + e.getMessage());
+            CustomStackPane projectPan = createProjectPane();
         }
-    }
-
-    private Button createDeleteButton(CustomStackPane overlay) {
-        Button deleteButton = new Button("Delete");
-        deleteButton.getStyleClass().add("round-button");
-        deleteButton.setOnAction(event -> {
-            String projectID = overlay.getProjectID();
-
-            if (projectID == null || projectID.isEmpty()) {
-                showErrorAlert("Validation Error", "Project ID cannot be empty.");
-                return;
-            }
-
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Confirm Deletion");
-            alert.setHeaderText("Are you sure you want to delete this project?");
-            alert.setContentText("This action cannot be undone.");
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            alert.initOwner(stage);
-
-            ButtonType deleteButtonType = new ButtonType("Delete");
-            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-            alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
-
-            Optional<ButtonType> result = alert.showAndWait();
-
-            if (result.isPresent() && result.get() == deleteButtonType) {
-                try {
-                    Boolean deletionResult = FirebaseRequestHandler.DeleteProject(projectID);
-
-                    if (Boolean.TRUE.equals(deletionResult)) {
-                        mainVbox.getChildren().remove(overlay);
-                        paneObservers.remove(overlay);
-                        projectList.remove(overlay);
-                    } else {
-                        showErrorAlert("Error Deleting Project", "Failed to delete project from the database.");
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Exception", "Failed to delete the project: " + e.getMessage());
-                }
-            }
-        });
-        return deleteButton;
-    }
-
-
-
-    private CustomStackPane createDisplayOnlyPane(String projectID, String projectName,
-                                                  String projectDescription,
-                                                  String projectResources,
-                                                  String projectTools) {
-        CustomStackPane overlay = new CustomStackPane(testTitle);
-        overlay.setProjectID(projectID);
-        overlay.setId("overlayID");
-
-        VBox projectPane = createMainPaneWithoutBackend(overlay, projectName,
-                projectDescription,
-                projectResources,
-                projectTools);
-
-        HBox bigPane = createBigPane();
-        overlay.getChildren().addAll(projectPane, bigPane);
-        return overlay;
-    }
-
-    private VBox createMainPaneWithoutBackend(CustomStackPane overlay, String projectName, String projectDescription, String projectResources, String projectTools) {
-        VBox projectPane = new VBox(20);
-
-        // Set up editable text fields
-        TextField nameField = new TextField(projectName);
-        TextField descriptionField = new TextField(projectDescription);
-        TextField resourcesField = new TextField(projectResources);
-        TextField toolsField = new TextField(projectTools);
-
-        // Add focus listeners for automatic saving
-        nameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Focus lost
-                try {
-                    FirebaseRequestHandler.UpdateProjectName(overlay.getProjectID(), nameField.getText());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Error", "Failed to update project name: " + e.getMessage());
-                }
-            }
-        });
-
-        descriptionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Focus lost
-                try {
-                    FirebaseRequestHandler.UpdateProjectDescription(overlay.getProjectID(), descriptionField.getText());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Error", "Failed to update project description: " + e.getMessage());
-                }
-            }
-        });
-
-
-        // Add text fields to the project pane
-        projectPane.getChildren().addAll(nameField, descriptionField, resourcesField, toolsField);
-        return projectPane;
     }
 
 
@@ -352,9 +198,6 @@ public class ProjectController   {
             return mergeLists(list, firstHalf, secondHalf);
         }
 
-
-
-
         public List<CustomStackPane> mergeLists(List<CustomStackPane> original, List<CustomStackPane> first, List<CustomStackPane> second){
             List<CustomStackPane> merged = new ArrayList<>();
             int originalSize = original.size();
@@ -392,66 +235,57 @@ public class ProjectController   {
      * @return overlay pane (base pane)
      */
     @FXML
-    private CustomStackPane createProjectPane() {
-        // Create a new CustomStackPane with a temporary ID
-        CustomStackPane overLay = new CustomStackPane(testTitle);
+    private CustomStackPane createProjectPane (){
+        CustomStackPane overLay = new CustomStackPane(0);
         overLay.setId("overlayID");
-
-        // Extract initial details from the text fields
-        String projectName = "New Project"; // You can make this more dynamic
-        String projectDescription = "Enter description here";
-        String projectResources = "Enter resources here";
-        String projectTools = "Enter tools here";
-
-        // Call the Firebase request to create a new project immediately
-        try {
-            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
-            String result = rawResult.getKey();
-
-            if (result.equals("success")) {
-                // Set the generated project ID to the CustomStackPane
-                overLay.setProjectID(rawResult.getValue());
-
-            } else {
-                showErrorAlert("Error", "Failed to create project: " + result);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();  // Log any errors
-            showErrorAlert("Error", "An error occurred while creating the project: " + e.getMessage());
-        }
-
-        // Create the UI components for the new project pane
         VBox projectPane = createMainPane(overLay);
         HBox bigPane = createBigPane();
         projectPane.setId("projectPane");
         bigPane.setId("bigPane");
-
-        // Rounding corners
+        //Rounding corners
         overLay.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         projectPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
         bigPane.setStyle("-fx-background-radius: 20px; -fx-border-radius: 20px");
 
-        // Add mouse-click listener for expanding the pane
+
+        // Lambda function that handles expanding the vbox when clicked.
         projectPane.setOnMouseClicked(actionEvent -> {
             hideAllPanes();
+            //animation goes here
+
             double scrollVal = mainScrollPane.getVvalue();
             bigPane.setVisible(true);
             projectPane.setVisible(false);
             bigPane.setPrefSize(260, 260);
-            bigPane.layout();
             overLay.setPrefSize(260, 260);
-            bigPane.layout();
             mainScrollPane.setVvalue(scrollVal);
         });
 
         bigPane.setOnMouseClicked(actionEvent -> {
-            System.out.println("BigPane Width: " + bigPane.getWidth() + ", Height: " + bigPane.getHeight());
+
+
+            if (currentProject != null){
+                SelectedProjectController.setProject(currentProject); // Change this to the pane's project.
+                try{
+                    Stage stage = (Stage) bigPane.getScene().getWindow();
+                    FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("selectedProject-view.fxml"));
+                    Scene scene = new Scene(fxmlLoader.load(), LoginController.MAIN_WIDTH, LoginController.MAIN_HEIGHT);
+                    stage.setTitle("Project");
+                    stage.setWidth(LoginController.MAIN_WIDTH);
+                    stage.setHeight(LoginController.MAIN_HEIGHT);
+                    stage.setScene(scene);
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+
+
         });
 
         overLay.getChildren().addAll(projectPane, bigPane);
         return overLay;
     }
-
 
     /**
      * Used before expanding a new pane into bigPane.
@@ -463,7 +297,7 @@ public class ProjectController   {
      */
     private void hideAllPanes(){
         if (projectList.size() >= 3){
-            mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly big. DO NOT REMOVE
+            mainScrollPane.setFitToHeight(false); // Disgusting fix to a really ugly bug. DO NOT REMOVE
         }
         else if (projectList.size() <3){
             mainScrollPane.setFitToHeight(true);
@@ -499,83 +333,80 @@ public class ProjectController   {
         }
     }
 
-    private VBox createMainPane(CustomStackPane overlay) {
+    private VBox createMainPane(CustomStackPane overLay) {
         VBox projectPane = new VBox(20);
         projectPane.getStyleClass().add("project-pane");
 
-        // Initial project details
-        String projectName = "New Project";
-        String projectDescription = "Enter description here";
-        String projectResources = "Enter resources here";
-        String projectTools = "Enter tools here";
-
-        // Attempt to create a new project in the database immediately
-        try {
-            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
-            String result = rawResult.getKey();
-
-            if (result.equals("success")) {
-                overlay.setProjectID(rawResult.getValue());
-            } else {
-                showErrorAlert("Error", "Failed to create project: " + result);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();  // Log any errors
-            showErrorAlert("Error", "An error occurred while creating the project: " + e.getMessage());
-        }
-
-        // Create and set up text fields
-        TextField projectNameField = new TextField(projectName);
+        // Project details
+        TextField projectNameField = new TextField();
         projectNameField.setPromptText("Enter project name");
         projectNameField.getStyleClass().add("project-text-field");
 
-        TextField projectDescriptionField = new TextField(projectDescription);
+        TextField projectDescriptionField = new TextField();
         projectDescriptionField.setPromptText("Enter project description");
         projectDescriptionField.getStyleClass().add("project-text-field");
 
-        TextField projectResourcesField = new TextField(projectResources);
+        TextField projectResourcesField = new TextField();
         projectResourcesField.setPromptText("Enter list of required resources");
         projectResourcesField.getStyleClass().add("project-text-field");
 
-        TextField projectToolsField = new TextField(projectTools);
+        TextField projectToolsField = new TextField();
         projectToolsField.setPromptText("Enter list of required tools");
         projectToolsField.getStyleClass().add("project-text-field");
 
-        // Add focus listeners for automatic saving
-        projectNameField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Focus lost
+        // Save Button
+        Button saveButton = new Button("Save");
+        saveButton.getStyleClass().add("round-button");
+        saveButton.setOnAction(event -> {
+            String projectName = projectNameField.getText();
+            String projectDescription = projectDescriptionField.getText();
+            String projectResources = projectResourcesField.getText();
+            String projectTools = projectToolsField.getText();
+
+            if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
                 try {
-                    FirebaseRequestHandler.UpdateProjectName(overlay.getProjectID(), projectNameField.getText());
+                    Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+                    String result = rawResult.getKey();
+
+                    if (result.equals("success")) {
+
+                        overLay.setProjectID(rawResult.getValue());
+                        // Success case: disable editing and buttons
+                        projectNameField.setEditable(false);
+                        projectDescriptionField.setEditable(false);
+                        projectResourcesField.setEditable(false);
+                        projectToolsField.setEditable(false);
+                        saveButton.setDisable(true);
+
+                        showSuccessAlert("Project Created", "Project was successfully saved to the database!");
+                    } else {
+                        showErrorAlert("Error creating project", result);
+                    }
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Error", "Failed to update project name: " + e.getMessage());
+                    showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
                 }
+            } else {
+                showErrorAlert("Validation Error", "Project name and description cannot be empty.");
             }
         });
 
-        projectDescriptionField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue) { // Focus lost
-                try {
-                    FirebaseRequestHandler.UpdateProjectDescription(overlay.getProjectID(), projectDescriptionField.getText());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    showErrorAlert("Error", "Failed to update project description: " + e.getMessage());
-                }
-            }
-        });
-
-        // Duplicate and Delete buttons
+        // Duplicate button
         Button duplicateButton = new Button("Duplicate");
         duplicateButton.getStyleClass().add("round-button");
         duplicateButton.setOnAction(event -> {
+            String projectName = projectNameField.getText();
+            String projectDescription = projectDescriptionField.getText();
+            String projectResources = projectResourcesField.getText();
+            String projectTools = projectToolsField.getText();
+
             CustomStackPane duplicateProjectPane = createProjectPane();
             duplicateProjectPane.setId("duplicateProjectPaneID");
 
             VBox newProjectPane = (VBox) duplicateProjectPane.getChildren().get(0);
-            ((TextField) newProjectPane.getChildren().get(0)).setText(projectNameField.getText());
-            ((TextField) newProjectPane.getChildren().get(1)).setText(projectDescriptionField.getText());
-            ((TextField) newProjectPane.getChildren().get(2)).setText(projectResourcesField.getText());
-            ((TextField) newProjectPane.getChildren().get(3)).setText(projectToolsField.getText());
+            ((TextField) newProjectPane.getChildren().get(0)).setText(projectName);
+            ((TextField) newProjectPane.getChildren().get(1)).setText(projectDescription);
+            ((TextField) newProjectPane.getChildren().get(2)).setText(projectResources);
+            ((TextField) newProjectPane.getChildren().get(3)).setText(projectTools);
 
             if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
                 mainVbox.getChildren().add(duplicateProjectPane);
@@ -584,19 +415,78 @@ public class ProjectController   {
             }
 
             hideAllPanes();
+            handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools);
         });
 
-        // Attach the new delete button
-        Button deleteButton = createDeleteButton(overlay);
+        // Edit Button
+        Button editButton = new Button("Edit");
+        editButton.getStyleClass().add("round-button");
+        editButton.setOnAction(event -> {
+            projectNameField.setEditable(true);
+            projectDescriptionField.setEditable(true);
+            projectResourcesField.setEditable(true);
+            projectToolsField.setEditable(true);
+            saveButton.setDisable(false);
+        });
 
-        // Add buttons to the layout
-        HBox buttonBox = new HBox(10, duplicateButton, deleteButton);
+        // Delete Button
+        Button deleteButton = new Button("Delete");
+        deleteButton.getStyleClass().add("round-button");
+        deleteButton.setOnAction(event -> {
+            String projectID = overLay.getProjectID();
+
+            if (projectID == null || projectID.isEmpty()) {
+                showErrorAlert("Validation Error", "Project ID cannot be empty.");
+                return;
+            }
+
+            // Confirm Deletion Alert
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Deletion");
+            alert.setHeaderText("Are you sure you want to delete this project?");
+            alert.setContentText("This action cannot be undone.");
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            alert.initOwner(stage);
+
+            ButtonType deleteButtonType = new ButtonType("Delete");
+            ButtonType cancelButtonType = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(deleteButtonType, cancelButtonType);
+
+            Optional<ButtonType> result = alert.showAndWait();
+
+            if (result.isPresent() && result.get() == deleteButtonType) {
+                try {
+                    // Attempt to delete the project from the database
+                    Boolean deletionResult = FirebaseRequestHandler.DeleteProject(projectID);
+
+                    if (Boolean.TRUE.equals(deletionResult)) {
+                        // Remove the pane from the UI only if deletion was successful
+                        mainVbox.getChildren().remove(overLay);
+                        paneObservers.remove(overLay);
+                        projectList.remove(overLay);
+
+                        // Show success alert
+                        showSuccessAlert("Project Deleted", "Project was successfully deleted from the database!");
+                    } else {
+                        // Show error alert if deletion failed
+                        showErrorAlert("Error Deleting Project", "Failed to delete project from the database.");
+                    }
+                } catch (Exception e) {
+                    // Handle exceptions and show error message
+                    showErrorAlert("Exception", "Failed to delete the project: " + e.getMessage());
+                }
+            }
+        });
+
+
+
+        // Adding buttons to a horizontal box layout
+        HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
         projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
 
         return projectPane;
     }
-
-
 
 
     // Method to display success alerts
@@ -638,75 +528,82 @@ public class ProjectController   {
         bigPane.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, null, null)));
         bigPane.setVisible(false);
 
-        VBox pictureBox = new VBox(20);
-        pictureBox.fillWidthProperty();
-        // top, right?, left?, bottom?
-        pictureBox.setPadding(new Insets(25, 0, 0, 25));
-        Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
-        ImageView imageView = new ImageView(placeholder);
-        imageView.setFitHeight(180);
-        imageView.setFitWidth(180);
-        imageView.setStyle("-fx-background-radius: 20px;"); //come back to this later.
-        imageView.setDisable(true);
+            VBox pictureBox = new VBox(20);
+            pictureBox.fillWidthProperty();
+            // top, right?, left?, bottom?
+            pictureBox.setPadding(new Insets(25, 0, 0, 25));
+            Image placeholder = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/qut/cab302_a1/pictures/forge.png")));
+            ImageView imageView = new ImageView(placeholder);
+            imageView.setFitHeight(180);
+            imageView.setFitWidth(180);
+            imageView.setStyle("-fx-background-radius: 20px;"); //come back to this later.
+            imageView.setDisable(true);
 
-        pictureBox.getChildren().addAll(imageView);
-        //Right side
-        VBox rightSide = new VBox(20);
+            pictureBox.getChildren().addAll(imageView);
+            //Right side
+            VBox rightSide = new VBox(20);
 
-        //Left side of rightSide panel
-        rightSide.setPadding(new Insets(40, 0, 0, 0));
-        HBox middlePane = new HBox(20);
-        Label title = new Label("Title" + testTitle); // no more than 25 Char
-        testTitle--;
-        int MAX_SPACING = 400;
-        title.setId("titleID");
+            //Left side of rightSide panel
+            rightSide.setPadding(new Insets(40, 0, 0, 0));
+                HBox middlePane = new HBox(20);
+                Label title;
+                if (currentProject == null){
+                    title = new Label("Null ID"); //Needs to be set first. Can change this value later.
+                }
+                else{
+                    title = new Label(currentProject.getName()); // no more than 25 Char
+                }
 
-        // progressbar right side of right side
-        VBox progressBar = new VBox(20);
-        //top row
-        HBox progressBox = new HBox(20);
-        progressBox.setSpacing(185);
-        // = should be changed to a settings icon
-        Label progressLabel = new Label("=  Progress");
+                testTitle--;
+                int MAX_SPACING = 400;
+                title.setId("titleID");
 
-        progressLabel.setId("progressLabelID");
-        Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
-        tipsLabel.setId("tipsLabelID");
+                        // progressbar right side of right side
+                        VBox progressBar = new VBox(20);
+                            //top row
+                            HBox progressBox = new HBox(20);
+                            progressBox.setSpacing(185);
+                            // = should be changed to a settings icon
+                            Label progressLabel = new Label("=  Progress");
 
-        progressBox.getChildren().addAll(progressLabel, tipsLabel);
-        final int MAX_RANGE = 270;
-        final int MAX_WIDTH = 5;
-        int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+                            progressLabel.setId("progressLabelID");
+                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+                            tipsLabel.setId("tipsLabelID");
 
-        HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
-        StackPane progressPane = new StackPane();
-        Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
+                            progressBox.getChildren().addAll(progressLabel, tipsLabel);
+                                final int MAX_RANGE = 270;
+                                final int MAX_WIDTH = 5;
+                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
 
-        backBar.setArcWidth(10);
-        backBar.setArcHeight(2);
-        backBar.setFill(Color.GRAY);
+                                HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
+                                StackPane progressPane = new StackPane();
+                                Rectangle backBar = new Rectangle(MAX_RANGE, MAX_WIDTH+0.2);
 
-        //progress bar gradient should range from blue to red.
-        Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
-        Color colorPicker = pickColor(MAX_RANGE, progressRange);
+                                backBar.setArcWidth(10);
+                                backBar.setArcHeight(2);
+                                backBar.setFill(Color.GRAY);
 
-        progressionBar.setFill(colorPicker);
-        backBar.setArcWidth(10);
-        backBar.setArcHeight(2);
+                                //progress bar gradient should range from blue to red.
+                                Rectangle progressionBar = new Rectangle(progressRange, MAX_WIDTH);
+                                Color colorPicker = pickColor(MAX_RANGE, progressRange);
 
-        progressPane.setAlignment(Pos.CENTER_LEFT);
-        progressPane.getChildren().addAll(backBar, progressionBar);
+                                progressionBar.setFill(colorPicker);
+                                backBar.setArcWidth(10);
+                                backBar.setArcHeight(2);
 
-        progressBar.getChildren().addAll(progressBox, progressPane);
-        middlePane.getChildren().addAll(title, progressBar);
+                                progressPane.setAlignment(Pos.CENTER_LEFT);
+                                progressPane.getChildren().addAll(backBar, progressionBar);
 
-        // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
-        String titleString = title.toString();
-        double titleWidth = calculateTextSize(titleString);
-        middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
+                        progressBar.getChildren().addAll(progressBox, progressPane);
+                    middlePane.getChildren().addAll(title, progressBar);
 
-        TextArea textArea = getTextArea();
-        rightSide.getChildren().addAll(middlePane, textArea);
+                    // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
+                    String titleString = title.toString();
+                    double titleWidth = calculateTextSize(titleString);
+                    middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
+
+                TextArea textArea = getTextArea();
+            rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
         bigPane.setMinSize(150, 150);
@@ -728,10 +625,10 @@ public class ProjectController   {
      */
     public double calculateTextSize(String title){
 
-        Text titleText = new Text(title);
-        titleText.setFont(Font.font("-fx-font-size: 1.5"));
-        double width = titleText.getLayoutBounds().getWidth();
-        return width;
+    Text titleText = new Text(title);
+    titleText.setFont(Font.font("-fx-font-size: 1.5"));
+    double width = titleText.getLayoutBounds().getWidth();
+    return width;
     }
 
     /**
@@ -814,60 +711,33 @@ public class ProjectController   {
 
 
     @FXML
-    protected void onCreatePanelAction() {
-        System.out.println("Creating a new project in the backend!");
+    protected void onCreatePanelAction(){
+        System.out.println("Created Panel!");
 
-        // Attempt to create a new project in the backend first
-        try {
-            // Default project details for a new project
-            String projectName = "New Project";
-            String projectDescription = "Enter description here";
+        currentProject = null;
+        CustomStackPane projectPan = createProjectPane();
 
-            // Create the project in the backend only once here
-            Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
-            String result = rawResult.getKey();
 
-            if (result.equals("success")) {
-                // Pass the new project's ID and details to create a pane with these details
-                CustomStackPane projectPane = createProjectPaneWithData(
-                        rawResult.getValue(), // projectID
-                        projectName,
-                        projectDescription,
-                        "", // Empty resources for new project
-                        ""  // Empty tools for new project
-                );
 
-                if (!mainVbox.getChildren().contains(projectPane)) {
-                    mainVbox.getChildren().add(projectPane);
-                } else {
-                    System.out.println("Project panel already exists in mainVbox!");
-                }
 
-                hideAllPanes(); // Adjust pane sizes as needed
-            } else {
-                showErrorAlert("Error", "Failed to create project: " + result);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showErrorAlert("Error", "An error occurred while creating the project: " + e.getMessage());
-        }
+        //mainVbox.getChildren().add(projectPan);
+        hideAllPanes(); // This for some reason fixes the size of panes.
+
     }
-
-
 
     @FXML
     private Button logoutButton;
 
     @FXML
-    protected void onLogoutAction(){
+   protected void onLogoutAction(){
         try{
-            Stage stage = (Stage) logoutButton.getScene().getWindow();
-            FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
-            Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
-            stage.setTitle("Project Partner");
-            stage.setWidth(LoginApplication.WIDTH);
-            stage.setHeight(LoginApplication.HEIGHT);
-            stage.setScene(scene);
+        Stage stage = (Stage) logoutButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), LoginApplication.HEIGHT, LoginApplication.WIDTH);
+        stage.setTitle("Project Partner");
+        stage.setWidth(LoginApplication.WIDTH);
+        stage.setHeight(LoginApplication.HEIGHT);
+        stage.setScene(scene);
         }
         catch(IOException e){
             e.printStackTrace();
