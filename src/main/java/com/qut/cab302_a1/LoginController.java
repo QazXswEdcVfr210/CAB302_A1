@@ -86,7 +86,6 @@ public class LoginController {
                 Stage stage = (Stage) LoginButton.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("project-view.fxml"));
                 Scene scene = new Scene(fxmlLoader.load(), MAIN_WIDTH, MAIN_HEIGHT);
-                ProjectController.setUser = user;
                 stage.setTitle("Project Partner");
                 stage.setWidth(MAIN_WIDTH);
                 stage.setHeight(MAIN_HEIGHT);
