@@ -104,6 +104,7 @@ public class FirebaseJSONUnpacker {
 
         } catch (Exception e) {
             e.printStackTrace();
+            FirebaseDataStorage.setProjectIDs(new ArrayList<>());
         }
     }
 
