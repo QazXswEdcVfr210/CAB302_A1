@@ -605,7 +605,7 @@ public class ProjectController   {
                         progressBar.getChildren().addAll(progressBox, progressPane);
                     middlePane.getChildren().addAll(title, progressBar);
 
-                    // Text needs to be rendered before .getWidth runlater waits for UI changes before execute.
+                    // Text needs to be rendered before .getWidth runlater waits for UI changes before execute
                     String titleString = title.toString();
                     double titleWidth = calculateTextSize(titleString);
                     middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
