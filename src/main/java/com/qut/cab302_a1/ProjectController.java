@@ -317,7 +317,7 @@ public class ProjectController   {
     }
 
     // Method to handle the saving of duplicated projects to db
-    private void handleDuplicateProjectSave(String projectName, String projectDescription, String projectResources, String projectTools) {
+    private void handleDuplicateProjectSave(String projectName, String projectDescription) {
         try {
             // This calls the FirebaseRequestHandler to save the project in the db
             Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription); // EDITED OUT projectResources and projectTools
@@ -396,13 +396,6 @@ public class ProjectController   {
         projectDescriptionField.setPromptText("Enter project description");
         projectDescriptionField.getStyleClass().add("project-text-field");
 
-        TextField projectResourcesField = new TextField();
-        projectResourcesField.setPromptText("Enter list of required resources");
-        projectResourcesField.getStyleClass().add("project-text-field");
-
-        TextField projectToolsField = new TextField();
-        projectToolsField.setPromptText("Enter list of required tools");
-        projectToolsField.getStyleClass().add("project-text-field");
 
         Project current = (Project) projectPane.getUserData();
 
@@ -418,10 +411,8 @@ public class ProjectController   {
         saveButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
             String projectDescription = projectDescriptionField.getText();
-            String projectResources = projectResourcesField.getText();
-            String projectTools = projectToolsField.getText();
 
-            if (!projectName.isEmpty() && !projectDescription.isEmpty() && !projectResources.isEmpty() && !projectTools.isEmpty()) {
+            if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
                 try {
                     Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
                     String result = rawResult.getKey();
@@ -432,8 +423,6 @@ public class ProjectController   {
                         // Success case: disable editing and buttons
                         projectNameField.setEditable(false);
                         projectDescriptionField.setEditable(false);
-                        projectResourcesField.setEditable(false);
-                        projectToolsField.setEditable(false);
                         saveButton.setDisable(true);
 
                         showSuccessAlert("Project Created", "Project was successfully saved to the database!");
@@ -454,8 +443,6 @@ public class ProjectController   {
         duplicateButton.setOnAction(event -> {
             String projectName = projectNameField.getText();
             String projectDescription = projectDescriptionField.getText();
-            String projectResources = projectResourcesField.getText();
-            String projectTools = projectToolsField.getText();
 
             CustomStackPane duplicateProjectPane = createProjectPane();
             duplicateProjectPane.setId("duplicateProjectPaneID");
@@ -463,8 +450,7 @@ public class ProjectController   {
             VBox newProjectPane = (VBox) duplicateProjectPane.getChildren().get(0);
             ((TextField) newProjectPane.getChildren().get(0)).setText(projectName);
             ((TextField) newProjectPane.getChildren().get(1)).setText(projectDescription);
-            ((TextField) newProjectPane.getChildren().get(2)).setText(projectResources);
-            ((TextField) newProjectPane.getChildren().get(3)).setText(projectTools);
+
 
             if (!mainVbox.getChildren().contains(duplicateProjectPane)) {
                 mainVbox.getChildren().add(duplicateProjectPane);
@@ -473,7 +459,7 @@ public class ProjectController   {
             }
 
             hideAllPanes();
-            handleDuplicateProjectSave(projectName, projectDescription, projectResources, projectTools);
+            handleDuplicateProjectSave(projectName, projectDescription);
         });
 
         // Edit Button
@@ -482,8 +468,6 @@ public class ProjectController   {
         editButton.setOnAction(event -> {
             projectNameField.setEditable(true);
             projectDescriptionField.setEditable(true);
-            projectResourcesField.setEditable(true);
-            projectToolsField.setEditable(true);
             saveButton.setDisable(false);
         });
 
@@ -492,7 +476,7 @@ public class ProjectController   {
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
-        projectPane.getChildren().addAll(projectNameField, projectDescriptionField, projectResourcesField, projectToolsField, buttonBox);
+        projectPane.getChildren().addAll(projectNameField, projectDescriptionField,  buttonBox);
 
         return projectPane;
     }
