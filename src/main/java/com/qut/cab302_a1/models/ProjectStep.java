@@ -20,9 +20,11 @@ public class ProjectStep {
     public void setCompleted(boolean state){
         if(state == true){
             this.bIsCompleted = true;
+            //FirebaseRequestHandler.UpdateIsComplete(true);
         }
         else{
             this.bIsCompleted = false;
+            //FirebaseRequestHandler.UpdateIsComplete(false);
         }
     }
 

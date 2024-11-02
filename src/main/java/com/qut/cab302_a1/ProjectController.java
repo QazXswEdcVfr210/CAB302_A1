@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.qut.cab302_a1.models.Project;
+import com.qut.cab302_a1.models.ProjectStep;
 import firebase.FirebaseDataStorage;
 import javafx.util.Pair;
 import firebase.FirebaseRequestHandler;
@@ -574,13 +575,26 @@ public class ProjectController   {
                             Label progressLabel = new Label("=  Progress");
 
                             progressLabel.setId("progressLabelID");
-                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+
+                            String ratioString = getRatio(currentProject.getProjectSteps());
+
+                            Label tipsLabel = new Label(ratioString);
                             tipsLabel.setId("tipsLabelID");
+
+                            List<ProjectStep> temp = currentProject.getProjectSteps();
+                            int completed = 0;
+                            int total = temp.size();
+
+                            for (ProjectStep steps: temp){
+                                if (steps.getbIsCompleted() == true){
+                                    completed++;
+                                }
+                            }
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
                                 final int MAX_WIDTH = 5;
-                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+                                int progressRange = calculateProgress(MAX_RANGE, total, completed);
 
                                 HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
                                 StackPane progressPane = new StackPane();
@@ -749,6 +763,23 @@ public class ProjectController   {
         catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    public String getRatio(List<ProjectStep> stepList){
+
+        int totalStepCount = stepList.size();
+        int completedSteps = 0;
+        for (ProjectStep step : stepList){
+            if (step.getbIsCompleted() == true){
+                completedSteps++;
+            }
+        }
+
+        String completedStepsString = "" + completedSteps;
+        String totalStepsString = "" + totalStepCount;
+
+        String ratioString = (completedStepsString + "/" + totalStepsString);
+        return ratioString;
     }
 
 

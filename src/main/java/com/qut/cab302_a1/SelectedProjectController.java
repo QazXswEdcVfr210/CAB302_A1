@@ -146,18 +146,28 @@ public class SelectedProjectController {
            steps = loadedProject.getProjectSteps();
 
            for (ProjectStep step : steps){
-               if (!step.getbIsCompleted()){
+               if (step.getbIsCompleted() == false){
                    incompleteStepCount++;
                }
-               createStep(step);
+               if (!newSteps.contains(step)){
+                   createStep(step);
+               }
            }
            setRatio();
+
         }
     }
 
+
     public void setRatio(){
         totalStepCount = steps.size();
-        completedSteps = totalStepCount - incompleteStepCount;
+        completedSteps = 0;
+        for (ProjectStep step : steps){
+            if (step.getbIsCompleted() == true){
+                completedSteps++;
+            }
+        }
+        setLoadingBar();
         String completedStepsString = "" + completedSteps;
         String totalStepsString = "" + totalStepCount;
 
@@ -170,11 +180,17 @@ public class SelectedProjectController {
 
         if (newSteps.size() % 2 != 0){
             hboxRow = createHbox();
+            hboxRow.setSpacing(150);
+            hboxRow.setAlignment(Pos.CENTER);
             stepBoxes.add(hboxRow);
             VBox leftSide = (VBox) hboxRow.getChildren().get(0);
             leftSide.setPrefSize(200, 200);
             leftSide.setAlignment(Pos.CENTER);
+            leftSide.setStyle("-fx-background-color: #25262b; -fx-background-radius: 20px;" +
+                    "    -fx-border-radius: 20px;");
             HBox complete = new HBox();
+            complete.setSpacing(10);
+            complete.setAlignment(Pos.TOP_RIGHT);
             Label competeLabel = new Label(step.getbIsCompleted() ? "Completed" : "Incomplete");
             RadioButton completeRadio = new RadioButton();
 
@@ -184,19 +200,30 @@ public class SelectedProjectController {
 
             completeRadio.setOnAction(actionEvent -> {
                 if (completeRadio.isSelected()){
+                    competeLabel.setText("Complete");
                     step.setCompleted(true);
                     setRatio();
                 }
                 else{
+                    competeLabel.setText("Incomplete");
                     step.setCompleted(false);
                     setRatio();
                 }
             });
             Label nameLabel = new Label(step.getName());
             TextArea decriptionLabel = new TextArea(step.getDescription());
+            decriptionLabel.setEditable(false);
+
+
+            nameLabel.setStyle("-fx-font-size: 1.1em; -fx-text-fill: white");
+            decriptionLabel.setStyle("-fx-text-fill: white");
+            competeLabel.setStyle("-fx-text-fill: white");
 
             complete.getChildren().addAll(competeLabel, completeRadio);
             leftSide.getChildren().addAll(complete, nameLabel, decriptionLabel);
+
+            stepsPane.setAlignment(Pos.CENTER);
+            stepsPane.setSpacing(100);
 
             stepsPane.getChildren().add(hboxRow);
         }
@@ -206,8 +233,12 @@ public class SelectedProjectController {
             VBox rightSide = (VBox) hboxRow.getChildren().get(1);
             rightSide.setPrefSize(200, 200);
             rightSide.setAlignment(Pos.CENTER);
+            rightSide.setStyle("-fx-background-color: #25262b; -fx-background-radius: 20px;" +
+                    "    -fx-border-radius: 20px;");
 
             HBox complete = new HBox();
+            complete.setSpacing(10);
+            complete.setAlignment(Pos.TOP_RIGHT);
             Label competeLabel = new Label(step.getbIsCompleted() ? "Completed" : "Incomplete");
             RadioButton completeRadio = new RadioButton();
 
@@ -217,16 +248,23 @@ public class SelectedProjectController {
 
             completeRadio.setOnAction(actionEvent -> {
                 if (completeRadio.isSelected()){
+                    competeLabel.setText("Complete");
                     step.setCompleted(true);
                     setRatio();
                 }
                 else{
+                    competeLabel.setText("Incomplete");
                     step.setCompleted(false);
                     setRatio();
                 }
             });
             Label nameLabel = new Label(step.getName());
             TextArea decriptionLabel = new TextArea(step.getDescription());
+            decriptionLabel.setEditable(false);
+
+            nameLabel.setStyle("-fx-font-size: 1.1em; -fx-text-fill: white");
+            decriptionLabel.setStyle("-fx-text-fill: white");
+            competeLabel.setStyle("-fx-text-fill: white");
 
             complete.getChildren().addAll(competeLabel, completeRadio);
             rightSide.getChildren().addAll(complete, nameLabel, decriptionLabel);
@@ -237,9 +275,10 @@ public class SelectedProjectController {
     public HBox createHbox(){
         HBox hboxRow = new HBox();
         hboxRow.setAlignment(Pos.CENTER);
-        hboxRow.setSpacing(10);
         VBox leftSide = new VBox();
+        leftSide.maxWidth(200);
         VBox rightSide = new VBox();
+        rightSide.maxWidth(200);
         hboxRow.getChildren().addAll(leftSide, rightSide);
         return hboxRow;
     }
@@ -258,13 +297,11 @@ public class SelectedProjectController {
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         popup.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
-
-        // Handle the Save button click and retrieve input data
         popup.setResultConverter(dialogButton -> {
             if (dialogButton == saveButtonType) {
-                // Combine or process the input values as needed
                 try {
                     FirebaseRequestHandler.CreateProjectStep(loadedProject.getID(), name.getText(), description.getText());
+
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -272,12 +309,11 @@ public class SelectedProjectController {
             return null;
         });
 
-        // Show the dialog and capture the result
+
         popup.showAndWait().ifPresent(result -> {
-            System.out.println("User Details: " + result);
-            // Further processing of the saved details here, e.g., updating UI or storing data
+
         });
+
+
     }
-
-
 }

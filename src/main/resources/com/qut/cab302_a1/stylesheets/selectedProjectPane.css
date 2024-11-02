@@ -10,6 +10,9 @@
     -fx-background-color: rgba(29,29,29,254);
 }
 
+ #hboxRow{
+     -fx-background-color: #25262b;
+ }
 
 #projectPanID, #mainVbox, #mainScrollPane, #scrollMainVBox{
     -fx-background-color: rgba(28,28,28,255);
@@ -53,6 +56,17 @@
 }
 
 #returnButton:hover{
+    -fx-cursor: hand;
+    -fx-background-color: rgba(1,1,1,0.2);
+}
+
+#createStep{
+    -fx-text-fill: white;
+    -fx-background-color: rgba(1,1,1,0.1);
+    -fx-border-color: transparent;
+}
+
+#createStep:hover{
     -fx-cursor: hand;
     -fx-background-color: rgba(1,1,1,0.2);
 }
