@@ -4,9 +4,15 @@ import com.qut.cab302_a1.models.Settings;
 import firebase.FirebaseRequestHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -42,10 +48,9 @@ public class SignupController {
 
     @FXML
     public void initialize() {
-        try{
+        try {
             signupMain.getStylesheets().add(getClass().getResource("stylesheets/signupStylesheet.css").toExternalForm());
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             System.out.println("Stylesheet failed to load");
         }
     }
@@ -78,6 +83,7 @@ public class SignupController {
     /**
      * Gets email and password parameters and sends them to db. Db validates user and returns a boolean.
      * If boolean is true, Takes user to the main projects page and shows them their projects.
+     *
      * @throws Exception
      */
     @FXML
@@ -107,21 +113,20 @@ public class SignupController {
 
                 e.printStackTrace();
             }
-        }
-        else{
+        } else {
             failLabel.setText("Passwords do not match");
             failLabel.setVisible(true);
         }
     }
 
     @FXML
-    protected void google(){
+    protected void google() {
         failLabel.setText("Feature coming soon");
         failLabel.setVisible(true);
     }
 
     @FXML
-    protected void apple(){
+    protected void apple() {
         failLabel.setText("Feature coming soon");
         failLabel.setVisible(true);
     }

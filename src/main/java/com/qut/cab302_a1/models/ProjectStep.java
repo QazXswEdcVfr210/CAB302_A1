@@ -17,6 +17,17 @@ public class ProjectStep {
         System.out.printf("Project Step Data:\nName: %s%n\nDescription: %s%n\nIs Complete: %s%n\n", this.name, this.description, this.bIsCompleted);
     }
 
+    public void setCompleted(boolean state){
+        if(state == true){
+            this.bIsCompleted = true;
+            //FirebaseRequestHandler.UpdateIsComplete(true);
+        }
+        else{
+            this.bIsCompleted = false;
+            //FirebaseRequestHandler.UpdateIsComplete(false);
+        }
+    }
+
     // Getters
     public String getName() {
         return this.name;

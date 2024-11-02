@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.*;
 
 import com.qut.cab302_a1.models.Project;
+import com.qut.cab302_a1.models.ProjectStep;
 import firebase.FirebaseDataStorage;
 import javafx.util.Pair;
 import firebase.FirebaseRequestHandler;
@@ -486,8 +487,8 @@ public class ProjectController   {
             saveButton.setDisable(false);
         });
 
-        Button deleteButton = createDeleteButton(overLay);
 
+        Button deleteButton = createDeleteButton(overLay);
 
         // Adding buttons to a horizontal box layout
         HBox buttonBox = new HBox(10, saveButton, editButton, deleteButton, duplicateButton);
@@ -577,13 +578,26 @@ public class ProjectController   {
                             Label progressLabel = new Label("=  Progress");
 
                             progressLabel.setId("progressLabelID");
-                            Label tipsLabel = new Label(currentProgress + "/" + totalProgress);
+
+                            String ratioString = getRatio(currentProject.getProjectSteps());
+
+                            Label tipsLabel = new Label(ratioString);
                             tipsLabel.setId("tipsLabelID");
+
+                            List<ProjectStep> temp = currentProject.getProjectSteps();
+                            int completed = 0;
+                            int total = temp.size();
+
+                            for (ProjectStep steps: temp){
+                                if (steps.getbIsCompleted() == true){
+                                    completed++;
+                                }
+                            }
 
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
                                 final int MAX_WIDTH = 5;
-                                int progressRange = calculateProgress(MAX_RANGE, totalProgress, currentProgress);
+                                int progressRange = calculateProgress(MAX_RANGE, total, completed);
 
                                 HBox.setHgrow(middlePane, Priority.ALWAYS); // figure this out later. Meant to be growth between label and progressPane.
                                 StackPane progressPane = new StackPane();
@@ -613,6 +627,7 @@ public class ProjectController   {
                     middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
 
                 TextArea textArea = getTextArea();
+                textArea.setText(currentProject.getDescription());
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
@@ -689,7 +704,7 @@ public class ProjectController   {
      * @param currentProgress
      * @return size of the bar
      */
-    public int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
+    public static int calculateProgress(int MAX_RANGE, int totalProgress, int currentProgress){
         if (currentProgress > totalProgress || totalProgress == currentProgress || totalProgress == 0){
             return MAX_RANGE;
         }
@@ -710,7 +725,7 @@ public class ProjectController   {
      * @param progressRange
      * @return Color for progressBar
      */
-    public Color pickColor(int MAX_RANGE, int progressRange){
+    public static Color pickColor(int MAX_RANGE, int progressRange){
         if (MAX_RANGE / 2 <= progressRange){ //Gradient this
             return Color.BLUE;
         }
@@ -752,6 +767,23 @@ public class ProjectController   {
         catch(IOException e){
             e.printStackTrace();
         }
+    }
+
+    public String getRatio(List<ProjectStep> stepList){
+
+        int totalStepCount = stepList.size();
+        int completedSteps = 0;
+        for (ProjectStep step : stepList){
+            if (step.getbIsCompleted() == true){
+                completedSteps++;
+            }
+        }
+
+        String completedStepsString = "" + completedSteps;
+        String totalStepsString = "" + totalStepCount;
+
+        String ratioString = (completedStepsString + "/" + totalStepsString);
+        return ratioString;
     }
 
 
