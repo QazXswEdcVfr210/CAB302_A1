@@ -624,6 +624,7 @@ public class ProjectController   {
                     middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
 
                 TextArea textArea = getTextArea();
+                textArea.setText(currentProject.getDescription());
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
