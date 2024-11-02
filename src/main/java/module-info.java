@@ -17,6 +17,7 @@ module com.qut.cab302_a1 {
     requires com.google.api.services.storage;
     requires org.apache.commons.lang3;
     requires jdk.jdi;
+    requires google.cloud.firestore;
 
     opens com.qut.cab302_a1 to javafx.fxml;
     exports com.qut.cab302_a1;

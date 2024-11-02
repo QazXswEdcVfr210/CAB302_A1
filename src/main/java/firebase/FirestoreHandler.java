@@ -11,7 +11,7 @@ import javafx.util.Pair;
 import java.util.HashMap;
 import java.util.Map;
 
-// This class is used to abstract certain functionality for use in interacting with Firestore DB (mostly CRUD operations)
+// The purpose of this class is to abstract CRUD operations for use in other backend functions when interacting with Firestore
 public class FirestoreHandler {
 
     // Creates a document

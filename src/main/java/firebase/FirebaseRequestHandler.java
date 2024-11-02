@@ -14,13 +14,11 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.client.http.json.JsonHttpContent;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.jdi.event.ExceptionEvent;
 import javafx.util.Pair;
 
 import com.qut.cab302_a1.models.Project;
@@ -30,7 +28,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 /*
     This class handles making requests to Firebase through REST API requests.
-    Down the line this might be replaced with making requests to cloud functions for security purposes.
     The purpose of this class is to abstract complex backend functionality into easy to use functions for frontend use.
  */
 
@@ -41,22 +38,22 @@ public class FirebaseRequestHandler {
 
     // Attempts login with provided credentials, if successful then returns true and stores UID and other user information.
     public static Boolean TryLogin(String email, String pass, Boolean bPrintResponse) throws Exception {
-        try{
+        try {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
             String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=%s", FirebaseID);
 
             // Create payload
-            Map<String, Object> data = new HashMap<>();
-            data.put("email", email);
-            data.put("password", pass);
-            data.put("returnSecureToken", "true");
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("email", email);
+            requestBody.put("password", pass);
+            requestBody.put("returnSecureToken", "true");
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, data);
+            HttpContent content = new JsonHttpContent(jsonFactory, requestBody);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
 
             // Handle response (print response body to console if bPrintResponse is true.
@@ -84,24 +81,23 @@ public class FirebaseRequestHandler {
 
     // Attempts to create an account with the provided credentials, if successful then returns true, if not then returns false and prints the error to the console.
     public static Boolean TrySignup(String email, String pass, String username, Boolean bPrintResponse) throws Exception {
-
-        try{
+        try {
             // Set up request
             HttpTransport httpTransport = new NetHttpTransport();
             JsonFactory jsonFactory = new GsonFactory();
             String firebaseUrl = String.format("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s", FirebaseID);
 
             // Create payload
-            Map<String, Object> data = new HashMap<>();
-            data.put("email", email);
-            data.put("password", pass);
-            data.put("displayName", username);
-            data.put("returnSecureToken", "true");
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("email", email);
+            requestBody.put("password", pass);
+            requestBody.put("displayName", username);
+            requestBody.put("returnSecureToken", "true");
 
             // Make POST request
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
             GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpContent content = new JsonHttpContent(jsonFactory, data);
+            HttpContent content = new JsonHttpContent(jsonFactory, requestBody);
             HttpResponse response = requestFactory.buildPostRequest(url, content).execute();
 
             // Handle response (print response body to console if bPrintResponse is true.
@@ -125,9 +121,7 @@ public class FirebaseRequestHandler {
 
     // Creates a new project, first returned string is either success or an error code, the second string is the project ID
     public static Pair<String, String> CreateProject(String projectName, String projectDescription) throws Exception {
-
-        try{
-
+        try {
             // Generate random project ID and check if project exists
             String projectID = "";
             boolean cont = true;
@@ -137,14 +131,14 @@ public class FirebaseRequestHandler {
             }
 
             // Create payload
-            Map<String, Object> projectFields = new HashMap<String, Object>();
-            projectFields.put("projectName", Map.of("stringValue", projectName));                   // Add project name to payload
-            projectFields.put("projectDescription", Map.of("stringValue", projectDescription));     // Add project description to payload
-            projectFields.put("projectSteps", Map.of("mapValue", new HashMap<String, Object>()));   // Add project steps to payload
-            projectFields.put("projectID", Map.of("stringValue", projectID));                       // Add project ID to payload
+            Map<String, Object> requestBody = new HashMap<String, Object>();
+            requestBody.put("projectName", Map.of("stringValue", projectName));                   // Add project name to payload
+            requestBody.put("projectDescription", Map.of("stringValue", projectDescription));     // Add project description to payload
+            requestBody.put("projectSteps", Map.of("mapValue", new HashMap<String, Object>()));   // Add project steps to payload
+            requestBody.put("projectID", Map.of("stringValue", projectID));                       // Add project ID to payload
 
             // Create a new document with a randomly-generated projectID using the data provided in the projectFields payload
-            Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, projectFields);
+            Pair<Boolean, String> results = FirestoreHandler.CreateDocument("Projects", projectID, requestBody);
 
             // If the document was successfully created, add a reference to the project in the user's list of projectIDs
             if(results.getKey()) { AppendProjectToProfile(projectID);}
@@ -223,24 +217,49 @@ public class FirebaseRequestHandler {
     }
 
     // Deletes a project
-    public static Boolean DeleteProject(String projectID) {
+    public static Boolean DeleteProject(String projectID) throws Exception {
+
+        // Attempt to delete the document from Firestore
+        Boolean projectWasDeleted;
         try {
-            // Attempt to delete the document from Firestore
-            FirestoreHandler.DeleteDocument("Projects", projectID);
-            System.out.println("Project deletion successful for ID: " + projectID);
-            return true; // Return true if deletion was successful
+            projectWasDeleted = FirestoreHandler.DeleteDocument("Projects", projectID).getKey();
+            projectWasDeleted = true; // Return true if deletion was successful
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Project deletion failed for ID: " + projectID);
-            return false; // Return false if an error occurred
+            projectWasDeleted = false; // Return false if an error occurred
         }
-    }
 
+        // If we were able to delete the project from Firestore, delete its reference in Users/*uid*/projectIDs
+        Boolean success = false;
+        if(projectWasDeleted) {
+
+            // Delete our local copy
+            FirebaseDataStorage.deleteProject(projectID);
+
+            // Create projectIDs array to send
+            List<Map<String, String>> projects = new ArrayList<>();
+            for(String p : FirebaseDataStorage.getProjectIDs()) {
+                projects.add(Map.of("stringValue", p));
+            }
+
+            // Update request body and perform PATCH request
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("projectIDs", Map.of(
+                    "arrayValue", Map.of(
+                            "values", projects
+                    )
+            ));
+
+            // Perform operation
+            success = FirestoreHandler.ModifyFieldValue("Users", FirebaseDataStorage.getUid(), "projectIDs", requestBody).getKey();
+        }
+
+        return success;
+    }
 
     // Creates a new project step and adds it to a project
     public static Boolean CreateProjectStep(String _projectID, String _projectStepName, String _projectStepDescription) throws Exception {
         try {
-
             // Get existing project steps
             Map<String, Object> stepData = new HashMap<>();
             Project project = FirebaseDataStorage.getProjectByID(_projectID).getKey();
@@ -270,14 +289,14 @@ public class FirebaseRequestHandler {
             ));
 
             // Create payload for PATCH request
-            Map<String, Object> newProjectStep = Map.of(
+            Map<String, Object> requestBody = Map.of(
                     "projectSteps", Map.of(
                             "mapValue", Map.of("fields", stepData)
                     )
             );
 
             // Create PATCH request to update document
-            FirestoreHandler.ModifyFieldValue("Projects", _projectID, "projectSteps", newProjectStep);
+            FirestoreHandler.ModifyFieldValue("Projects", _projectID, "projectSteps", requestBody);
 
             // Updates our copy of our projects
             GetProjects();
@@ -287,6 +306,50 @@ public class FirebaseRequestHandler {
         }
 
         return false;
+    }
+
+    // Updates the isCompleted flag of a project step
+    public static Boolean UpdateProjectStepCompleted(String projectID, String projectStepName, Boolean isCompleted) throws Exception {
+        try {
+            // Get projectSteps array from local data to minimise the number of calls to our db
+            List<ProjectStep> projectSteps = FirebaseDataStorage.getProjectByID(projectID).getKey().getProjectSteps();
+
+            // Select the relevant projectStep and edit the bIsCompleted variable
+            for(ProjectStep step : projectSteps) {
+                if(projectStepName.equals(step.getName())) {
+                    step.setbIsCompleted(isCompleted);
+                }
+            }
+
+            // Create step data
+            Map<String, Object> stepData = new HashMap<>();
+            for(ProjectStep step : projectSteps) {
+                stepData.put(step.getName(), Map.of(
+                        "mapValue", Map.of(
+                                "fields", Map.of(
+                                        "name", Map.of("stringValue", step.getName()),
+                                        "desc", Map.of("stringValue", step.getDescription()),
+                                        "isComplete", Map.of("booleanValue", step.getbIsCompleted())
+                                )
+                        )
+                ));
+            }
+
+            // Create payload for PATCH request
+            Map<String, Object> requestBody = Map.of(
+                    "projectSteps", Map.of(
+                            "mapValue", Map.of("fields", stepData)
+                    )
+            );
+
+            // Update the database's copy of the projectSteps array
+            FirestoreHandler.ModifyFieldValue("Projects", projectID, "projectSteps", requestBody);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     // Deletes a project step from a project
@@ -305,19 +368,11 @@ public class FirebaseRequestHandler {
     // Gets the list of the current user's projects - called on login
     private static void GetProjectIds() throws Exception {
         try {
-            // Set up request
-            HttpTransport httpTransport = new NetHttpTransport();
-            JsonFactory jsonFactory = new GsonFactory();
-            String firebaseUrl = "https://firestore.googleapis.com/v1/projects/cab302a1/databases/projectdb/documents/Users/" + FirebaseDataStorage.getUid();
-
-            // Make GET request
-            HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
-            GenericUrl url = new GenericUrl(firebaseUrl);
-            HttpResponse response = requestFactory.buildGetRequest(url).execute();
-            String responseBody = response.parseAsString();
+            // Get user document
+            Pair<Boolean, String> result = FirestoreHandler.GetDocument("Users", FirebaseDataStorage.getUid());
 
             // Save list of project IDs to storage
-            FirebaseJSONUnpacker.SaveUserProjectIDs(responseBody);
+            FirebaseJSONUnpacker.SaveUserProjectIDs(result.getValue());
 
         } catch (HttpResponseException e) {
             System.out.printf("Error getting user projects: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));
@@ -328,7 +383,6 @@ public class FirebaseRequestHandler {
     private static Boolean GetProjects() throws Exception{
         // Iterate through user projects ID list
         for(String projectID : FirebaseDataStorage.getProjectIDs()) {
-
             try{
                 // Try to get project
                 Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
@@ -352,11 +406,11 @@ public class FirebaseRequestHandler {
     private static void SetUpNewUser(String username) throws Exception {
         try {
             // Create payload
-            Map<String, Object> fields = new HashMap<String, Object>();
-            fields.put("username", Map.of("stringValue", username));
-            fields.put("projectIDs", Map.of("arrayValue", new HashMap<String, Object>()));
+            Map<String, Object> requestBody = new HashMap<String, Object>();
+            requestBody.put("username", Map.of("stringValue", username));
+            requestBody.put("projectIDs", Map.of("arrayValue", new HashMap<String, Object>()));
 
-            FirestoreHandler.CreateDocument("Users", FirebaseDataStorage.getUid(), fields);
+            FirestoreHandler.CreateDocument("Users", FirebaseDataStorage.getUid(), requestBody);
 
         } catch (HttpResponseException e) {
             System.out.printf("Error setting up new user: %s%n", FirebaseJSONUnpacker.ExtractBadRequestErrorMessage(e.getContent()));

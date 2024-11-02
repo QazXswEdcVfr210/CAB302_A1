@@ -41,4 +41,7 @@ public class ProjectStep {
         return this.bIsCompleted;
     }
 
+    // Setters
+    public void setbIsCompleted(Boolean _bIsCompleted) { this.bIsCompleted = _bIsCompleted; }
+
 }

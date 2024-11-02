@@ -10,12 +10,11 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 // This is a class that unpacks JSON responses received from Firebase and extracts context-specific data.
+// Its purpose is to abstract this functionality to improve readability and make maintenance easier
 public class FirebaseJSONUnpacker {
 
     // This extracts the UID and email address of the user from an authentication response. Used for user profile data.
