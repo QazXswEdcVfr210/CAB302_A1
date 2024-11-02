@@ -413,19 +413,38 @@ public class ProjectController   {
             String projectDescription = projectDescriptionField.getText();
 
             if (!projectName.isEmpty() && !projectDescription.isEmpty()) {
-                try {
-                    Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
-                    String result = rawResult.getKey();
+                if (overLay.getProjectID() != null && !overLay.getProjectID().isEmpty()) {
+                    // Project already exists, update instead of create
+                    try {
+                        boolean updateNameResult = FirebaseRequestHandler.UpdateProjectName(overLay.getProjectID(), projectName);
+                        boolean updateDescriptionResult = FirebaseRequestHandler.UpdateProjectDescription(overLay.getProjectID(), projectDescription);
 
-                    if (result.equals("success")) {
+                        if (updateNameResult && updateDescriptionResult) {
+                            // Success case: disable editing and buttons
+                            projectNameField.setEditable(false);
+                            projectDescriptionField.setEditable(false);
+                            saveButton.setDisable(true);
+                        } else {
+                            showErrorAlert("Error updating project", "Failed to update project details.");
+                        }
+                    } catch (Exception e) {
+                        showErrorAlert("Exception", "An error occurred while updating the project: " + e.getMessage());
+                    }
+                } else {
+                    // Project does not exist, create a new one
+                    try {
+                        Pair<String, String> rawResult = FirebaseRequestHandler.CreateProject(projectName, projectDescription);
+                        String result = rawResult.getKey();
 
-                        overLay.setProjectID(rawResult.getValue());
-                        // Success case: disable editing and buttons
-                        projectNameField.setEditable(false);
-                        projectDescriptionField.setEditable(false);
-                        saveButton.setDisable(true);
-
-                        showSuccessAlert("Project Created", "Project was successfully saved to the database!");
+                        if (result.equals("success")) {
+                            overLay.setProjectID(rawResult.getValue());
+                            // Success case: disable editing and buttons
+                            projectNameField.setEditable(false);
+                            projectDescriptionField.setEditable(false);
+                            saveButton.setDisable(true);
+                        } else {
+                            showErrorAlert("Error creating project", result);
+                        }
 
                         for (CustomStackPane pane: projectList) {
                             mainVbox.getChildren().remove(pane);
@@ -436,16 +455,15 @@ public class ProjectController   {
                             mainVbox.getChildren().add(pane);
                         }
                         populateList();
-                    } else {
-                        showErrorAlert("Error creating project", result);
+                    } catch (Exception e) {
+                        showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
                     }
-                } catch (Exception e) {
-                    showErrorAlert("Exception", "Failed to save the project: " + e.getMessage());
                 }
             } else {
                 showErrorAlert("Validation Error", "Project name and description cannot be empty.");
             }
         });
+
 
         // Duplicate button
         Button duplicateButton = new Button("Duplicate");
