@@ -426,6 +426,16 @@ public class ProjectController   {
                         saveButton.setDisable(true);
 
                         showSuccessAlert("Project Created", "Project was successfully saved to the database!");
+
+                        for (CustomStackPane pane: projectList) {
+                            mainVbox.getChildren().remove(pane);
+                        }
+
+
+                        for (CustomStackPane pane: projectList){
+                            mainVbox.getChildren().add(pane);
+                        }
+                        populateList();
                     } else {
                         showErrorAlert("Error creating project", result);
                     }
@@ -562,22 +572,25 @@ public class ProjectController   {
                             Label progressLabel = new Label("=  Progress");
 
                             progressLabel.setId("progressLabelID");
-
-                            String ratioString = getRatio(currentProject.getProjectSteps());
-
-                            Label tipsLabel = new Label(ratioString);
-                            tipsLabel.setId("tipsLabelID");
-
-                            List<ProjectStep> temp = currentProject.getProjectSteps();
                             int completed = 0;
-                            int total = temp.size();
+                            int total = 0;
+                            String ratioString = "0/0";
+                            if (currentProject !=null){
+                                ratioString = getRatio(currentProject.getProjectSteps());
 
-                            for (ProjectStep steps: temp){
-                                if (steps.getbIsCompleted() == true){
-                                    completed++;
+                                List<ProjectStep> temp = currentProject.getProjectSteps();
+                                completed = 0;
+                                total = temp.size();
+
+                                for (ProjectStep steps: temp){
+                                    if (steps.getbIsCompleted() == true){
+                                        completed++;
+                                    }
                                 }
                             }
 
+                            Label tipsLabel = new Label(ratioString);
+                            tipsLabel.setId("tipsLabelID");
                             progressBox.getChildren().addAll(progressLabel, tipsLabel);
                                 final int MAX_RANGE = 270;
                                 final int MAX_WIDTH = 5;
@@ -611,7 +624,13 @@ public class ProjectController   {
                     middlePane.setSpacing(calcSpacing(titleWidth, MAX_SPACING, title)); // HERE
 
                 TextArea textArea = getTextArea();
-                textArea.setText(currentProject.getDescription());
+                if (currentProject != null) {
+                    textArea.setText(currentProject.getDescription());
+                }
+                else{
+                    textArea.setText("Empty Description");
+                }
+
             rightSide.getChildren().addAll(middlePane, textArea);
 
         bigPane.getChildren().addAll(pictureBox, rightSide);
