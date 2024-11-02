@@ -776,6 +776,8 @@ public class ProjectController   {
 
     @FXML
    protected void onLogoutAction(){
+        // Clear project data on logout to avoid duplicates
+        FirebaseDataStorage.clearProjectsData();
         try{
         Stage stage = (Stage) logoutButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(LoginApplication.class.getResource("login-view.fxml"));

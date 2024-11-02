@@ -380,27 +380,28 @@ public class FirebaseRequestHandler {
     }
 
     // Gets all projects that the currently logged-in user owns and saves them to FirebaseDataStorage.projects - called on login
-    private static Boolean GetProjects() throws Exception{
-        // Iterate through user projects ID list
-        for(String projectID : FirebaseDataStorage.getProjectIDs()) {
-            try{
-                // Try to get project
-                Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
+    private static Boolean GetProjects() throws Exception {
+        List<String> projectIds = FirebaseDataStorage.getProjectIDs();
 
-                // If the project exists, add it to the user's list of projects
-                if(result.getKey()) {
-                    // Extract information and save to FirebaseDataStorage.projects
+        if (projectIds == null || projectIds.isEmpty()) {
+            System.out.println("No project IDs found or projectIds is null.");
+            return false; // or handle accordingly
+        }
+
+        for (String projectID : projectIds) {
+            try {
+                Pair<Boolean, String> result = FirestoreHandler.GetDocument("Projects", projectID);
+                if (result.getKey()) {
                     FirebaseJSONUnpacker.ExtractProjectInformation(result.getValue());
                 }
-
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
             }
         }
         return true;
-
     }
+
 
     // Creates a new user document, then populates the new document with required fields.
     private static void SetUpNewUser(String username) throws Exception {

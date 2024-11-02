@@ -27,6 +27,11 @@ public class FirebaseDataStorage {
     public static void appendProjectID(String projectID) { projectIDs.add(projectID); }                 // Append
     public static void deleteProjectID(String projectID) { projectIDs.remove(projectID); }              // Delete
 
+    public static void clearProjectsData() {
+        projectIDs = new ArrayList<>();
+        projects = new ArrayList<>();
+    }
+
     private static List<Project> projects = new ArrayList<>();                                          // The user's list of project instances
     public static List<Project> getProjects() {return FirebaseDataStorage.projects; }                   // Getter
     public static Pair<Project, Integer> getProjectByID(String projectID) {
